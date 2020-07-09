@@ -9,7 +9,7 @@ import (
 
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 
-	"github.com/tetratelabs/protoc-gen-cobra/generator"
+	"github.com/NathanBaulch/protoc-gen-cobra/generator"
 )
 
 type protoTypeCache map[string]entry

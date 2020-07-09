@@ -5,4 +5,4 @@
 
 package main
 
-import _ "github.com/tetratelabs/protoc-gen-cobra/client"
+import _ "github.com/NathanBaulch/protoc-gen-cobra/client"
