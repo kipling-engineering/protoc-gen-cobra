@@ -5,10 +5,10 @@ package pb;
 option go_package = ".;pb";
 
 service MapList {
-    rpc Method(MapListRequest) returns (MapListResponse);
+    rpc Method (MapListRequest) returns (MapListResponse);
 }
 
-message MapListRequest{
+message MapListRequest {
     map<string, string> map_field = 1;
     repeated string list_field = 2;
 }

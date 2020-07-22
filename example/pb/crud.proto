@@ -5,10 +5,10 @@ package pb;
 option go_package = ".;pb";
 
 service CRUD {
-    rpc Create(CreateCRUD) returns (CRUDObject);
-    rpc Get(GetCRUD) returns (CRUDObject);
-    rpc Update(CRUDObject) returns (CRUDObject);
-    rpc Delete(CRUDObject) returns (Empty);
+    rpc Create (CreateCRUD) returns (CRUDObject);
+    rpc Get (GetCRUD) returns (CRUDObject);
+    rpc Update (CRUDObject) returns (CRUDObject);
+    rpc Delete (CRUDObject) returns (Empty);
 }
 
 message CRUDObject {
@@ -25,4 +25,5 @@ message GetCRUD {
     string name = 1;
 }
 
-message Empty {}
+message Empty {
+}

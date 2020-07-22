@@ -5,8 +5,8 @@ package pb;
 option go_package = ".;pb";
 
 service NestedMessages {
-    rpc Get(NestedRequest) returns (NestedResponse);
-    rpc GetDeeplyNested(DeeplyNested) returns (NestedResponse);
+    rpc Get (NestedRequest) returns (NestedResponse);
+    rpc GetDeeplyNested (DeeplyNested) returns (NestedResponse);
 }
 
 message TopLevelNestedType {

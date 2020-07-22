@@ -5,17 +5,17 @@ package pb;
 option go_package = ".;pb";
 
 service Bank {
-	rpc Deposit(DepositRequest) returns (DepositReply);
+    rpc Deposit (DepositRequest) returns (DepositReply);
 }
 
 message DepositRequest {
-	// account number of recipient
-	string account = 1;
-	// amount to deposit
-	double amount = 2;
+    // account number of recipient
+    string account = 1;
+    // amount to deposit
+    double amount = 2;
 }
 
 message DepositReply {
-	string account = 1;
-	double balance = 2;
+    string account = 1;
+    double balance = 2;
 }

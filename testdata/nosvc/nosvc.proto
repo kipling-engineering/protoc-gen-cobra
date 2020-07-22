@@ -4,6 +4,10 @@ package nosvc;
 
 option go_package = ".;nosvc";
 
-message No { string no = 1; }
+message No {
+    string no = 1;
+}
 
-message Svc { string svc = 1; }
+message Svc {
+    string svc = 1;
+}

@@ -5,13 +5,13 @@ package pb;
 option go_package = ".;pb";
 
 service Timer {
-	rpc Tick(TickRequest) returns (stream TickResponse);
+    rpc Tick (TickRequest) returns (stream TickResponse);
 }
 
 message TickRequest {
-	int32 interval = 1;
+    int32 interval = 1;
 }
 
 message TickResponse {
-	string time = 1;
+    string time = 1;
 }
