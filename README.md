@@ -64,7 +64,7 @@ Flags:
       --jwt-key-file string        jwt key file
   -p, --print-sample-request       print sample request file and exit
   -f, --request-file string        client request file (must be json, yaml, or xml); use "-" for stdin + json
-  -o, --response-format string     response format (json, prettyjson, yaml, or xml) (default "json")
+  -o, --response-format string     response format (json, prettyjson, xml, prettyxml, or yaml) (default "json")
   -s, --server-addr string         server address in form of host:port (default "localhost:8080")
       --timeout duration           client connection timeout (default 10s)
       --tls                        enable tls

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"io"
-	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
 )
@@ -13,7 +12,7 @@ import (
 var DefaultDecoders = DecoderGroup{
 	"xml":  DecoderMakerFunc(func(r io.Reader) Decoder { return xml.NewDecoder(r) }),
 	"json": DecoderMakerFunc(func(r io.Reader) Decoder { return json.NewDecoder(r) }),
-	"yaml": DecoderMakerFunc(func(r io.Reader) Decoder { return &yamlDecoder{r} }),
+	"yaml": DecoderMakerFunc(func(r io.Reader) Decoder { return yaml.NewDecoder(r) }),
 	"noop": DecoderMakerFunc(func(r io.Reader) Decoder { return noop{} }),
 }
 
@@ -31,8 +30,7 @@ type (
 		NewDecoder(r io.Reader) Decoder
 	}
 
-	// DecoderMakerFunc is an adapter for creating DecoderMakers
-	// from functions.
+	// DecoderMakerFunc is an adapter for creating DecoderMakers from functions.
 	DecoderMakerFunc func(r io.Reader) Decoder
 
 	noop struct{}
@@ -43,18 +41,6 @@ func (f DecoderMakerFunc) NewDecoder(r io.Reader) Decoder {
 	return f(r)
 }
 
-type yamlDecoder struct {
-	r io.Reader
-}
-
-func (yd *yamlDecoder) Decode(v interface{}) error {
-	b, err := ioutil.ReadAll(yd.r)
-	if err != nil {
-		return err
-	}
-	return yaml.Unmarshal(b, v)
-}
-
-func (noop) Decode(v interface{}) error {
+func (noop) Decode(_ interface{}) error {
 	return nil
 }
