@@ -412,7 +412,15 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			} else if fld.Desc.IsList() {
 				// message list not supported
 			} else if fld.Desc.IsMap() {
-				// map not supported
+				// TODO: expand map support
+				if fld.Desc.MapKey().Kind() == protoreflect.StringKind {
+					switch fld.Desc.MapValue().Kind() {
+					case protoreflect.StringKind:
+						flagLine = fmt.Sprintf("StringToStringVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+					case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
+						flagLine = fmt.Sprintf("StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+					}
+				}
 			} else {
 				i, f := walkFields(g, fld.Message, path)
 				if i != "" {

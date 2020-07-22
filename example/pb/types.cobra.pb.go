@@ -213,7 +213,33 @@ func _TypesEchoCommand() *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringSliceVar(&req.ListField, "listfield", nil, "")
+	cmd.PersistentFlags().BoolSliceVar(&req.ListBool, "listbool", nil, "")
+	cmd.PersistentFlags().BoolVar(&req.Bool, "bool", false, "")
+	cmd.PersistentFlags().BytesBase64Var(&req.Bytes, "bytes", nil, "")
+	cmd.PersistentFlags().Float32SliceVar(&req.ListFloat, "listfloat", nil, "")
+	cmd.PersistentFlags().Float32Var(&req.Float, "float", 0, "")
+	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, "listdouble", nil, "")
+	cmd.PersistentFlags().Float64Var(&req.Double, "double", 0, "")
+	cmd.PersistentFlags().Int32SliceVar(&req.ListInt32, "listint32", nil, "")
+	cmd.PersistentFlags().Int32SliceVar(&req.ListSfixed32, "listsfixed32", nil, "")
+	cmd.PersistentFlags().Int32SliceVar(&req.ListSint32, "listsint32", nil, "")
+	cmd.PersistentFlags().Int32Var(&req.Int32, "int32", 0, "")
+	cmd.PersistentFlags().Int32Var(&req.Sfixed32, "sfixed32", 0, "")
+	cmd.PersistentFlags().Int32Var(&req.Sint32, "sint32", 0, "")
+	cmd.PersistentFlags().Int64SliceVar(&req.ListInt64, "listint64", nil, "")
+	cmd.PersistentFlags().Int64SliceVar(&req.ListSfixed64, "listsfixed64", nil, "")
+	cmd.PersistentFlags().Int64SliceVar(&req.ListSint64, "listsint64", nil, "")
+	cmd.PersistentFlags().Int64Var(&req.Int64, "int64", 0, "")
+	cmd.PersistentFlags().Int64Var(&req.Sfixed64, "sfixed64", 0, "")
+	cmd.PersistentFlags().Int64Var(&req.Sint64, "sint64", 0, "")
+	cmd.PersistentFlags().StringSliceVar(&req.ListString, "liststring", nil, "")
+	cmd.PersistentFlags().StringToInt64Var(&req.MapStringInt64, "mapstringint64", nil, "")
+	cmd.PersistentFlags().StringToStringVar(&req.MapStringString, "mapstringstring", nil, "")
+	cmd.PersistentFlags().StringVar(&req.String_, "string_", "", "")
+	cmd.PersistentFlags().Uint32Var(&req.Fixed32, "fixed32", 0, "")
+	cmd.PersistentFlags().Uint32Var(&req.Uint32, "uint32", 0, "")
+	cmd.PersistentFlags().Uint64Var(&req.Fixed64, "fixed64", 0, "")
+	cmd.PersistentFlags().Uint64Var(&req.Uint64, "uint64", 0, "")
 
 	return cmd
 }
