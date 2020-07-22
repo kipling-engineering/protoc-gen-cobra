@@ -355,6 +355,8 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 	return methodTemplate.Execute(g, data)
 }
 
+var flagPkg = protogen.GoImportPath("github.com/NathanBaulch/protoc-gen-cobra/flag")
+
 func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum) (string, string) {
 	var initLines []string
 	flagLines := make([]string, 0, len(message.Fields))
@@ -381,7 +383,8 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			}
 		case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
 			if fld.Desc.IsList() {
-				// uint32 list not supported
+				id := g.QualifiedGoIdent(flagPkg.Ident("Uint32SliceVar"))
+				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
 			} else {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
@@ -393,7 +396,8 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			}
 		case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
 			if fld.Desc.IsList() {
-				// uint64 list not supported
+				id := g.QualifiedGoIdent(flagPkg.Ident("Uint64SliceVar"))
+				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
 			} else {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}

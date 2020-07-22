@@ -7,6 +7,7 @@ import (
 	tls "crypto/tls"
 	x509 "crypto/x509"
 	fmt "fmt"
+	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	proto "github.com/golang/protobuf/proto"
 	cobra "github.com/spf13/cobra"
@@ -244,6 +245,10 @@ func _TypesEchoCommand() *cobra.Command {
 	cmd.PersistentFlags().Uint32Var(&req.Uint32, "uint32", 0, "")
 	cmd.PersistentFlags().Uint64Var(&req.Fixed64, "fixed64", 0, "")
 	cmd.PersistentFlags().Uint64Var(&req.Uint64, "uint64", 0, "")
+	flag.Uint32SliceVar(cmd.PersistentFlags(), &req.ListFixed32, "listfixed32", "")
+	flag.Uint32SliceVar(cmd.PersistentFlags(), &req.ListUint32, "listuint32", "")
+	flag.Uint64SliceVar(cmd.PersistentFlags(), &req.ListFixed64, "listfixed64", "")
+	flag.Uint64SliceVar(cmd.PersistentFlags(), &req.ListUint64, "listuint64", "")
 
 	return cmd
 }
