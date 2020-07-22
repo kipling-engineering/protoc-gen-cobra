@@ -44,8 +44,12 @@ func TestGolden(t *testing.T) {
 	}
 
 	// Compile each package, using this binary as protoc-gen-cobra.
-	for _, sources := range packages {
-		args := []string{"-Itestdata", "--cobra_out=plugins=client,paths=source_relative:" + workdir}
+	for dir, sources := range packages {
+		dir := filepath.Join(workdir, dir)
+		if err := os.MkdirAll(dir, 0666); err != nil {
+			t.Fatal(err)
+		}
+		args := []string{"-Itestdata", "--cobra_out=" + dir}
 		args = append(args, sources...)
 		t.Log(args)
 		protoc(t, args)
@@ -65,7 +69,7 @@ func TestGolden(t *testing.T) {
 			t.Errorf("generated file %q is not relative to %q", genPath, workdir)
 		}
 
-		goldenPath := filepath.Join("testdata", relPath)
+		goldenPath := relPath
 
 		got, err := ioutil.ReadFile(genPath)
 		if err != nil {

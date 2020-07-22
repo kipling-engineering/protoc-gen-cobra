@@ -9,7 +9,9 @@ import (
 	"github.com/NathanBaulch/protoc-gen-cobra/example/pb"
 )
 
-type Timer struct{}
+type Timer struct {
+	pb.UnimplementedTimerServer
+}
 
 func NewTimer() *Timer { return &Timer{} }
 

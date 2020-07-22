@@ -62,7 +62,6 @@ Flags:
       --auth-token-type string     authorization token type (default "Bearer")
       --jwt-key string             jwt key
       --jwt-key-file string        jwt key file
-  -p, --print-sample-request       print sample request file and exit
   -f, --request-file string        client request file (must be json, yaml, or xml); use "-" for stdin + json
   -o, --response-format string     response format (json, prettyjson, xml, prettyxml, or yaml) (default "json")
   -s, --server-addr string         server address in form of host:port (default "localhost:8080")

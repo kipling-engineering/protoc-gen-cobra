@@ -11,6 +11,7 @@ import (
 )
 
 type Bank struct {
+	pb.UnimplementedBankServer
 	mu             sync.Mutex
 	accountBalance map[string]float64
 }

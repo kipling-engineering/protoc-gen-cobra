@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pb;
 
+option go_package = ".;pb";
+
 service Cache {
 	rpc Set(SetRequest) returns (SetResponse);
 	rpc Get(GetRequest) returns (GetResponse);

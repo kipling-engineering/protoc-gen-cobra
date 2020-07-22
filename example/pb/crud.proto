@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pb;
 
+option go_package = ".;pb";
+
 service CRUD {
     rpc Create(CreateCRUD) returns (CRUDObject);
     rpc Get(GetCRUD) returns (CRUDObject);

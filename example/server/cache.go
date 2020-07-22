@@ -10,6 +10,7 @@ import (
 )
 
 type Cache struct {
+	pb.UnimplementedCacheServer
 	mu sync.Mutex
 	kv map[string]string
 }

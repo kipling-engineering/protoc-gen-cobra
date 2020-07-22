@@ -6,17 +6,19 @@ import (
 	"github.com/NathanBaulch/protoc-gen-cobra/example/pb"
 )
 
-type NestedMessage struct{}
+type NestedMessage struct {
+	pb.UnimplementedNestedMessagesServer
+}
 
-var _ pb.NestedMessagesServer = NestedMessage{}
+var _ pb.NestedMessagesServer = &NestedMessage{}
 
-func (NestedMessage) Get(_ context.Context, req *pb.NestedRequest) (*pb.NestedResponse, error) {
+func (*NestedMessage) Get(_ context.Context, req *pb.NestedRequest) (*pb.NestedResponse, error) {
 	return &pb.NestedResponse{
 		Return: req.Inner.Value + req.TopLevel.Value,
 	}, nil
 }
 
-func (NestedMessage) GetDeeplyNested(_ context.Context, req *pb.DeeplyNested) (*pb.NestedResponse, error) {
+func (*NestedMessage) GetDeeplyNested(_ context.Context, req *pb.DeeplyNested) (*pb.NestedResponse, error) {
 	return &pb.NestedResponse{
 		Return: req.L0.L1.L2.L3,
 	}, nil

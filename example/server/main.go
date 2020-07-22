@@ -20,7 +20,7 @@ func main() {
 	pb.RegisterCacheServer(srv, NewCache())
 	pb.RegisterTimerServer(srv, NewTimer())
 	pb.RegisterCRUDServer(srv, NewCRUD())
-	pb.RegisterNestedMessagesServer(srv, NestedMessage{})
+	pb.RegisterNestedMessagesServer(srv, &NestedMessage{})
 	err = srv.Serve(ln)
 	if err != nil {
 		log.Fatal(err)

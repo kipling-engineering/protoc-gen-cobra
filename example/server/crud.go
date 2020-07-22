@@ -12,11 +12,12 @@ import (
 )
 
 type CRUD struct {
+	pb.UnimplementedCRUDServer
 	kv sync.Map
 }
 
 func NewCRUD() *CRUD {
-	return &CRUD{sync.Map{}}
+	return &CRUD{kv: sync.Map{}}
 }
 func (c *CRUD) Create(_ context.Context, req *pb.CreateCRUD) (*pb.CRUDObject, error) {
 	c.kv.Store(req.Name, req.Value)
