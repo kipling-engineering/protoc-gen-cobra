@@ -25,43 +25,144 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
+type GlobalEnum int32
+
+const (
+	GlobalEnum_MON GlobalEnum = 0
+	GlobalEnum_TUE GlobalEnum = 1
+	GlobalEnum_WED GlobalEnum = 2
+)
+
+// Enum value maps for GlobalEnum.
+var (
+	GlobalEnum_name = map[int32]string{
+		0: "MON",
+		1: "TUE",
+		2: "WED",
+	}
+	GlobalEnum_value = map[string]int32{
+		"MON": 0,
+		"TUE": 1,
+		"WED": 2,
+	}
+)
+
+func (x GlobalEnum) Enum() *GlobalEnum {
+	p := new(GlobalEnum)
+	*p = x
+	return p
+}
+
+func (x GlobalEnum) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (GlobalEnum) Descriptor() protoreflect.EnumDescriptor {
+	return file_types_proto_enumTypes[0].Descriptor()
+}
+
+func (GlobalEnum) Type() protoreflect.EnumType {
+	return &file_types_proto_enumTypes[0]
+}
+
+func (x GlobalEnum) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use GlobalEnum.Descriptor instead.
+func (GlobalEnum) EnumDescriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{0}
+}
+
+type Sound_NestedEnum int32
+
+const (
+	Sound_JAN Sound_NestedEnum = 0
+	Sound_FEB Sound_NestedEnum = 1
+	Sound_MAR Sound_NestedEnum = 2
+)
+
+// Enum value maps for Sound_NestedEnum.
+var (
+	Sound_NestedEnum_name = map[int32]string{
+		0: "JAN",
+		1: "FEB",
+		2: "MAR",
+	}
+	Sound_NestedEnum_value = map[string]int32{
+		"JAN": 0,
+		"FEB": 1,
+		"MAR": 2,
+	}
+)
+
+func (x Sound_NestedEnum) Enum() *Sound_NestedEnum {
+	p := new(Sound_NestedEnum)
+	*p = x
+	return p
+}
+
+func (x Sound_NestedEnum) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Sound_NestedEnum) Descriptor() protoreflect.EnumDescriptor {
+	return file_types_proto_enumTypes[1].Descriptor()
+}
+
+func (Sound_NestedEnum) Type() protoreflect.EnumType {
+	return &file_types_proto_enumTypes[1]
+}
+
+func (x Sound_NestedEnum) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Sound_NestedEnum.Descriptor instead.
+func (Sound_NestedEnum) EnumDescriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{0, 0}
+}
+
 type Sound struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Double          float64           `protobuf:"fixed64,1,opt,name=double,proto3" json:"double,omitempty"`
-	Float           float32           `protobuf:"fixed32,2,opt,name=float,proto3" json:"float,omitempty"`
-	Int32           int32             `protobuf:"varint,3,opt,name=int32,proto3" json:"int32,omitempty"`
-	Int64           int64             `protobuf:"varint,4,opt,name=int64,proto3" json:"int64,omitempty"`
-	Uint32          uint32            `protobuf:"varint,5,opt,name=uint32,proto3" json:"uint32,omitempty"`
-	Uint64          uint64            `protobuf:"varint,6,opt,name=uint64,proto3" json:"uint64,omitempty"`
-	Sint32          int32             `protobuf:"zigzag32,7,opt,name=sint32,proto3" json:"sint32,omitempty"`
-	Sint64          int64             `protobuf:"zigzag64,8,opt,name=sint64,proto3" json:"sint64,omitempty"`
-	Fixed32         uint32            `protobuf:"fixed32,9,opt,name=fixed32,proto3" json:"fixed32,omitempty"`
-	Fixed64         uint64            `protobuf:"fixed64,10,opt,name=fixed64,proto3" json:"fixed64,omitempty"`
-	Sfixed32        int32             `protobuf:"fixed32,11,opt,name=sfixed32,proto3" json:"sfixed32,omitempty"`
-	Sfixed64        int64             `protobuf:"fixed64,12,opt,name=sfixed64,proto3" json:"sfixed64,omitempty"`
-	Bool            bool              `protobuf:"varint,13,opt,name=bool,proto3" json:"bool,omitempty"`
-	String_         string            `protobuf:"bytes,14,opt,name=string,proto3" json:"string,omitempty"`
-	Bytes           []byte            `protobuf:"bytes,15,opt,name=bytes,proto3" json:"bytes,omitempty"`
-	ListDouble      []float64         `protobuf:"fixed64,21,rep,packed,name=list_double,json=listDouble,proto3" json:"list_double,omitempty"`
-	ListFloat       []float32         `protobuf:"fixed32,22,rep,packed,name=list_float,json=listFloat,proto3" json:"list_float,omitempty"`
-	ListInt32       []int32           `protobuf:"varint,23,rep,packed,name=list_int32,json=listInt32,proto3" json:"list_int32,omitempty"`
-	ListInt64       []int64           `protobuf:"varint,24,rep,packed,name=list_int64,json=listInt64,proto3" json:"list_int64,omitempty"`
-	ListUint32      []uint32          `protobuf:"varint,25,rep,packed,name=list_uint32,json=listUint32,proto3" json:"list_uint32,omitempty"`
-	ListUint64      []uint64          `protobuf:"varint,26,rep,packed,name=list_uint64,json=listUint64,proto3" json:"list_uint64,omitempty"`
-	ListSint32      []int32           `protobuf:"zigzag32,27,rep,packed,name=list_sint32,json=listSint32,proto3" json:"list_sint32,omitempty"`
-	ListSint64      []int64           `protobuf:"zigzag64,28,rep,packed,name=list_sint64,json=listSint64,proto3" json:"list_sint64,omitempty"`
-	ListFixed32     []uint32          `protobuf:"fixed32,29,rep,packed,name=list_fixed32,json=listFixed32,proto3" json:"list_fixed32,omitempty"`
-	ListFixed64     []uint64          `protobuf:"fixed64,30,rep,packed,name=list_fixed64,json=listFixed64,proto3" json:"list_fixed64,omitempty"`
-	ListSfixed32    []int32           `protobuf:"fixed32,31,rep,packed,name=list_sfixed32,json=listSfixed32,proto3" json:"list_sfixed32,omitempty"`
-	ListSfixed64    []int64           `protobuf:"fixed64,32,rep,packed,name=list_sfixed64,json=listSfixed64,proto3" json:"list_sfixed64,omitempty"`
-	ListBool        []bool            `protobuf:"varint,33,rep,packed,name=list_bool,json=listBool,proto3" json:"list_bool,omitempty"`
-	ListString      []string          `protobuf:"bytes,34,rep,name=list_string,json=listString,proto3" json:"list_string,omitempty"`
-	ListBytes       [][]byte          `protobuf:"bytes,35,rep,name=list_bytes,json=listBytes,proto3" json:"list_bytes,omitempty"`
-	MapStringInt64  map[string]int64  `protobuf:"bytes,41,rep,name=map_string_int64,json=mapStringInt64,proto3" json:"map_string_int64,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	MapStringString map[string]string `protobuf:"bytes,42,rep,name=map_string_string,json=mapStringString,proto3" json:"map_string_string,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Double          float64            `protobuf:"fixed64,1,opt,name=double,proto3" json:"double,omitempty"`
+	Float           float32            `protobuf:"fixed32,2,opt,name=float,proto3" json:"float,omitempty"`
+	Int32           int32              `protobuf:"varint,3,opt,name=int32,proto3" json:"int32,omitempty"`
+	Int64           int64              `protobuf:"varint,4,opt,name=int64,proto3" json:"int64,omitempty"`
+	Uint32          uint32             `protobuf:"varint,5,opt,name=uint32,proto3" json:"uint32,omitempty"`
+	Uint64          uint64             `protobuf:"varint,6,opt,name=uint64,proto3" json:"uint64,omitempty"`
+	Sint32          int32              `protobuf:"zigzag32,7,opt,name=sint32,proto3" json:"sint32,omitempty"`
+	Sint64          int64              `protobuf:"zigzag64,8,opt,name=sint64,proto3" json:"sint64,omitempty"`
+	Fixed32         uint32             `protobuf:"fixed32,9,opt,name=fixed32,proto3" json:"fixed32,omitempty"`
+	Fixed64         uint64             `protobuf:"fixed64,10,opt,name=fixed64,proto3" json:"fixed64,omitempty"`
+	Sfixed32        int32              `protobuf:"fixed32,11,opt,name=sfixed32,proto3" json:"sfixed32,omitempty"`
+	Sfixed64        int64              `protobuf:"fixed64,12,opt,name=sfixed64,proto3" json:"sfixed64,omitempty"`
+	Bool            bool               `protobuf:"varint,13,opt,name=bool,proto3" json:"bool,omitempty"`
+	String_         string             `protobuf:"bytes,14,opt,name=string,proto3" json:"string,omitempty"`
+	Bytes           []byte             `protobuf:"bytes,15,opt,name=bytes,proto3" json:"bytes,omitempty"`
+	ListDouble      []float64          `protobuf:"fixed64,21,rep,packed,name=list_double,json=listDouble,proto3" json:"list_double,omitempty"`
+	ListFloat       []float32          `protobuf:"fixed32,22,rep,packed,name=list_float,json=listFloat,proto3" json:"list_float,omitempty"`
+	ListInt32       []int32            `protobuf:"varint,23,rep,packed,name=list_int32,json=listInt32,proto3" json:"list_int32,omitempty"`
+	ListInt64       []int64            `protobuf:"varint,24,rep,packed,name=list_int64,json=listInt64,proto3" json:"list_int64,omitempty"`
+	ListUint32      []uint32           `protobuf:"varint,25,rep,packed,name=list_uint32,json=listUint32,proto3" json:"list_uint32,omitempty"`
+	ListUint64      []uint64           `protobuf:"varint,26,rep,packed,name=list_uint64,json=listUint64,proto3" json:"list_uint64,omitempty"`
+	ListSint32      []int32            `protobuf:"zigzag32,27,rep,packed,name=list_sint32,json=listSint32,proto3" json:"list_sint32,omitempty"`
+	ListSint64      []int64            `protobuf:"zigzag64,28,rep,packed,name=list_sint64,json=listSint64,proto3" json:"list_sint64,omitempty"`
+	ListFixed32     []uint32           `protobuf:"fixed32,29,rep,packed,name=list_fixed32,json=listFixed32,proto3" json:"list_fixed32,omitempty"`
+	ListFixed64     []uint64           `protobuf:"fixed64,30,rep,packed,name=list_fixed64,json=listFixed64,proto3" json:"list_fixed64,omitempty"`
+	ListSfixed32    []int32            `protobuf:"fixed32,31,rep,packed,name=list_sfixed32,json=listSfixed32,proto3" json:"list_sfixed32,omitempty"`
+	ListSfixed64    []int64            `protobuf:"fixed64,32,rep,packed,name=list_sfixed64,json=listSfixed64,proto3" json:"list_sfixed64,omitempty"`
+	ListBool        []bool             `protobuf:"varint,33,rep,packed,name=list_bool,json=listBool,proto3" json:"list_bool,omitempty"`
+	ListString      []string           `protobuf:"bytes,34,rep,name=list_string,json=listString,proto3" json:"list_string,omitempty"`
+	ListBytes       [][]byte           `protobuf:"bytes,35,rep,name=list_bytes,json=listBytes,proto3" json:"list_bytes,omitempty"`
+	MapStringInt64  map[string]int64   `protobuf:"bytes,41,rep,name=map_string_int64,json=mapStringInt64,proto3" json:"map_string_int64,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	MapStringString map[string]string  `protobuf:"bytes,42,rep,name=map_string_string,json=mapStringString,proto3" json:"map_string_string,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	NestedEnum      Sound_NestedEnum   `protobuf:"varint,43,opt,name=nested_enum,json=nestedEnum,proto3,enum=example.Sound_NestedEnum" json:"nested_enum,omitempty"`
+	GlobalEnum      GlobalEnum         `protobuf:"varint,44,opt,name=global_enum,json=globalEnum,proto3,enum=example.GlobalEnum" json:"global_enum,omitempty"`
+	ListEnum        []Sound_NestedEnum `protobuf:"varint,45,rep,packed,name=list_enum,json=listEnum,proto3,enum=example.Sound_NestedEnum" json:"list_enum,omitempty"`
 }
 
 func (x *Sound) Reset() {
@@ -320,11 +421,32 @@ func (x *Sound) GetMapStringString() map[string]string {
 	return nil
 }
 
+func (x *Sound) GetNestedEnum() Sound_NestedEnum {
+	if x != nil {
+		return x.NestedEnum
+	}
+	return Sound_JAN
+}
+
+func (x *Sound) GetGlobalEnum() GlobalEnum {
+	if x != nil {
+		return x.GlobalEnum
+	}
+	return GlobalEnum_MON
+}
+
+func (x *Sound) GetListEnum() []Sound_NestedEnum {
+	if x != nil {
+		return x.ListEnum
+	}
+	return nil
+}
+
 var File_types_proto protoreflect.FileDescriptor
 
 var file_types_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x07, 0x65,
-	0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x22, 0x84, 0x09, 0x0a, 0x05, 0x53, 0x6f, 0x75, 0x6e, 0x64,
+	0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x22, 0xd7, 0x0a, 0x0a, 0x05, 0x53, 0x6f, 0x75, 0x6e, 0x64,
 	0x12, 0x16, 0x0a, 0x06, 0x64, 0x6f, 0x75, 0x62, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x01,
 	0x52, 0x06, 0x64, 0x6f, 0x75, 0x62, 0x6c, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x66, 0x6c, 0x6f, 0x61,
 	0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0x12, 0x14,
@@ -388,19 +510,35 @@ var file_types_proto_rawDesc = []byte{
 	0x32, 0x23, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64,
 	0x2e, 0x4d, 0x61, 0x70, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
 	0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0f, 0x6d, 0x61, 0x70, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
-	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x1a, 0x41, 0x0a, 0x13, 0x4d, 0x61, 0x70, 0x53, 0x74, 0x72,
-	0x69, 0x6e, 0x67, 0x49, 0x6e, 0x74, 0x36, 0x34, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a,
-	0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12,
-	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05,
-	0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x42, 0x0a, 0x14, 0x4d, 0x61, 0x70,
-	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x45, 0x6e, 0x74, 0x72,
-	0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03,
-	0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x32, 0x2f, 0x0a,
-	0x05, 0x54, 0x79, 0x70, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x04, 0x45, 0x63, 0x68, 0x6f, 0x12, 0x0e,
-	0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64, 0x1a, 0x0e,
-	0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64, 0x42, 0x06,
-	0x5a, 0x04, 0x2e, 0x3b, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x12, 0x3a, 0x0a, 0x0b, 0x6e, 0x65, 0x73, 0x74, 0x65, 0x64,
+	0x5f, 0x65, 0x6e, 0x75, 0x6d, 0x18, 0x2b, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x19, 0x2e, 0x65, 0x78,
+	0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64, 0x2e, 0x4e, 0x65, 0x73, 0x74,
+	0x65, 0x64, 0x45, 0x6e, 0x75, 0x6d, 0x52, 0x0a, 0x6e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x45, 0x6e,
+	0x75, 0x6d, 0x12, 0x34, 0x0a, 0x0b, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x5f, 0x65, 0x6e, 0x75,
+	0x6d, 0x18, 0x2c, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x13, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c,
+	0x65, 0x2e, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x45, 0x6e, 0x75, 0x6d, 0x52, 0x0a, 0x67, 0x6c,
+	0x6f, 0x62, 0x61, 0x6c, 0x45, 0x6e, 0x75, 0x6d, 0x12, 0x36, 0x0a, 0x09, 0x6c, 0x69, 0x73, 0x74,
+	0x5f, 0x65, 0x6e, 0x75, 0x6d, 0x18, 0x2d, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x19, 0x2e, 0x65, 0x78,
+	0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64, 0x2e, 0x4e, 0x65, 0x73, 0x74,
+	0x65, 0x64, 0x45, 0x6e, 0x75, 0x6d, 0x52, 0x08, 0x6c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x75, 0x6d,
+	0x1a, 0x41, 0x0a, 0x13, 0x4d, 0x61, 0x70, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x49, 0x6e, 0x74,
+	0x36, 0x34, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a,
+	0x02, 0x38, 0x01, 0x1a, 0x42, 0x0a, 0x14, 0x4d, 0x61, 0x70, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
+	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b,
+	0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x27, 0x0a, 0x0a, 0x4e, 0x65, 0x73, 0x74, 0x65,
+	0x64, 0x45, 0x6e, 0x75, 0x6d, 0x12, 0x07, 0x0a, 0x03, 0x4a, 0x41, 0x4e, 0x10, 0x00, 0x12, 0x07,
+	0x0a, 0x03, 0x46, 0x45, 0x42, 0x10, 0x01, 0x12, 0x07, 0x0a, 0x03, 0x4d, 0x41, 0x52, 0x10, 0x02,
+	0x2a, 0x27, 0x0a, 0x0a, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x45, 0x6e, 0x75, 0x6d, 0x12, 0x07,
+	0x0a, 0x03, 0x4d, 0x4f, 0x4e, 0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x54, 0x55, 0x45, 0x10, 0x01,
+	0x12, 0x07, 0x0a, 0x03, 0x57, 0x45, 0x44, 0x10, 0x02, 0x32, 0x2f, 0x0a, 0x05, 0x54, 0x79, 0x70,
+	0x65, 0x73, 0x12, 0x26, 0x0a, 0x04, 0x45, 0x63, 0x68, 0x6f, 0x12, 0x0e, 0x2e, 0x65, 0x78, 0x61,
+	0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64, 0x1a, 0x0e, 0x2e, 0x65, 0x78, 0x61,
+	0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x53, 0x6f, 0x75, 0x6e, 0x64, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x3b,
+	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -415,22 +553,28 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
+var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_types_proto_goTypes = []interface{}{
-	(*Sound)(nil), // 0: example.Sound
-	nil,           // 1: example.Sound.MapStringInt64Entry
-	nil,           // 2: example.Sound.MapStringStringEntry
+	(GlobalEnum)(0),       // 0: example.GlobalEnum
+	(Sound_NestedEnum)(0), // 1: example.Sound.NestedEnum
+	(*Sound)(nil),         // 2: example.Sound
+	nil,                   // 3: example.Sound.MapStringInt64Entry
+	nil,                   // 4: example.Sound.MapStringStringEntry
 }
 var file_types_proto_depIdxs = []int32{
-	1, // 0: example.Sound.map_string_int64:type_name -> example.Sound.MapStringInt64Entry
-	2, // 1: example.Sound.map_string_string:type_name -> example.Sound.MapStringStringEntry
-	0, // 2: example.Types.Echo:input_type -> example.Sound
-	0, // 3: example.Types.Echo:output_type -> example.Sound
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 0: example.Sound.map_string_int64:type_name -> example.Sound.MapStringInt64Entry
+	4, // 1: example.Sound.map_string_string:type_name -> example.Sound.MapStringStringEntry
+	1, // 2: example.Sound.nested_enum:type_name -> example.Sound.NestedEnum
+	0, // 3: example.Sound.global_enum:type_name -> example.GlobalEnum
+	1, // 4: example.Sound.list_enum:type_name -> example.Sound.NestedEnum
+	2, // 5: example.Types.Echo:input_type -> example.Sound
+	2, // 6: example.Types.Echo:output_type -> example.Sound
+	6, // [6:7] is the sub-list for method output_type
+	5, // [5:6] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -457,13 +601,14 @@ func file_types_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_types_proto_rawDesc,
-			NumEnums:      0,
+			NumEnums:      2,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_types_proto_goTypes,
 		DependencyIndexes: file_types_proto_depIdxs,
+		EnumInfos:         file_types_proto_enumTypes,
 		MessageInfos:      file_types_proto_msgTypes,
 	}.Build()
 	File_types_proto = out.File

@@ -19,6 +19,7 @@ import (
 	net "net"
 	os "os"
 	filepath "path/filepath"
+	strconv "strconv"
 	strings "strings"
 	time "time"
 )
@@ -213,6 +214,9 @@ func _TypesEchoCommand() *cobra.Command {
 		},
 	}
 
+	_GlobalEnumVar(cmd.PersistentFlags(), &req.GlobalEnum, "globalenum", "")
+	_Sound_NestedEnumSliceVar(cmd.PersistentFlags(), &req.ListEnum, "listenum", "")
+	_Sound_NestedEnumVar(cmd.PersistentFlags(), &req.NestedEnum, "nestedenum", "")
 	cmd.PersistentFlags().BoolSliceVar(&req.ListBool, "listbool", nil, "")
 	cmd.PersistentFlags().BoolVar(&req.Bool, "bool", false, "")
 	cmd.PersistentFlags().BytesBase64Var(&req.Bytes, "bytes", nil, "")
@@ -242,4 +246,121 @@ func _TypesEchoCommand() *cobra.Command {
 	cmd.PersistentFlags().Uint64Var(&req.Uint64, "uint64", 0, "")
 
 	return cmd
+}
+
+type _GlobalEnumValue GlobalEnum
+
+func _GlobalEnumVar(fs *pflag.FlagSet, p *GlobalEnum, name, usage string) {
+	fs.Var((*_GlobalEnumValue)(p), name, usage)
+}
+
+func (v *_GlobalEnumValue) Set(val string) error {
+	if e, err := parseGlobalEnum(val); err != nil {
+		return err
+	} else {
+		*v = _GlobalEnumValue(e)
+		return nil
+	}
+}
+
+func (v *_GlobalEnumValue) Type() string { return "GlobalEnum" }
+
+func (v *_GlobalEnumValue) String() string { return (GlobalEnum)(*v).String() }
+
+func parseGlobalEnum(s string) (GlobalEnum, error) {
+	if i, ok := GlobalEnum_value[s]; ok {
+		return GlobalEnum(i), nil
+	} else if i, err := strconv.ParseInt(s, 0, 32); err == nil {
+		return GlobalEnum(i), nil
+	} else {
+		return 0, err
+	}
+}
+
+type _Sound_NestedEnumValue Sound_NestedEnum
+
+func _Sound_NestedEnumVar(fs *pflag.FlagSet, p *Sound_NestedEnum, name, usage string) {
+	fs.Var((*_Sound_NestedEnumValue)(p), name, usage)
+}
+
+func (v *_Sound_NestedEnumValue) Set(val string) error {
+	if e, err := parseSound_NestedEnum(val); err != nil {
+		return err
+	} else {
+		*v = _Sound_NestedEnumValue(e)
+		return nil
+	}
+}
+
+func (v *_Sound_NestedEnumValue) Type() string { return "Sound_NestedEnum" }
+
+func (v *_Sound_NestedEnumValue) String() string { return (Sound_NestedEnum)(*v).String() }
+
+type _Sound_NestedEnumSliceValue struct {
+	value   *[]Sound_NestedEnum
+	changed bool
+}
+
+func _Sound_NestedEnumSliceVar(fs *pflag.FlagSet, p *[]Sound_NestedEnum, name, usage string) {
+	fs.Var(&_Sound_NestedEnumSliceValue{value: p}, name, usage)
+}
+
+func (s *_Sound_NestedEnumSliceValue) Set(val string) error {
+	ss := strings.Split(val, ",")
+	out := make([]Sound_NestedEnum, len(ss))
+	for i, s := range ss {
+		var err error
+		if out[i], err = parseSound_NestedEnum(s); err != nil {
+			return err
+		}
+	}
+	if !s.changed {
+		*s.value = out
+		s.changed = true
+	} else {
+		*s.value = append(*s.value, out...)
+	}
+	return nil
+}
+
+func (s *_Sound_NestedEnumSliceValue) Type() string { return "Sound_NestedEnumSlice" }
+
+func (s *_Sound_NestedEnumSliceValue) String() string { return "[]" }
+
+func (s *_Sound_NestedEnumSliceValue) Append(val string) error {
+	var e Sound_NestedEnum
+	if err := (*_Sound_NestedEnumValue)(&e).Set(val); err != nil {
+		return err
+	}
+	*s.value = append(*s.value, e)
+	return nil
+}
+
+func (s *_Sound_NestedEnumSliceValue) Replace(val []string) error {
+	out := make([]Sound_NestedEnum, len(val))
+	for i, s := range val {
+		if err := (*_Sound_NestedEnumValue)(&out[i]).Set(s); err != nil {
+			return err
+		}
+	}
+	*s.value = out
+	return nil
+}
+
+func (s *_Sound_NestedEnumSliceValue) GetSlice() []string {
+	out := make([]string, len(*s.value))
+	for i, v := range *s.value {
+		out[i] = v.String()
+	}
+	return out
+}
+
+func parseSound_NestedEnum(s string) (Sound_NestedEnum, error) {
+	if i, ok := Sound_NestedEnum_value[s]; ok {
+		return Sound_NestedEnum(i), nil
+	} else if i, err := strconv.ParseInt(s, 0, 32); err == nil {
+		return Sound_NestedEnum(i), nil
+	} else {
+		return 0, err
+	}
 }

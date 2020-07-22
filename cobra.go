@@ -226,9 +226,26 @@ func genService(g *protogen.GeneratedFile, service *protogen.Service) error {
 		return err
 	}
 
+	enums := make(map[string]*enum)
+
 	for _, mth := range service.Methods {
-		if err := genMethod(g, mth); err != nil {
+		if err := genMethod(g, mth, enums); err != nil {
 			return err
+		}
+	}
+
+	if len(enums) > 0 {
+		names := make([]string, len(enums))
+		i := 0
+		for name := range enums {
+			names[i] = name
+			i++
+		}
+		sort.Strings(names)
+		for _, name := range names {
+			if err := genEnum(g, enums[name]); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -321,7 +338,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command() *cobra.Command {
 	}
 )
 
-func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
+func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[string]*enum) error {
 	for _, imp := range methodImports {
 		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: imp})
 	}
@@ -329,7 +346,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "io"})
 	}
 
-	initCode, flagCode := walkFields(g, method.Input, nil)
+	initCode, flagCode := walkFields(g, method.Input, nil, enums)
 	data := struct {
 		*protogen.Method
 		InputInitializerCode string
@@ -338,7 +355,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 	return methodTemplate.Execute(g, data)
 }
 
-func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string) (string, string) {
+func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum) (string, string) {
 	var initLines []string
 	flagLines := make([]string, 0, len(message.Fields))
 
@@ -352,60 +369,71 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		switch fld.Desc.Kind() {
 		case protoreflect.BoolKind:
 			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("BoolSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().BoolSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			} else {
-				flagLine = fmt.Sprintf("BoolVar(&req.%s, %q, false, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().BoolVar(&req.%s, %q, false, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
 			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("Int32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			} else {
-				flagLine = fmt.Sprintf("Int32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
 			if fld.Desc.IsList() {
 				// uint32 list not supported
 			} else {
-				flagLine = fmt.Sprintf("Uint32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
 			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("Int64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			} else {
-				flagLine = fmt.Sprintf("Int64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
 			if fld.Desc.IsList() {
 				// uint64 list not supported
 			} else {
-				flagLine = fmt.Sprintf("Uint64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.FloatKind:
 			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("Float32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			} else {
-				flagLine = fmt.Sprintf("Float32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.DoubleKind:
 			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("Float64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			} else {
-				flagLine = fmt.Sprintf("Float64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.StringKind:
 			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("StringSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().StringSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			} else {
-				flagLine = fmt.Sprintf("StringVar(&req.%s, %q, \"\", %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().StringVar(&req.%s, %q, \"\", %q)", goPath, flagName, comment)
 			}
 		case protoreflect.BytesKind:
 			if fld.Desc.IsList() {
 				// bytes list not supported
 			} else {
-				flagLine = fmt.Sprintf("BytesBase64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().BytesBase64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.EnumKind:
-			// enum not supported
+			e, ok := enums[fld.Enum.GoIdent.GoName]
+			if !ok {
+				e = &enum{Enum: fld.Enum}
+				enums[fld.Enum.GoIdent.GoName] = e
+			}
+			if fld.Desc.IsList() {
+				e.List = true
+				flagLine = fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
+			} else {
+				e.Value = true
+				flagLine = fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
+			}
 		case protoreflect.MessageKind, protoreflect.GroupKind:
 			if fld.Desc.ContainingOneof() != nil {
 				// oneof not supported
@@ -416,13 +444,13 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 				if fld.Desc.MapKey().Kind() == protoreflect.StringKind {
 					switch fld.Desc.MapValue().Kind() {
 					case protoreflect.StringKind:
-						flagLine = fmt.Sprintf("StringToStringVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToStringVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 					case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
-						flagLine = fmt.Sprintf("StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
+						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 					}
 				}
 			} else {
-				i, f := walkFields(g, fld.Message, path)
+				i, f := walkFields(g, fld.Message, path, enums)
 				if i != "" {
 					initLines = append(initLines, fld.GoName+": "+i+",")
 				}
@@ -433,7 +461,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		}
 
 		if flagLine != "" {
-			flagLines = append(flagLines, "cmd.PersistentFlags()."+flagLine)
+			flagLines = append(flagLines, flagLine)
 		}
 	}
 
@@ -444,6 +472,122 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 	}
 	sort.Strings(flagLines)
 	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(flagLines, "\n")
+}
+
+type enum struct {
+	*protogen.Enum
+	Value bool
+	List  bool
+}
+
+var (
+	enumTemplateCode = `
+{{if .Value}}
+type _{{.GoIdent.GoName}}Value {{.GoIdent.GoName}}
+
+func _{{.GoIdent.GoName}}Var(fs *pflag.FlagSet, p *{{.GoIdent.GoName}}, name, usage string) {
+	fs.Var((*_{{.GoIdent.GoName}}Value)(p), name, usage)
+}
+
+func (v *_{{.GoIdent.GoName}}Value) Set(val string) error {
+	if e, err := parse{{.GoIdent.GoName}}(val); err != nil {
+		return err
+	} else {
+		*v = _{{.GoIdent.GoName}}Value(e)
+		return nil
+	}
+}
+
+func (v *_{{.GoIdent.GoName}}Value) Type() string { return "{{.GoIdent.GoName}}" }
+
+func (v *_{{.GoIdent.GoName}}Value) String() string { return ({{.GoIdent.GoName}})(*v).String() }
+{{end}}
+{{if .List}}
+type _{{.GoIdent.GoName}}SliceValue struct {
+	value   *[]{{.GoIdent.GoName}}
+	changed bool
+}
+
+func _{{.GoIdent.GoName}}SliceVar(fs *pflag.FlagSet, p *[]{{.GoIdent.GoName}}, name, usage string) {
+	fs.Var(&_{{.GoIdent.GoName}}SliceValue{value: p}, name, usage)
+}
+
+func (s *_{{.GoIdent.GoName}}SliceValue) Set(val string) error {
+	ss := strings.Split(val, ",")
+	out := make([]{{.GoIdent.GoName}}, len(ss))
+	for i, s := range ss {
+		var err error
+		if out[i], err = parse{{.GoIdent.GoName}}(s); err != nil {
+			return err
+		}
+	}
+	if !s.changed {
+		*s.value = out
+		s.changed = true
+	} else {
+		*s.value = append(*s.value, out...)
+	}
+	return nil
+}
+
+func (s *_{{.GoIdent.GoName}}SliceValue) Type() string { return "{{.GoIdent.GoName}}Slice" }
+
+func (s *_{{.GoIdent.GoName}}SliceValue) String() string { return "[]" }
+
+func (s *_{{.GoIdent.GoName}}SliceValue) Append(val string) error {
+	var e {{.GoIdent.GoName}}
+	if err := (*_{{.GoIdent.GoName}}Value)(&e).Set(val); err != nil {
+		return err
+	}
+	*s.value = append(*s.value, e)
+	return nil
+}
+
+func (s *_{{.GoIdent.GoName}}SliceValue) Replace(val []string) error {
+	out := make([]{{.GoIdent.GoName}}, len(val))
+	for i, s := range val {
+		if err := (*_{{.GoIdent.GoName}}Value)(&out[i]).Set(s); err != nil {
+			return err
+		}
+	}
+	*s.value = out
+	return nil
+}
+
+func (s *_{{.GoIdent.GoName}}SliceValue) GetSlice() []string {
+	out := make([]string, len(*s.value))
+	for i, v := range *s.value {
+		out[i] = v.String()
+	}
+	return out
+}
+{{end}}
+func parse{{.GoIdent.GoName}}(s string) ({{.GoIdent.GoName}}, error) {
+	if i, ok := {{.GoIdent.GoName}}_value[s]; ok {
+		return {{.GoIdent.GoName}}(i), nil
+	} else if i, err := strconv.ParseInt(s, 0, 32); err == nil {
+		return {{.GoIdent.GoName}}(i), nil
+	} else {
+		return 0, err
+	}
+}
+`
+	enumTemplate = template.Must(template.New("enum").Parse(enumTemplateCode))
+	enumImports  = []protogen.GoImportPath{
+		"fmt",
+		"strconv",
+		"github.com/spf13/pflag",
+	}
+)
+
+func genEnum(g *protogen.GeneratedFile, enum *enum) error {
+	for _, imp := range enumImports {
+		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: imp})
+	}
+	if enum.List {
+		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "strings"})
+	}
+	return enumTemplate.Execute(g, enum)
 }
 
 func cleanComments(comments protogen.Comments) string {

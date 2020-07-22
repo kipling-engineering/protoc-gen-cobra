@@ -43,4 +43,19 @@ message Sound {
 
     map<string, int64> map_string_int64 = 41;
     map<string, string> map_string_string = 42;
+    NestedEnum nested_enum = 43;
+    GlobalEnum global_enum = 44;
+    repeated NestedEnum list_enum = 45;
+
+    enum NestedEnum {
+        JAN = 0;
+        FEB = 1;
+        MAR = 2;
+    }
+}
+
+enum GlobalEnum {
+    MON = 0;
+    TUE = 1;
+    WED = 2;
 }
