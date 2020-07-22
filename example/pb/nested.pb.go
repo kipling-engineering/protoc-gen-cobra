@@ -3,16 +3,17 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
-
-import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -36,7 +37,7 @@ func (m *TopLevelNestedType) Reset()         { *m = TopLevelNestedType{} }
 func (m *TopLevelNestedType) String() string { return proto.CompactTextString(m) }
 func (*TopLevelNestedType) ProtoMessage()    {}
 func (*TopLevelNestedType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{0}
+	return fileDescriptor_2a0036ddd0f0b972, []int{0}
 }
 func (m *TopLevelNestedType) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -53,8 +54,8 @@ func (m *TopLevelNestedType) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (dst *TopLevelNestedType) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TopLevelNestedType.Merge(dst, src)
+func (m *TopLevelNestedType) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TopLevelNestedType.Merge(m, src)
 }
 func (m *TopLevelNestedType) XXX_Size() int {
 	return m.Size()
@@ -73,8 +74,8 @@ func (m *TopLevelNestedType) GetValue() string {
 }
 
 type NestedRequest struct {
-	Inner                *NestedRequest_InnerNestedType `protobuf:"bytes,1,opt,name=inner" json:"inner,omitempty"`
-	TopLevel             *TopLevelNestedType            `protobuf:"bytes,2,opt,name=top_level,json=topLevel" json:"top_level,omitempty"`
+	Inner                *NestedRequest_InnerNestedType `protobuf:"bytes,1,opt,name=inner,proto3" json:"inner,omitempty"`
+	TopLevel             *TopLevelNestedType            `protobuf:"bytes,2,opt,name=top_level,json=topLevel,proto3" json:"top_level,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
 	XXX_unrecognized     []byte                         `json:"-"`
 	XXX_sizecache        int32                          `json:"-"`
@@ -84,7 +85,7 @@ func (m *NestedRequest) Reset()         { *m = NestedRequest{} }
 func (m *NestedRequest) String() string { return proto.CompactTextString(m) }
 func (*NestedRequest) ProtoMessage()    {}
 func (*NestedRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{1}
+	return fileDescriptor_2a0036ddd0f0b972, []int{1}
 }
 func (m *NestedRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -101,8 +102,8 @@ func (m *NestedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return b[:n], nil
 	}
 }
-func (dst *NestedRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NestedRequest.Merge(dst, src)
+func (m *NestedRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NestedRequest.Merge(m, src)
 }
 func (m *NestedRequest) XXX_Size() int {
 	return m.Size()
@@ -138,7 +139,7 @@ func (m *NestedRequest_InnerNestedType) Reset()         { *m = NestedRequest_Inn
 func (m *NestedRequest_InnerNestedType) String() string { return proto.CompactTextString(m) }
 func (*NestedRequest_InnerNestedType) ProtoMessage()    {}
 func (*NestedRequest_InnerNestedType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{1, 0}
+	return fileDescriptor_2a0036ddd0f0b972, []int{1, 0}
 }
 func (m *NestedRequest_InnerNestedType) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -155,8 +156,8 @@ func (m *NestedRequest_InnerNestedType) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (dst *NestedRequest_InnerNestedType) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NestedRequest_InnerNestedType.Merge(dst, src)
+func (m *NestedRequest_InnerNestedType) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NestedRequest_InnerNestedType.Merge(m, src)
 }
 func (m *NestedRequest_InnerNestedType) XXX_Size() int {
 	return m.Size()
@@ -185,7 +186,7 @@ func (m *NestedResponse) Reset()         { *m = NestedResponse{} }
 func (m *NestedResponse) String() string { return proto.CompactTextString(m) }
 func (*NestedResponse) ProtoMessage()    {}
 func (*NestedResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{2}
+	return fileDescriptor_2a0036ddd0f0b972, []int{2}
 }
 func (m *NestedResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -202,8 +203,8 @@ func (m *NestedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (dst *NestedResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NestedResponse.Merge(dst, src)
+func (m *NestedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NestedResponse.Merge(m, src)
 }
 func (m *NestedResponse) XXX_Size() int {
 	return m.Size()
@@ -222,7 +223,7 @@ func (m *NestedResponse) GetReturn() string {
 }
 
 type DeeplyNested struct {
-	L0                   *DeeplyNested_DeeplyNestedOuter `protobuf:"bytes,1,opt,name=l0" json:"l0,omitempty"`
+	L0                   *DeeplyNested_DeeplyNestedOuter `protobuf:"bytes,1,opt,name=l0,proto3" json:"l0,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
 	XXX_sizecache        int32                           `json:"-"`
@@ -232,7 +233,7 @@ func (m *DeeplyNested) Reset()         { *m = DeeplyNested{} }
 func (m *DeeplyNested) String() string { return proto.CompactTextString(m) }
 func (*DeeplyNested) ProtoMessage()    {}
 func (*DeeplyNested) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{3}
+	return fileDescriptor_2a0036ddd0f0b972, []int{3}
 }
 func (m *DeeplyNested) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -249,8 +250,8 @@ func (m *DeeplyNested) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (dst *DeeplyNested) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeeplyNested.Merge(dst, src)
+func (m *DeeplyNested) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeeplyNested.Merge(m, src)
 }
 func (m *DeeplyNested) XXX_Size() int {
 	return m.Size()
@@ -269,7 +270,7 @@ func (m *DeeplyNested) GetL0() *DeeplyNested_DeeplyNestedOuter {
 }
 
 type DeeplyNested_DeeplyNestedOuter struct {
-	L1                   *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner `protobuf:"bytes,1,opt,name=l1" json:"l1,omitempty"`
+	L1                   *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner `protobuf:"bytes,1,opt,name=l1,proto3" json:"l1,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                                          `json:"-"`
 	XXX_unrecognized     []byte                                            `json:"-"`
 	XXX_sizecache        int32                                             `json:"-"`
@@ -279,7 +280,7 @@ func (m *DeeplyNested_DeeplyNestedOuter) Reset()         { *m = DeeplyNested_Dee
 func (m *DeeplyNested_DeeplyNestedOuter) String() string { return proto.CompactTextString(m) }
 func (*DeeplyNested_DeeplyNestedOuter) ProtoMessage()    {}
 func (*DeeplyNested_DeeplyNestedOuter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{3, 0}
+	return fileDescriptor_2a0036ddd0f0b972, []int{3, 0}
 }
 func (m *DeeplyNested_DeeplyNestedOuter) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -296,8 +297,8 @@ func (m *DeeplyNested_DeeplyNestedOuter) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (dst *DeeplyNested_DeeplyNestedOuter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeeplyNested_DeeplyNestedOuter.Merge(dst, src)
+func (m *DeeplyNested_DeeplyNestedOuter) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeeplyNested_DeeplyNestedOuter.Merge(m, src)
 }
 func (m *DeeplyNested_DeeplyNestedOuter) XXX_Size() int {
 	return m.Size()
@@ -316,7 +317,7 @@ func (m *DeeplyNested_DeeplyNestedOuter) GetL1() *DeeplyNested_DeeplyNestedOuter
 }
 
 type DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner struct {
-	L2                   *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost `protobuf:"bytes,1,opt,name=l2" json:"l2,omitempty"`
+	L2                   *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost `protobuf:"bytes,1,opt,name=l2,proto3" json:"l2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                                                                `json:"-"`
 	XXX_unrecognized     []byte                                                                  `json:"-"`
 	XXX_sizecache        int32                                                                   `json:"-"`
@@ -330,7 +331,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) String() string {
 }
 func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) ProtoMessage() {}
 func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{3, 0, 0}
+	return fileDescriptor_2a0036ddd0f0b972, []int{3, 0, 0}
 }
 func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -347,8 +348,8 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) XXX_Marshal(b []byte,
 		return b[:n], nil
 	}
 }
-func (dst *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner.Merge(dst, src)
+func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner.Merge(m, src)
 }
 func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) XXX_Size() int {
 	return m.Size()
@@ -381,7 +382,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 }
 func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) ProtoMessage() {}
 func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) Descriptor() ([]byte, []int) {
-	return fileDescriptor_nested_7df99a9db8993913, []int{3, 0, 0, 0}
+	return fileDescriptor_2a0036ddd0f0b972, []int{3, 0, 0, 0}
 }
 func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -398,8 +399,8 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 		return b[:n], nil
 	}
 }
-func (dst *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost.Merge(dst, src)
+func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost.Merge(m, src)
 }
 func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) XXX_Size() int {
 	return m.Size()
@@ -426,6 +427,35 @@ func init() {
 	proto.RegisterType((*DeeplyNested_DeeplyNestedOuter)(nil), "pb.DeeplyNested.DeeplyNestedOuter")
 	proto.RegisterType((*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner)(nil), "pb.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner")
 	proto.RegisterType((*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)(nil), "pb.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner.DeeplyNestedInnermost")
+}
+
+func init() { proto.RegisterFile("nested.proto", fileDescriptor_2a0036ddd0f0b972) }
+
+var fileDescriptor_2a0036ddd0f0b972 = []byte{
+	// 354 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x52, 0x5d, 0x4a, 0xeb, 0x40,
+	0x14, 0xbe, 0x33, 0x97, 0x96, 0xdb, 0x73, 0x7b, 0xfb, 0x33, 0x5c, 0x4b, 0xc9, 0x43, 0xd0, 0xbc,
+	0xb4, 0x88, 0x84, 0x36, 0x11, 0xfa, 0x2e, 0x85, 0xa2, 0xf8, 0x03, 0x43, 0x9f, 0x7c, 0x91, 0x16,
+	0x0f, 0x22, 0x8c, 0xc9, 0x98, 0x99, 0x54, 0xba, 0x93, 0xae, 0xc0, 0x3d, 0xb8, 0x03, 0x1f, 0x5d,
+	0x82, 0xd4, 0x2d, 0xb8, 0x00, 0x49, 0x32, 0xc5, 0xa6, 0xa9, 0x08, 0x3e, 0x9e, 0xef, 0x2f, 0xdf,
+	0x39, 0x19, 0xa8, 0x06, 0xa8, 0x34, 0x5e, 0xbb, 0x32, 0x0a, 0x75, 0xc8, 0xa8, 0x9c, 0x3a, 0xfb,
+	0xc0, 0xc6, 0xa1, 0x3c, 0xc5, 0x19, 0x8a, 0xf3, 0x94, 0x1b, 0xcf, 0x25, 0xb2, 0xff, 0x50, 0x9a,
+	0x4d, 0x44, 0x8c, 0x6d, 0xb2, 0x4b, 0xba, 0x15, 0x9e, 0x0d, 0xce, 0x23, 0x81, 0x7f, 0x99, 0x88,
+	0xe3, 0x7d, 0x8c, 0x4a, 0xb3, 0x01, 0x94, 0x6e, 0x83, 0x00, 0xa3, 0x54, 0xf7, 0xd7, 0xdb, 0x73,
+	0xe5, 0xd4, 0xcd, 0x29, 0xdc, 0xe3, 0x84, 0xfe, 0x4c, 0xe6, 0x99, 0x9e, 0xf9, 0x50, 0xd1, 0xa1,
+	0xbc, 0x12, 0xc9, 0x77, 0xdb, 0x34, 0x35, 0xb7, 0x12, 0x73, 0xb1, 0x0b, 0xff, 0xa3, 0x0d, 0x66,
+	0x75, 0xa0, 0xbe, 0x11, 0xf7, 0x45, 0xd1, 0x2e, 0xd4, 0x56, 0x2d, 0x94, 0x0c, 0x03, 0x85, 0xac,
+	0x05, 0xe5, 0x08, 0x75, 0x1c, 0x05, 0x46, 0x68, 0x26, 0xe7, 0x89, 0x42, 0x75, 0x88, 0x28, 0xc5,
+	0x3c, 0x33, 0x30, 0x0f, 0xa8, 0xe8, 0x99, 0x75, 0x9c, 0xa4, 0xd1, 0x3a, 0x9b, 0x1b, 0x2e, 0x62,
+	0x8d, 0x11, 0xa7, 0xa2, 0x67, 0xbd, 0x13, 0x68, 0x16, 0x18, 0x36, 0x04, 0x2a, 0xfa, 0x26, 0xe9,
+	0xf0, 0xfb, 0xa4, 0x1c, 0x92, 0xae, 0xc9, 0xa9, 0xe8, 0x5b, 0x8b, 0x8d, 0xec, 0x94, 0x61, 0x97,
+	0x40, 0x85, 0x67, 0xb2, 0x4f, 0x7e, 0x92, 0x5d, 0x44, 0xee, 0x42, 0xa5, 0x39, 0x15, 0x9e, 0xd5,
+	0x81, 0x9d, 0xad, 0x24, 0xab, 0x01, 0x15, 0xbe, 0xb9, 0x1f, 0x15, 0xbe, 0xf7, 0xb0, 0xba, 0xf2,
+	0x19, 0x2a, 0x35, 0xb9, 0x41, 0xc5, 0x0e, 0xe0, 0xf7, 0x08, 0x35, 0x6b, 0x16, 0x9e, 0x81, 0xc5,
+	0xd6, 0x21, 0xf3, 0x4f, 0x06, 0x50, 0x1f, 0xa1, 0xce, 0x5d, 0xbf, 0xb1, 0xb9, 0xcb, 0x36, 0xe3,
+	0x51, 0xe3, 0x79, 0x69, 0x93, 0x97, 0xa5, 0x4d, 0x5e, 0x97, 0x36, 0x59, 0xbc, 0xd9, 0xbf, 0xa6,
+	0xe5, 0xf4, 0x41, 0xfb, 0x1f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x57, 0xcd, 0x71, 0xa4, 0xe0, 0x02,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -474,6 +504,17 @@ func (c *nestedMessagesClient) GetDeeplyNested(ctx context.Context, in *DeeplyNe
 type NestedMessagesServer interface {
 	Get(context.Context, *NestedRequest) (*NestedResponse, error)
 	GetDeeplyNested(context.Context, *DeeplyNested) (*NestedResponse, error)
+}
+
+// UnimplementedNestedMessagesServer can be embedded to have forward compatible implementations.
+type UnimplementedNestedMessagesServer struct {
+}
+
+func (*UnimplementedNestedMessagesServer) Get(ctx context.Context, req *NestedRequest) (*NestedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedNestedMessagesServer) GetDeeplyNested(ctx context.Context, req *DeeplyNested) (*NestedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeeplyNested not implemented")
 }
 
 func RegisterNestedMessagesServer(s *grpc.Server, srv NestedMessagesServer) {
@@ -579,9 +620,9 @@ func (m *NestedRequest) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintNested(dAtA, i, uint64(m.Inner.Size()))
-		n1, err := m.Inner.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		n1, err1 := m.Inner.MarshalTo(dAtA[i:])
+		if err1 != nil {
+			return 0, err1
 		}
 		i += n1
 	}
@@ -589,9 +630,9 @@ func (m *NestedRequest) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintNested(dAtA, i, uint64(m.TopLevel.Size()))
-		n2, err := m.TopLevel.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		n2, err2 := m.TopLevel.MarshalTo(dAtA[i:])
+		if err2 != nil {
+			return 0, err2
 		}
 		i += n2
 	}
@@ -674,9 +715,9 @@ func (m *DeeplyNested) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintNested(dAtA, i, uint64(m.L0.Size()))
-		n3, err := m.L0.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		n3, err3 := m.L0.MarshalTo(dAtA[i:])
+		if err3 != nil {
+			return 0, err3
 		}
 		i += n3
 	}
@@ -705,9 +746,9 @@ func (m *DeeplyNested_DeeplyNestedOuter) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintNested(dAtA, i, uint64(m.L1.Size()))
-		n4, err := m.L1.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		n4, err4 := m.L1.MarshalTo(dAtA[i:])
+		if err4 != nil {
+			return 0, err4
 		}
 		i += n4
 	}
@@ -736,9 +777,9 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) MarshalTo(dAtA []byte
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintNested(dAtA, i, uint64(m.L2.Size()))
-		n5, err := m.L2.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		n5, err5 := m.L2.MarshalTo(dAtA[i:])
+		if err5 != nil {
+			return 0, err5
 		}
 		i += n5
 	}
@@ -917,14 +958,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 }
 
 func sovNested(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozNested(x uint64) (n int) {
 	return sovNested(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -944,7 +978,7 @@ func (m *TopLevelNestedType) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -972,7 +1006,7 @@ func (m *TopLevelNestedType) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -982,6 +1016,9 @@ func (m *TopLevelNestedType) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -994,6 +1031,9 @@ func (m *TopLevelNestedType) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1024,7 +1064,7 @@ func (m *NestedRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1052,7 +1092,7 @@ func (m *NestedRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1061,6 +1101,9 @@ func (m *NestedRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1085,7 +1128,7 @@ func (m *NestedRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1094,6 +1137,9 @@ func (m *NestedRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1111,6 +1157,9 @@ func (m *NestedRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1141,7 +1190,7 @@ func (m *NestedRequest_InnerNestedType) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1169,7 +1218,7 @@ func (m *NestedRequest_InnerNestedType) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1179,6 +1228,9 @@ func (m *NestedRequest_InnerNestedType) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1191,6 +1243,9 @@ func (m *NestedRequest_InnerNestedType) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1221,7 +1276,7 @@ func (m *NestedResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1249,7 +1304,7 @@ func (m *NestedResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1259,6 +1314,9 @@ func (m *NestedResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1271,6 +1329,9 @@ func (m *NestedResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1301,7 +1362,7 @@ func (m *DeeplyNested) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1329,7 +1390,7 @@ func (m *DeeplyNested) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1338,6 +1399,9 @@ func (m *DeeplyNested) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1355,6 +1419,9 @@ func (m *DeeplyNested) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1385,7 +1452,7 @@ func (m *DeeplyNested_DeeplyNestedOuter) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1413,7 +1480,7 @@ func (m *DeeplyNested_DeeplyNestedOuter) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1422,6 +1489,9 @@ func (m *DeeplyNested_DeeplyNestedOuter) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1439,6 +1509,9 @@ func (m *DeeplyNested_DeeplyNestedOuter) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1469,7 +1542,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Unmarshal(dAtA []byte
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1497,7 +1570,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Unmarshal(dAtA []byte
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1506,6 +1579,9 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Unmarshal(dAtA []byte
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1523,6 +1599,9 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Unmarshal(dAtA []byte
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1553,7 +1632,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1581,7 +1660,7 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1591,6 +1670,9 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 				return ErrInvalidLengthNested
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNested
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1603,6 +1685,9 @@ func (m *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNested
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNested
 			}
 			if (iNdEx + skippy) > l {
@@ -1672,8 +1757,11 @@ func skipNested(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
+				return 0, ErrInvalidLengthNested
+			}
+			iNdEx += length
+			if iNdEx < 0 {
 				return 0, ErrInvalidLengthNested
 			}
 			return iNdEx, nil
@@ -1704,6 +1792,9 @@ func skipNested(dAtA []byte) (n int, err error) {
 					return 0, err
 				}
 				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthNested
+				}
 			}
 			return iNdEx, nil
 		case 4:
@@ -1722,32 +1813,3 @@ var (
 	ErrInvalidLengthNested = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowNested   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("nested.proto", fileDescriptor_nested_7df99a9db8993913) }
-
-var fileDescriptor_nested_7df99a9db8993913 = []byte{
-	// 354 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x52, 0x5d, 0x4a, 0xeb, 0x40,
-	0x14, 0xbe, 0x33, 0x97, 0x96, 0xdb, 0x73, 0x7b, 0xfb, 0x33, 0x5c, 0x4b, 0xc9, 0x43, 0xd0, 0xbc,
-	0xb4, 0x88, 0x84, 0x36, 0x11, 0xfa, 0x2e, 0x85, 0xa2, 0xf8, 0x03, 0x43, 0x9f, 0x7c, 0x91, 0x16,
-	0x0f, 0x22, 0x8c, 0xc9, 0x98, 0x99, 0x54, 0xba, 0x93, 0xae, 0xc0, 0x3d, 0xb8, 0x03, 0x1f, 0x5d,
-	0x82, 0xd4, 0x2d, 0xb8, 0x00, 0x49, 0x32, 0xc5, 0xa6, 0xa9, 0x08, 0x3e, 0x9e, 0xef, 0x2f, 0xdf,
-	0x39, 0x19, 0xa8, 0x06, 0xa8, 0x34, 0x5e, 0xbb, 0x32, 0x0a, 0x75, 0xc8, 0xa8, 0x9c, 0x3a, 0xfb,
-	0xc0, 0xc6, 0xa1, 0x3c, 0xc5, 0x19, 0x8a, 0xf3, 0x94, 0x1b, 0xcf, 0x25, 0xb2, 0xff, 0x50, 0x9a,
-	0x4d, 0x44, 0x8c, 0x6d, 0xb2, 0x4b, 0xba, 0x15, 0x9e, 0x0d, 0xce, 0x23, 0x81, 0x7f, 0x99, 0x88,
-	0xe3, 0x7d, 0x8c, 0x4a, 0xb3, 0x01, 0x94, 0x6e, 0x83, 0x00, 0xa3, 0x54, 0xf7, 0xd7, 0xdb, 0x73,
-	0xe5, 0xd4, 0xcd, 0x29, 0xdc, 0xe3, 0x84, 0xfe, 0x4c, 0xe6, 0x99, 0x9e, 0xf9, 0x50, 0xd1, 0xa1,
-	0xbc, 0x12, 0xc9, 0x77, 0xdb, 0x34, 0x35, 0xb7, 0x12, 0x73, 0xb1, 0x0b, 0xff, 0xa3, 0x0d, 0x66,
-	0x75, 0xa0, 0xbe, 0x11, 0xf7, 0x45, 0xd1, 0x2e, 0xd4, 0x56, 0x2d, 0x94, 0x0c, 0x03, 0x85, 0xac,
-	0x05, 0xe5, 0x08, 0x75, 0x1c, 0x05, 0x46, 0x68, 0x26, 0xe7, 0x89, 0x42, 0x75, 0x88, 0x28, 0xc5,
-	0x3c, 0x33, 0x30, 0x0f, 0xa8, 0xe8, 0x99, 0x75, 0x9c, 0xa4, 0xd1, 0x3a, 0x9b, 0x1b, 0x2e, 0x62,
-	0x8d, 0x11, 0xa7, 0xa2, 0x67, 0xbd, 0x13, 0x68, 0x16, 0x18, 0x36, 0x04, 0x2a, 0xfa, 0x26, 0xe9,
-	0xf0, 0xfb, 0xa4, 0x1c, 0x92, 0xae, 0xc9, 0xa9, 0xe8, 0x5b, 0x8b, 0x8d, 0xec, 0x94, 0x61, 0x97,
-	0x40, 0x85, 0x67, 0xb2, 0x4f, 0x7e, 0x92, 0x5d, 0x44, 0xee, 0x42, 0xa5, 0x39, 0x15, 0x9e, 0xd5,
-	0x81, 0x9d, 0xad, 0x24, 0xab, 0x01, 0x15, 0xbe, 0xb9, 0x1f, 0x15, 0xbe, 0xf7, 0xb0, 0xba, 0xf2,
-	0x19, 0x2a, 0x35, 0xb9, 0x41, 0xc5, 0x0e, 0xe0, 0xf7, 0x08, 0x35, 0x6b, 0x16, 0x9e, 0x81, 0xc5,
-	0xd6, 0x21, 0xf3, 0x4f, 0x06, 0x50, 0x1f, 0xa1, 0xce, 0x5d, 0xbf, 0xb1, 0xb9, 0xcb, 0x36, 0xe3,
-	0x51, 0xe3, 0x79, 0x69, 0x93, 0x97, 0xa5, 0x4d, 0x5e, 0x97, 0x36, 0x59, 0xbc, 0xd9, 0xbf, 0xa6,
-	0xe5, 0xf4, 0x41, 0xfb, 0x1f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x57, 0xcd, 0x71, 0xa4, 0xe0, 0x02,
-	0x00, 0x00,
-}

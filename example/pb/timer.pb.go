@@ -3,16 +3,17 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
-
-import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -36,7 +37,7 @@ func (m *TickRequest) Reset()         { *m = TickRequest{} }
 func (m *TickRequest) String() string { return proto.CompactTextString(m) }
 func (*TickRequest) ProtoMessage()    {}
 func (*TickRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_timer_468c66ad9c568581, []int{0}
+	return fileDescriptor_ad0307ee16b652d2, []int{0}
 }
 func (m *TickRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -53,8 +54,8 @@ func (m *TickRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return b[:n], nil
 	}
 }
-func (dst *TickRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TickRequest.Merge(dst, src)
+func (m *TickRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TickRequest.Merge(m, src)
 }
 func (m *TickRequest) XXX_Size() int {
 	return m.Size()
@@ -83,7 +84,7 @@ func (m *TickResponse) Reset()         { *m = TickResponse{} }
 func (m *TickResponse) String() string { return proto.CompactTextString(m) }
 func (*TickResponse) ProtoMessage()    {}
 func (*TickResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_timer_468c66ad9c568581, []int{1}
+	return fileDescriptor_ad0307ee16b652d2, []int{1}
 }
 func (m *TickResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -100,8 +101,8 @@ func (m *TickResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (dst *TickResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TickResponse.Merge(dst, src)
+func (m *TickResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TickResponse.Merge(m, src)
 }
 func (m *TickResponse) XXX_Size() int {
 	return m.Size()
@@ -122,6 +123,22 @@ func (m *TickResponse) GetTime() string {
 func init() {
 	proto.RegisterType((*TickRequest)(nil), "pb.TickRequest")
 	proto.RegisterType((*TickResponse)(nil), "pb.TickResponse")
+}
+
+func init() { proto.RegisterFile("timer.proto", fileDescriptor_ad0307ee16b652d2) }
+
+var fileDescriptor_ad0307ee16b652d2 = []byte{
+	// 154 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2e, 0xc9, 0xcc, 0x4d,
+	0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0xd2, 0xe4, 0xe2, 0x0e,
+	0xc9, 0x4c, 0xce, 0x0e, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x92, 0xe2, 0xe2, 0xc8, 0xcc,
+	0x2b, 0x49, 0x2d, 0x2a, 0x4b, 0xcc, 0x91, 0x60, 0x54, 0x60, 0xd4, 0x60, 0x0d, 0x82, 0xf3, 0x95,
+	0x94, 0xb8, 0x78, 0x20, 0x4a, 0x8b, 0x0b, 0xf2, 0xf3, 0x8a, 0x53, 0x85, 0x84, 0xb8, 0x58, 0x40,
+	0xa6, 0x81, 0xd5, 0x71, 0x06, 0x81, 0xd9, 0x46, 0x26, 0x5c, 0xac, 0x21, 0x20, 0x1b, 0x84, 0xb4,
+	0xb9, 0x58, 0x40, 0x8a, 0x85, 0xf8, 0xf5, 0x0a, 0x92, 0xf4, 0x90, 0x6c, 0x90, 0x12, 0x40, 0x08,
+	0x40, 0xcc, 0x31, 0x60, 0x74, 0x12, 0x38, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07,
+	0x8f, 0xe4, 0x18, 0x67, 0x3c, 0x96, 0x63, 0x48, 0x62, 0x03, 0xbb, 0xd0, 0x18, 0x10, 0x00, 0x00,
+	0xff, 0xff, 0xa0, 0xa1, 0x58, 0x36, 0xb0, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -182,6 +199,14 @@ func (x *timerTickClient) Recv() (*TickResponse, error) {
 // TimerServer is the server API for Timer service.
 type TimerServer interface {
 	Tick(*TickRequest, Timer_TickServer) error
+}
+
+// UnimplementedTimerServer can be embedded to have forward compatible implementations.
+type UnimplementedTimerServer struct {
+}
+
+func (*UnimplementedTimerServer) Tick(req *TickRequest, srv Timer_TickServer) error {
+	return status.Errorf(codes.Unimplemented, "method Tick not implemented")
 }
 
 func RegisterTimerServer(s *grpc.Server, srv TimerServer) {
@@ -317,14 +342,7 @@ func (m *TickResponse) Size() (n int) {
 }
 
 func sovTimer(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozTimer(x uint64) (n int) {
 	return sovTimer(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -344,7 +362,7 @@ func (m *TickRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -372,7 +390,7 @@ func (m *TickRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Interval |= (int32(b) & 0x7F) << shift
+				m.Interval |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -384,6 +402,9 @@ func (m *TickRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTimer
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTimer
 			}
 			if (iNdEx + skippy) > l {
@@ -414,7 +435,7 @@ func (m *TickResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -442,7 +463,7 @@ func (m *TickResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -452,6 +473,9 @@ func (m *TickResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTimer
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTimer
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -464,6 +488,9 @@ func (m *TickResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTimer
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTimer
 			}
 			if (iNdEx + skippy) > l {
@@ -533,8 +560,11 @@ func skipTimer(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
+				return 0, ErrInvalidLengthTimer
+			}
+			iNdEx += length
+			if iNdEx < 0 {
 				return 0, ErrInvalidLengthTimer
 			}
 			return iNdEx, nil
@@ -565,6 +595,9 @@ func skipTimer(dAtA []byte) (n int, err error) {
 					return 0, err
 				}
 				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthTimer
+				}
 			}
 			return iNdEx, nil
 		case 4:
@@ -583,19 +616,3 @@ var (
 	ErrInvalidLengthTimer = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowTimer   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("timer.proto", fileDescriptor_timer_468c66ad9c568581) }
-
-var fileDescriptor_timer_468c66ad9c568581 = []byte{
-	// 154 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2e, 0xc9, 0xcc, 0x4d,
-	0x2d, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0xd2, 0xe4, 0xe2, 0x0e,
-	0xc9, 0x4c, 0xce, 0x0e, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x92, 0xe2, 0xe2, 0xc8, 0xcc,
-	0x2b, 0x49, 0x2d, 0x2a, 0x4b, 0xcc, 0x91, 0x60, 0x54, 0x60, 0xd4, 0x60, 0x0d, 0x82, 0xf3, 0x95,
-	0x94, 0xb8, 0x78, 0x20, 0x4a, 0x8b, 0x0b, 0xf2, 0xf3, 0x8a, 0x53, 0x85, 0x84, 0xb8, 0x58, 0x40,
-	0xa6, 0x81, 0xd5, 0x71, 0x06, 0x81, 0xd9, 0x46, 0x26, 0x5c, 0xac, 0x21, 0x20, 0x1b, 0x84, 0xb4,
-	0xb9, 0x58, 0x40, 0x8a, 0x85, 0xf8, 0xf5, 0x0a, 0x92, 0xf4, 0x90, 0x6c, 0x90, 0x12, 0x40, 0x08,
-	0x40, 0xcc, 0x31, 0x60, 0x74, 0x12, 0x38, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07,
-	0x8f, 0xe4, 0x18, 0x67, 0x3c, 0x96, 0x63, 0x48, 0x62, 0x03, 0xbb, 0xd0, 0x18, 0x10, 0x00, 0x00,
-	0xff, 0xff, 0xa0, 0xa1, 0x58, 0x36, 0xb0, 0x00, 0x00, 0x00,
-}

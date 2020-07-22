@@ -3,16 +3,17 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
-
-import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -37,7 +38,7 @@ func (m *CRUDObject) Reset()         { *m = CRUDObject{} }
 func (m *CRUDObject) String() string { return proto.CompactTextString(m) }
 func (*CRUDObject) ProtoMessage()    {}
 func (*CRUDObject) Descriptor() ([]byte, []int) {
-	return fileDescriptor_crud_69aa095156113a77, []int{0}
+	return fileDescriptor_478bbe1b22b2e995, []int{0}
 }
 func (m *CRUDObject) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -54,8 +55,8 @@ func (m *CRUDObject) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *CRUDObject) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CRUDObject.Merge(dst, src)
+func (m *CRUDObject) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CRUDObject.Merge(m, src)
 }
 func (m *CRUDObject) XXX_Size() int {
 	return m.Size()
@@ -92,7 +93,7 @@ func (m *CreateCRUD) Reset()         { *m = CreateCRUD{} }
 func (m *CreateCRUD) String() string { return proto.CompactTextString(m) }
 func (*CreateCRUD) ProtoMessage()    {}
 func (*CreateCRUD) Descriptor() ([]byte, []int) {
-	return fileDescriptor_crud_69aa095156113a77, []int{1}
+	return fileDescriptor_478bbe1b22b2e995, []int{1}
 }
 func (m *CreateCRUD) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -109,8 +110,8 @@ func (m *CreateCRUD) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *CreateCRUD) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCRUD.Merge(dst, src)
+func (m *CreateCRUD) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCRUD.Merge(m, src)
 }
 func (m *CreateCRUD) XXX_Size() int {
 	return m.Size()
@@ -146,7 +147,7 @@ func (m *GetCRUD) Reset()         { *m = GetCRUD{} }
 func (m *GetCRUD) String() string { return proto.CompactTextString(m) }
 func (*GetCRUD) ProtoMessage()    {}
 func (*GetCRUD) Descriptor() ([]byte, []int) {
-	return fileDescriptor_crud_69aa095156113a77, []int{2}
+	return fileDescriptor_478bbe1b22b2e995, []int{2}
 }
 func (m *GetCRUD) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -163,8 +164,8 @@ func (m *GetCRUD) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *GetCRUD) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetCRUD.Merge(dst, src)
+func (m *GetCRUD) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCRUD.Merge(m, src)
 }
 func (m *GetCRUD) XXX_Size() int {
 	return m.Size()
@@ -192,7 +193,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_crud_69aa095156113a77, []int{3}
+	return fileDescriptor_478bbe1b22b2e995, []int{3}
 }
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -209,8 +210,8 @@ func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Empty) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Empty.Merge(dst, src)
+func (m *Empty) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Empty.Merge(m, src)
 }
 func (m *Empty) XXX_Size() int {
 	return m.Size()
@@ -226,6 +227,25 @@ func init() {
 	proto.RegisterType((*CreateCRUD)(nil), "pb.CreateCRUD")
 	proto.RegisterType((*GetCRUD)(nil), "pb.GetCRUD")
 	proto.RegisterType((*Empty)(nil), "pb.Empty")
+}
+
+func init() { proto.RegisterFile("crud.proto", fileDescriptor_478bbe1b22b2e995) }
+
+var fileDescriptor_478bbe1b22b2e995 = []byte{
+	// 204 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4a, 0x2e, 0x2a, 0x4d,
+	0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x32, 0xe3, 0xe2, 0x72, 0x0e,
+	0x0a, 0x75, 0xf1, 0x4f, 0xca, 0x4a, 0x4d, 0x2e, 0x11, 0x12, 0xe2, 0x62, 0xc9, 0x4b, 0xcc, 0x4d,
+	0x95, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x02, 0xb3, 0x85, 0x44, 0xb8, 0x58, 0xcb, 0x12, 0x73,
+	0x4a, 0x53, 0x25, 0x98, 0xc0, 0x82, 0x10, 0x0e, 0x58, 0x5f, 0x51, 0x6a, 0x62, 0x49, 0x2a, 0x48,
+	0x37, 0x09, 0xfa, 0x64, 0xb9, 0xd8, 0xdd, 0x53, 0x4b, 0x70, 0x69, 0x52, 0x62, 0xe7, 0x62, 0x75,
+	0xcd, 0x2d, 0x28, 0xa9, 0x34, 0x5a, 0xcc, 0xc8, 0xc5, 0x02, 0x56, 0xa5, 0xc1, 0xc5, 0x06, 0xb1,
+	0x48, 0x88, 0x4f, 0xaf, 0x20, 0x49, 0x0f, 0x61, 0xa9, 0x14, 0x84, 0x8f, 0x70, 0xbc, 0x12, 0x17,
+	0xb3, 0x7b, 0x6a, 0x89, 0x10, 0x37, 0x48, 0x18, 0x6a, 0x07, 0x86, 0x1a, 0x0d, 0x2e, 0xb6, 0xd0,
+	0x82, 0x14, 0x84, 0x69, 0x70, 0x19, 0x0c, 0x95, 0xca, 0x5c, 0x6c, 0x2e, 0xa9, 0x39, 0xa9, 0x58,
+	0x54, 0x72, 0x82, 0xf8, 0x60, 0x57, 0x3a, 0x09, 0x9c, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c,
+	0xe3, 0x83, 0x47, 0x72, 0x8c, 0x33, 0x1e, 0xcb, 0x31, 0x24, 0xb1, 0x81, 0x83, 0xd6, 0x18, 0x10,
+	0x00, 0x00, 0xff, 0xff, 0xcf, 0xb9, 0x4b, 0xa9, 0x68, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -296,6 +316,23 @@ type CRUDServer interface {
 	Get(context.Context, *GetCRUD) (*CRUDObject, error)
 	Update(context.Context, *CRUDObject) (*CRUDObject, error)
 	Delete(context.Context, *CRUDObject) (*Empty, error)
+}
+
+// UnimplementedCRUDServer can be embedded to have forward compatible implementations.
+type UnimplementedCRUDServer struct {
+}
+
+func (*UnimplementedCRUDServer) Create(ctx context.Context, req *CreateCRUD) (*CRUDObject, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (*UnimplementedCRUDServer) Get(ctx context.Context, req *GetCRUD) (*CRUDObject, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedCRUDServer) Update(ctx context.Context, req *CRUDObject) (*CRUDObject, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (*UnimplementedCRUDServer) Delete(ctx context.Context, req *CRUDObject) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 
 func RegisterCRUDServer(s *grpc.Server, srv CRUDServer) {
@@ -591,14 +628,7 @@ func (m *Empty) Size() (n int) {
 }
 
 func sovCrud(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozCrud(x uint64) (n int) {
 	return sovCrud(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -618,7 +648,7 @@ func (m *CRUDObject) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -646,7 +676,7 @@ func (m *CRUDObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -656,6 +686,9 @@ func (m *CRUDObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCrud
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCrud
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -675,7 +708,7 @@ func (m *CRUDObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -685,6 +718,9 @@ func (m *CRUDObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCrud
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCrud
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -697,6 +733,9 @@ func (m *CRUDObject) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCrud
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCrud
 			}
 			if (iNdEx + skippy) > l {
@@ -727,7 +766,7 @@ func (m *CreateCRUD) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -755,7 +794,7 @@ func (m *CreateCRUD) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -765,6 +804,9 @@ func (m *CreateCRUD) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCrud
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCrud
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -784,7 +826,7 @@ func (m *CreateCRUD) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -794,6 +836,9 @@ func (m *CreateCRUD) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCrud
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCrud
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -806,6 +851,9 @@ func (m *CreateCRUD) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCrud
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCrud
 			}
 			if (iNdEx + skippy) > l {
@@ -836,7 +884,7 @@ func (m *GetCRUD) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -864,7 +912,7 @@ func (m *GetCRUD) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -874,6 +922,9 @@ func (m *GetCRUD) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCrud
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCrud
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -886,6 +937,9 @@ func (m *GetCRUD) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCrud
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCrud
 			}
 			if (iNdEx + skippy) > l {
@@ -916,7 +970,7 @@ func (m *Empty) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -937,6 +991,9 @@ func (m *Empty) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCrud
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCrud
 			}
 			if (iNdEx + skippy) > l {
@@ -1006,8 +1063,11 @@ func skipCrud(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
+				return 0, ErrInvalidLengthCrud
+			}
+			iNdEx += length
+			if iNdEx < 0 {
 				return 0, ErrInvalidLengthCrud
 			}
 			return iNdEx, nil
@@ -1038,6 +1098,9 @@ func skipCrud(dAtA []byte) (n int, err error) {
 					return 0, err
 				}
 				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthCrud
+				}
 			}
 			return iNdEx, nil
 		case 4:
@@ -1056,22 +1119,3 @@ var (
 	ErrInvalidLengthCrud = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowCrud   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("crud.proto", fileDescriptor_crud_69aa095156113a77) }
-
-var fileDescriptor_crud_69aa095156113a77 = []byte{
-	// 204 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4a, 0x2e, 0x2a, 0x4d,
-	0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x32, 0xe3, 0xe2, 0x72, 0x0e,
-	0x0a, 0x75, 0xf1, 0x4f, 0xca, 0x4a, 0x4d, 0x2e, 0x11, 0x12, 0xe2, 0x62, 0xc9, 0x4b, 0xcc, 0x4d,
-	0x95, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x02, 0xb3, 0x85, 0x44, 0xb8, 0x58, 0xcb, 0x12, 0x73,
-	0x4a, 0x53, 0x25, 0x98, 0xc0, 0x82, 0x10, 0x0e, 0x58, 0x5f, 0x51, 0x6a, 0x62, 0x49, 0x2a, 0x48,
-	0x37, 0x09, 0xfa, 0x64, 0xb9, 0xd8, 0xdd, 0x53, 0x4b, 0x70, 0x69, 0x52, 0x62, 0xe7, 0x62, 0x75,
-	0xcd, 0x2d, 0x28, 0xa9, 0x34, 0x5a, 0xcc, 0xc8, 0xc5, 0x02, 0x56, 0xa5, 0xc1, 0xc5, 0x06, 0xb1,
-	0x48, 0x88, 0x4f, 0xaf, 0x20, 0x49, 0x0f, 0x61, 0xa9, 0x14, 0x84, 0x8f, 0x70, 0xbc, 0x12, 0x17,
-	0xb3, 0x7b, 0x6a, 0x89, 0x10, 0x37, 0x48, 0x18, 0x6a, 0x07, 0x86, 0x1a, 0x0d, 0x2e, 0xb6, 0xd0,
-	0x82, 0x14, 0x84, 0x69, 0x70, 0x19, 0x0c, 0x95, 0xca, 0x5c, 0x6c, 0x2e, 0xa9, 0x39, 0xa9, 0x58,
-	0x54, 0x72, 0x82, 0xf8, 0x60, 0x57, 0x3a, 0x09, 0x9c, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c,
-	0xe3, 0x83, 0x47, 0x72, 0x8c, 0x33, 0x1e, 0xcb, 0x31, 0x24, 0xb1, 0x81, 0x83, 0xd6, 0x18, 0x10,
-	0x00, 0x00, 0xff, 0xff, 0xcf, 0xb9, 0x4b, 0xa9, 0x68, 0x01, 0x00, 0x00,
-}

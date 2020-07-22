@@ -3,18 +3,18 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
-
-import encoding_binary "encoding/binary"
-
-import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -39,7 +39,7 @@ func (m *DepositRequest) Reset()         { *m = DepositRequest{} }
 func (m *DepositRequest) String() string { return proto.CompactTextString(m) }
 func (*DepositRequest) ProtoMessage()    {}
 func (*DepositRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bank_24a687593763ef7d, []int{0}
+	return fileDescriptor_a6371916d5cb63b4, []int{0}
 }
 func (m *DepositRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -56,8 +56,8 @@ func (m *DepositRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (dst *DepositRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DepositRequest.Merge(dst, src)
+func (m *DepositRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DepositRequest.Merge(m, src)
 }
 func (m *DepositRequest) XXX_Size() int {
 	return m.Size()
@@ -94,7 +94,7 @@ func (m *DepositReply) Reset()         { *m = DepositReply{} }
 func (m *DepositReply) String() string { return proto.CompactTextString(m) }
 func (*DepositReply) ProtoMessage()    {}
 func (*DepositReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bank_24a687593763ef7d, []int{1}
+	return fileDescriptor_a6371916d5cb63b4, []int{1}
 }
 func (m *DepositReply) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -111,8 +111,8 @@ func (m *DepositReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (dst *DepositReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DepositReply.Merge(dst, src)
+func (m *DepositReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DepositReply.Merge(m, src)
 }
 func (m *DepositReply) XXX_Size() int {
 	return m.Size()
@@ -140,6 +140,23 @@ func (m *DepositReply) GetBalance() float64 {
 func init() {
 	proto.RegisterType((*DepositRequest)(nil), "pb.DepositRequest")
 	proto.RegisterType((*DepositReply)(nil), "pb.DepositReply")
+}
+
+func init() { proto.RegisterFile("bank.proto", fileDescriptor_a6371916d5cb63b4) }
+
+var fileDescriptor_a6371916d5cb63b4 = []byte{
+	// 173 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4a, 0x4a, 0xcc, 0xcb,
+	0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x72, 0xe2, 0xe2, 0x73, 0x49,
+	0x2d, 0xc8, 0x2f, 0xce, 0x2c, 0x09, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x92, 0xe0, 0x62,
+	0x4f, 0x4c, 0x4e, 0xce, 0x2f, 0xcd, 0x2b, 0x91, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0x71,
+	0x85, 0xc4, 0xb8, 0xd8, 0x12, 0x73, 0xc1, 0x12, 0x4c, 0x0a, 0x8c, 0x1a, 0x8c, 0x41, 0x50, 0x9e,
+	0x92, 0x13, 0x17, 0x0f, 0xdc, 0x8c, 0x82, 0x9c, 0x4a, 0x3c, 0x26, 0x48, 0x70, 0xb1, 0x27, 0x25,
+	0xe6, 0x24, 0xe6, 0x25, 0xa7, 0x42, 0x8d, 0x80, 0x71, 0x8d, 0xcc, 0xb9, 0x58, 0x9c, 0x12, 0xf3,
+	0xb2, 0x85, 0xf4, 0xb9, 0xd8, 0xa1, 0x66, 0x09, 0x09, 0xe9, 0x15, 0x24, 0xe9, 0xa1, 0x3a, 0x4e,
+	0x4a, 0x00, 0x45, 0xac, 0x20, 0xa7, 0xd2, 0x49, 0xe0, 0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f, 0xe4,
+	0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf1, 0x58, 0x8e, 0x21, 0x89, 0x0d, 0xec, 0x3b, 0x63, 0x40,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0xa5, 0x6a, 0x33, 0xe8, 0xeb, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -177,6 +194,14 @@ func (c *bankClient) Deposit(ctx context.Context, in *DepositRequest, opts ...gr
 // BankServer is the server API for Bank service.
 type BankServer interface {
 	Deposit(context.Context, *DepositRequest) (*DepositReply, error)
+}
+
+// UnimplementedBankServer can be embedded to have forward compatible implementations.
+type UnimplementedBankServer struct {
+}
+
+func (*UnimplementedBankServer) Deposit(ctx context.Context, req *DepositRequest) (*DepositReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
 }
 
 func RegisterBankServer(s *grpc.Server, srv BankServer) {
@@ -328,14 +353,7 @@ func (m *DepositReply) Size() (n int) {
 }
 
 func sovBank(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozBank(x uint64) (n int) {
 	return sovBank(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -355,7 +373,7 @@ func (m *DepositRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -383,7 +401,7 @@ func (m *DepositRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -393,6 +411,9 @@ func (m *DepositRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthBank
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBank
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -416,6 +437,9 @@ func (m *DepositRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthBank
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthBank
 			}
 			if (iNdEx + skippy) > l {
@@ -446,7 +470,7 @@ func (m *DepositReply) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -474,7 +498,7 @@ func (m *DepositReply) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -484,6 +508,9 @@ func (m *DepositReply) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthBank
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBank
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -507,6 +534,9 @@ func (m *DepositReply) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthBank
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthBank
 			}
 			if (iNdEx + skippy) > l {
@@ -576,8 +606,11 @@ func skipBank(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
+				return 0, ErrInvalidLengthBank
+			}
+			iNdEx += length
+			if iNdEx < 0 {
 				return 0, ErrInvalidLengthBank
 			}
 			return iNdEx, nil
@@ -608,6 +641,9 @@ func skipBank(dAtA []byte) (n int, err error) {
 					return 0, err
 				}
 				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthBank
+				}
 			}
 			return iNdEx, nil
 		case 4:
@@ -626,20 +662,3 @@ var (
 	ErrInvalidLengthBank = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowBank   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("bank.proto", fileDescriptor_bank_24a687593763ef7d) }
-
-var fileDescriptor_bank_24a687593763ef7d = []byte{
-	// 173 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4a, 0x4a, 0xcc, 0xcb,
-	0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x72, 0xe2, 0xe2, 0x73, 0x49,
-	0x2d, 0xc8, 0x2f, 0xce, 0x2c, 0x09, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x92, 0xe0, 0x62,
-	0x4f, 0x4c, 0x4e, 0xce, 0x2f, 0xcd, 0x2b, 0x91, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0x71,
-	0x85, 0xc4, 0xb8, 0xd8, 0x12, 0x73, 0xc1, 0x12, 0x4c, 0x0a, 0x8c, 0x1a, 0x8c, 0x41, 0x50, 0x9e,
-	0x92, 0x13, 0x17, 0x0f, 0xdc, 0x8c, 0x82, 0x9c, 0x4a, 0x3c, 0x26, 0x48, 0x70, 0xb1, 0x27, 0x25,
-	0xe6, 0x24, 0xe6, 0x25, 0xa7, 0x42, 0x8d, 0x80, 0x71, 0x8d, 0xcc, 0xb9, 0x58, 0x9c, 0x12, 0xf3,
-	0xb2, 0x85, 0xf4, 0xb9, 0xd8, 0xa1, 0x66, 0x09, 0x09, 0xe9, 0x15, 0x24, 0xe9, 0xa1, 0x3a, 0x4e,
-	0x4a, 0x00, 0x45, 0xac, 0x20, 0xa7, 0xd2, 0x49, 0xe0, 0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f, 0xe4,
-	0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf1, 0x58, 0x8e, 0x21, 0x89, 0x0d, 0xec, 0x3b, 0x63, 0x40,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0xa5, 0x6a, 0x33, 0xe8, 0xeb, 0x00, 0x00, 0x00,
-}

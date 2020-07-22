@@ -3,16 +3,17 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
-
-import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -37,7 +38,7 @@ func (m *SetRequest) Reset()         { *m = SetRequest{} }
 func (m *SetRequest) String() string { return proto.CompactTextString(m) }
 func (*SetRequest) ProtoMessage()    {}
 func (*SetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cache_4423949ee330efde, []int{0}
+	return fileDescriptor_5fca3b110c9bbf3a, []int{0}
 }
 func (m *SetRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -54,8 +55,8 @@ func (m *SetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *SetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetRequest.Merge(dst, src)
+func (m *SetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetRequest.Merge(m, src)
 }
 func (m *SetRequest) XXX_Size() int {
 	return m.Size()
@@ -90,7 +91,7 @@ func (m *SetResponse) Reset()         { *m = SetResponse{} }
 func (m *SetResponse) String() string { return proto.CompactTextString(m) }
 func (*SetResponse) ProtoMessage()    {}
 func (*SetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cache_4423949ee330efde, []int{1}
+	return fileDescriptor_5fca3b110c9bbf3a, []int{1}
 }
 func (m *SetResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -107,8 +108,8 @@ func (m *SetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return b[:n], nil
 	}
 }
-func (dst *SetResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetResponse.Merge(dst, src)
+func (m *SetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetResponse.Merge(m, src)
 }
 func (m *SetResponse) XXX_Size() int {
 	return m.Size()
@@ -130,7 +131,7 @@ func (m *GetRequest) Reset()         { *m = GetRequest{} }
 func (m *GetRequest) String() string { return proto.CompactTextString(m) }
 func (*GetRequest) ProtoMessage()    {}
 func (*GetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cache_4423949ee330efde, []int{2}
+	return fileDescriptor_5fca3b110c9bbf3a, []int{2}
 }
 func (m *GetRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -147,8 +148,8 @@ func (m *GetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *GetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRequest.Merge(dst, src)
+func (m *GetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRequest.Merge(m, src)
 }
 func (m *GetRequest) XXX_Size() int {
 	return m.Size()
@@ -177,7 +178,7 @@ func (m *GetResponse) Reset()         { *m = GetResponse{} }
 func (m *GetResponse) String() string { return proto.CompactTextString(m) }
 func (*GetResponse) ProtoMessage()    {}
 func (*GetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cache_4423949ee330efde, []int{3}
+	return fileDescriptor_5fca3b110c9bbf3a, []int{3}
 }
 func (m *GetResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -194,8 +195,8 @@ func (m *GetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return b[:n], nil
 	}
 }
-func (dst *GetResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetResponse.Merge(dst, src)
+func (m *GetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetResponse.Merge(m, src)
 }
 func (m *GetResponse) XXX_Size() int {
 	return m.Size()
@@ -218,6 +219,25 @@ func init() {
 	proto.RegisterType((*SetResponse)(nil), "pb.SetResponse")
 	proto.RegisterType((*GetRequest)(nil), "pb.GetRequest")
 	proto.RegisterType((*GetResponse)(nil), "pb.GetResponse")
+}
+
+func init() { proto.RegisterFile("cache.proto", fileDescriptor_5fca3b110c9bbf3a) }
+
+var fileDescriptor_5fca3b110c9bbf3a = []byte{
+	// 205 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4e, 0x4e, 0x4c, 0xce,
+	0x48, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x32, 0xe1, 0xe2, 0x0a,
+	0x4e, 0x2d, 0x09, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x12, 0xe0, 0x62, 0xce, 0x4e, 0xad,
+	0x94, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x02, 0x31, 0x85, 0x44, 0xb8, 0x58, 0xcb, 0x12, 0x73,
+	0x4a, 0x53, 0x25, 0x98, 0xc0, 0x62, 0x10, 0x8e, 0x12, 0x2f, 0x17, 0x37, 0x58, 0x57, 0x71, 0x41,
+	0x7e, 0x5e, 0x71, 0xaa, 0x92, 0x1c, 0x17, 0x97, 0x3b, 0x1e, 0x43, 0x94, 0x94, 0xb9, 0xb8, 0xdd,
+	0x11, 0xca, 0x11, 0x66, 0x32, 0x22, 0x99, 0x69, 0xb4, 0x9d, 0x91, 0x8b, 0xd5, 0x19, 0xe4, 0x3a,
+	0x21, 0x35, 0x2e, 0xe6, 0xe0, 0xd4, 0x12, 0x21, 0x3e, 0xbd, 0x82, 0x24, 0x3d, 0x84, 0xe3, 0xa4,
+	0xf8, 0xe1, 0x7c, 0xa8, 0x39, 0x6a, 0x5c, 0xcc, 0xee, 0x30, 0x75, 0xee, 0x68, 0xea, 0x90, 0xed,
+	0xd3, 0xe5, 0xe2, 0xf0, 0x2d, 0xcd, 0x29, 0xc9, 0x24, 0xc6, 0x50, 0x0d, 0x46, 0x21, 0x7d, 0xa8,
+	0x72, 0x62, 0xcc, 0xd6, 0x60, 0x34, 0x60, 0x74, 0x12, 0x38, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23,
+	0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x67, 0x3c, 0x96, 0x63, 0x48, 0x62, 0x03, 0x07, 0xb0, 0x31,
+	0x20, 0x00, 0x00, 0xff, 0xff, 0x09, 0x5e, 0xe1, 0x6d, 0x6f, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -335,6 +355,23 @@ type CacheServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	MultiSet(Cache_MultiSetServer) error
 	MultiGet(Cache_MultiGetServer) error
+}
+
+// UnimplementedCacheServer can be embedded to have forward compatible implementations.
+type UnimplementedCacheServer struct {
+}
+
+func (*UnimplementedCacheServer) Set(ctx context.Context, req *SetRequest) (*SetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+}
+func (*UnimplementedCacheServer) Get(ctx context.Context, req *GetRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedCacheServer) MultiSet(srv Cache_MultiSetServer) error {
+	return status.Errorf(codes.Unimplemented, "method MultiSet not implemented")
+}
+func (*UnimplementedCacheServer) MultiGet(srv Cache_MultiGetServer) error {
+	return status.Errorf(codes.Unimplemented, "method MultiGet not implemented")
 }
 
 func RegisterCacheServer(s *grpc.Server, srv CacheServer) {
@@ -640,14 +677,7 @@ func (m *GetResponse) Size() (n int) {
 }
 
 func sovCache(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozCache(x uint64) (n int) {
 	return sovCache(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -667,7 +697,7 @@ func (m *SetRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -695,7 +725,7 @@ func (m *SetRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -705,6 +735,9 @@ func (m *SetRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCache
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCache
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -724,7 +757,7 @@ func (m *SetRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -734,6 +767,9 @@ func (m *SetRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCache
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCache
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -746,6 +782,9 @@ func (m *SetRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCache
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCache
 			}
 			if (iNdEx + skippy) > l {
@@ -776,7 +815,7 @@ func (m *SetResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -797,6 +836,9 @@ func (m *SetResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCache
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCache
 			}
 			if (iNdEx + skippy) > l {
@@ -827,7 +869,7 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -855,7 +897,7 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -865,6 +907,9 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCache
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCache
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -877,6 +922,9 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCache
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCache
 			}
 			if (iNdEx + skippy) > l {
@@ -907,7 +955,7 @@ func (m *GetResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -935,7 +983,7 @@ func (m *GetResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -945,6 +993,9 @@ func (m *GetResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCache
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCache
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -957,6 +1008,9 @@ func (m *GetResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCache
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCache
 			}
 			if (iNdEx + skippy) > l {
@@ -1026,8 +1080,11 @@ func skipCache(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
+				return 0, ErrInvalidLengthCache
+			}
+			iNdEx += length
+			if iNdEx < 0 {
 				return 0, ErrInvalidLengthCache
 			}
 			return iNdEx, nil
@@ -1058,6 +1115,9 @@ func skipCache(dAtA []byte) (n int, err error) {
 					return 0, err
 				}
 				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthCache
+				}
 			}
 			return iNdEx, nil
 		case 4:
@@ -1076,22 +1136,3 @@ var (
 	ErrInvalidLengthCache = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowCache   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("cache.proto", fileDescriptor_cache_4423949ee330efde) }
-
-var fileDescriptor_cache_4423949ee330efde = []byte{
-	// 205 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4e, 0x4e, 0x4c, 0xce,
-	0x48, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x32, 0xe1, 0xe2, 0x0a,
-	0x4e, 0x2d, 0x09, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x12, 0xe0, 0x62, 0xce, 0x4e, 0xad,
-	0x94, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x02, 0x31, 0x85, 0x44, 0xb8, 0x58, 0xcb, 0x12, 0x73,
-	0x4a, 0x53, 0x25, 0x98, 0xc0, 0x62, 0x10, 0x8e, 0x12, 0x2f, 0x17, 0x37, 0x58, 0x57, 0x71, 0x41,
-	0x7e, 0x5e, 0x71, 0xaa, 0x92, 0x1c, 0x17, 0x97, 0x3b, 0x1e, 0x43, 0x94, 0x94, 0xb9, 0xb8, 0xdd,
-	0x11, 0xca, 0x11, 0x66, 0x32, 0x22, 0x99, 0x69, 0xb4, 0x9d, 0x91, 0x8b, 0xd5, 0x19, 0xe4, 0x3a,
-	0x21, 0x35, 0x2e, 0xe6, 0xe0, 0xd4, 0x12, 0x21, 0x3e, 0xbd, 0x82, 0x24, 0x3d, 0x84, 0xe3, 0xa4,
-	0xf8, 0xe1, 0x7c, 0xa8, 0x39, 0x6a, 0x5c, 0xcc, 0xee, 0x30, 0x75, 0xee, 0x68, 0xea, 0x90, 0xed,
-	0xd3, 0xe5, 0xe2, 0xf0, 0x2d, 0xcd, 0x29, 0xc9, 0x24, 0xc6, 0x50, 0x0d, 0x46, 0x21, 0x7d, 0xa8,
-	0x72, 0x62, 0xcc, 0xd6, 0x60, 0x34, 0x60, 0x74, 0x12, 0x38, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23,
-	0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x67, 0x3c, 0x96, 0x63, 0x48, 0x62, 0x03, 0x07, 0xb0, 0x31,
-	0x20, 0x00, 0x00, 0xff, 0xff, 0x09, 0x5e, 0xe1, 0x6d, 0x6f, 0x01, 0x00, 0x00,
-}
