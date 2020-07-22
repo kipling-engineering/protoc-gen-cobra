@@ -13,112 +13,112 @@ import (
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// NestedMessagesClient is the client API for NestedMessages service.
+// NestedClient is the client API for Nested service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type NestedMessagesClient interface {
+type NestedClient interface {
 	Get(ctx context.Context, in *NestedRequest, opts ...grpc.CallOption) (*NestedResponse, error)
 	GetDeeplyNested(ctx context.Context, in *DeeplyNested, opts ...grpc.CallOption) (*NestedResponse, error)
 }
 
-type nestedMessagesClient struct {
+type nestedClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewNestedMessagesClient(cc grpc.ClientConnInterface) NestedMessagesClient {
-	return &nestedMessagesClient{cc}
+func NewNestedClient(cc grpc.ClientConnInterface) NestedClient {
+	return &nestedClient{cc}
 }
 
-func (c *nestedMessagesClient) Get(ctx context.Context, in *NestedRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
+func (c *nestedClient) Get(ctx context.Context, in *NestedRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
 	out := new(NestedResponse)
-	err := c.cc.Invoke(ctx, "/pb.NestedMessages/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.Nested/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *nestedMessagesClient) GetDeeplyNested(ctx context.Context, in *DeeplyNested, opts ...grpc.CallOption) (*NestedResponse, error) {
+func (c *nestedClient) GetDeeplyNested(ctx context.Context, in *DeeplyNested, opts ...grpc.CallOption) (*NestedResponse, error) {
 	out := new(NestedResponse)
-	err := c.cc.Invoke(ctx, "/pb.NestedMessages/GetDeeplyNested", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.Nested/GetDeeplyNested", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// NestedMessagesServer is the server API for NestedMessages service.
-// All implementations must embed UnimplementedNestedMessagesServer
+// NestedServer is the server API for Nested service.
+// All implementations must embed UnimplementedNestedServer
 // for forward compatibility
-type NestedMessagesServer interface {
+type NestedServer interface {
 	Get(context.Context, *NestedRequest) (*NestedResponse, error)
 	GetDeeplyNested(context.Context, *DeeplyNested) (*NestedResponse, error)
-	mustEmbedUnimplementedNestedMessagesServer()
+	mustEmbedUnimplementedNestedServer()
 }
 
-// UnimplementedNestedMessagesServer must be embedded to have forward compatible implementations.
-type UnimplementedNestedMessagesServer struct {
+// UnimplementedNestedServer must be embedded to have forward compatible implementations.
+type UnimplementedNestedServer struct {
 }
 
-func (*UnimplementedNestedMessagesServer) Get(context.Context, *NestedRequest) (*NestedResponse, error) {
+func (*UnimplementedNestedServer) Get(context.Context, *NestedRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedNestedMessagesServer) GetDeeplyNested(context.Context, *DeeplyNested) (*NestedResponse, error) {
+func (*UnimplementedNestedServer) GetDeeplyNested(context.Context, *DeeplyNested) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeeplyNested not implemented")
 }
-func (*UnimplementedNestedMessagesServer) mustEmbedUnimplementedNestedMessagesServer() {}
+func (*UnimplementedNestedServer) mustEmbedUnimplementedNestedServer() {}
 
-func RegisterNestedMessagesServer(s *grpc.Server, srv NestedMessagesServer) {
-	s.RegisterService(&_NestedMessages_serviceDesc, srv)
+func RegisterNestedServer(s *grpc.Server, srv NestedServer) {
+	s.RegisterService(&_Nested_serviceDesc, srv)
 }
 
-func _NestedMessages_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Nested_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NestedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NestedMessagesServer).Get(ctx, in)
+		return srv.(NestedServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.NestedMessages/Get",
+		FullMethod: "/example.Nested/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NestedMessagesServer).Get(ctx, req.(*NestedRequest))
+		return srv.(NestedServer).Get(ctx, req.(*NestedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NestedMessages_GetDeeplyNested_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Nested_GetDeeplyNested_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeeplyNested)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NestedMessagesServer).GetDeeplyNested(ctx, in)
+		return srv.(NestedServer).GetDeeplyNested(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.NestedMessages/GetDeeplyNested",
+		FullMethod: "/example.Nested/GetDeeplyNested",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NestedMessagesServer).GetDeeplyNested(ctx, req.(*DeeplyNested))
+		return srv.(NestedServer).GetDeeplyNested(ctx, req.(*DeeplyNested))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _NestedMessages_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.NestedMessages",
-	HandlerType: (*NestedMessagesServer)(nil),
+var _Nested_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "example.Nested",
+	HandlerType: (*NestedServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Get",
-			Handler:    _NestedMessages_Get_Handler,
+			Handler:    _Nested_Get_Handler,
 		},
 		{
 			MethodName: "GetDeeplyNested",
-			Handler:    _NestedMessages_GetDeeplyNested_Handler,
+			Handler:    _Nested_GetDeeplyNested_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

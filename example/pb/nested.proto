@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package pb;
+package example;
 
 option go_package = ".;pb";
 
-service NestedMessages {
+service Nested {
     rpc Get (NestedRequest) returns (NestedResponse);
     rpc GetDeeplyNested (DeeplyNested) returns (NestedResponse);
 }

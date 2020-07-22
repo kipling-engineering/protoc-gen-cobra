@@ -30,7 +30,7 @@ func NewBankClient(cc grpc.ClientConnInterface) BankClient {
 
 func (c *bankClient) Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositReply, error) {
 	out := new(DepositReply)
-	err := c.cc.Invoke(ctx, "/pb.Bank/Deposit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.Bank/Deposit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func _Bank_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Bank/Deposit",
+		FullMethod: "/example.Bank/Deposit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BankServer).Deposit(ctx, req.(*DepositRequest))
@@ -77,7 +77,7 @@ func _Bank_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interf
 }
 
 var _Bank_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Bank",
+	ServiceName: "example.Bank",
 	HandlerType: (*BankServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

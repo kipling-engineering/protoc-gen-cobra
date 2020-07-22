@@ -33,7 +33,7 @@ func NewCacheClient(cc grpc.ClientConnInterface) CacheClient {
 
 func (c *cacheClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetResponse, error) {
 	out := new(SetResponse)
-	err := c.cc.Invoke(ctx, "/pb.Cache/Set", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.Cache/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (c *cacheClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.Call
 
 func (c *cacheClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/pb.Cache/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.Cache/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *cacheClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.Call
 }
 
 func (c *cacheClient) MultiSet(ctx context.Context, opts ...grpc.CallOption) (Cache_MultiSetClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Cache_serviceDesc.Streams[0], "/pb.Cache/MultiSet", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Cache_serviceDesc.Streams[0], "/example.Cache/MultiSet", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (x *cacheMultiSetClient) CloseAndRecv() (*SetResponse, error) {
 }
 
 func (c *cacheClient) MultiGet(ctx context.Context, opts ...grpc.CallOption) (Cache_MultiGetClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Cache_serviceDesc.Streams[1], "/pb.Cache/MultiGet", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Cache_serviceDesc.Streams[1], "/example.Cache/MultiGet", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func _Cache_Set_Handler(srv interface{}, ctx context.Context, dec func(interface
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Cache/Set",
+		FullMethod: "/example.Cache/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CacheServer).Set(ctx, req.(*SetRequest))
@@ -175,7 +175,7 @@ func _Cache_Get_Handler(srv interface{}, ctx context.Context, dec func(interface
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Cache/Get",
+		FullMethod: "/example.Cache/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CacheServer).Get(ctx, req.(*GetRequest))
@@ -236,7 +236,7 @@ func (x *cacheMultiGetServer) Recv() (*GetRequest, error) {
 }
 
 var _Cache_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Cache",
+	ServiceName: "example.Cache",
 	HandlerType: (*CacheServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

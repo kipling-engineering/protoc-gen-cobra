@@ -33,7 +33,7 @@ func NewCRUDClient(cc grpc.ClientConnInterface) CRUDClient {
 
 func (c *cRUDClient) Create(ctx context.Context, in *CreateCRUD, opts ...grpc.CallOption) (*CRUDObject, error) {
 	out := new(CRUDObject)
-	err := c.cc.Invoke(ctx, "/pb.CRUD/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.CRUD/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (c *cRUDClient) Create(ctx context.Context, in *CreateCRUD, opts ...grpc.Ca
 
 func (c *cRUDClient) Get(ctx context.Context, in *GetCRUD, opts ...grpc.CallOption) (*CRUDObject, error) {
 	out := new(CRUDObject)
-	err := c.cc.Invoke(ctx, "/pb.CRUD/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.CRUD/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *cRUDClient) Get(ctx context.Context, in *GetCRUD, opts ...grpc.CallOpti
 
 func (c *cRUDClient) Update(ctx context.Context, in *CRUDObject, opts ...grpc.CallOption) (*CRUDObject, error) {
 	out := new(CRUDObject)
-	err := c.cc.Invoke(ctx, "/pb.CRUD/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.CRUD/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (c *cRUDClient) Update(ctx context.Context, in *CRUDObject, opts ...grpc.Ca
 
 func (c *cRUDClient) Delete(ctx context.Context, in *CRUDObject, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/pb.CRUD/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.CRUD/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func _CRUD_Create_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.CRUD/Create",
+		FullMethod: "/example.CRUD/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRUDServer).Create(ctx, req.(*CreateCRUD))
@@ -128,7 +128,7 @@ func _CRUD_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.CRUD/Get",
+		FullMethod: "/example.CRUD/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRUDServer).Get(ctx, req.(*GetCRUD))
@@ -146,7 +146,7 @@ func _CRUD_Update_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.CRUD/Update",
+		FullMethod: "/example.CRUD/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRUDServer).Update(ctx, req.(*CRUDObject))
@@ -164,7 +164,7 @@ func _CRUD_Delete_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.CRUD/Delete",
+		FullMethod: "/example.CRUD/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRUDServer).Delete(ctx, req.(*CRUDObject))
@@ -173,7 +173,7 @@ func _CRUD_Delete_Handler(srv interface{}, ctx context.Context, dec func(interfa
 }
 
 var _CRUD_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.CRUD",
+	ServiceName: "example.CRUD",
 	HandlerType: (*CRUDServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

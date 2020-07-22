@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = ".;pb";
+
+service Types {
+    rpc Echo (Sound) returns (Sound);
+}
+
+message Sound {
+    map<string, string> map_field = 1;
+    repeated string list_field = 2;
+}

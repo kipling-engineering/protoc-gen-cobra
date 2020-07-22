@@ -16,19 +16,17 @@ type Cache struct {
 }
 
 func NewCache() *Cache {
-	return &Cache{
-		kv: make(map[string]string),
-	}
+	return &Cache{kv: make(map[string]string)}
 }
 
-func (c *Cache) Set(ctx context.Context, in *pb.SetRequest) (*pb.SetResponse, error) {
+func (c *Cache) Set(_ context.Context, in *pb.SetRequest) (*pb.SetResponse, error) {
 	c.mu.Lock()
 	c.kv[in.Key] = in.Value
 	c.mu.Unlock()
 	return &pb.SetResponse{}, nil
 }
 
-func (c *Cache) Get(ctx context.Context, in *pb.GetRequest) (*pb.GetResponse, error) {
+func (c *Cache) Get(_ context.Context, in *pb.GetRequest) (*pb.GetResponse, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	return &pb.GetResponse{
@@ -64,8 +62,8 @@ func (c *Cache) MultiGet(stream pb.Cache_MultiGetServer) error {
 		c.mu.Lock()
 		v := c.kv[req.Key]
 		c.mu.Unlock()
-		stream.Send(&pb.GetResponse{
-			Value: v,
-		})
+		if err := stream.Send(&pb.GetResponse{Value: v}); err != nil {
+			return err
+		}
 	}
 }

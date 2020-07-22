@@ -3,10 +3,9 @@ package main
 import (
 	"sync"
 
-	"google.golang.org/grpc/status"
-
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/example/pb"
 )
@@ -19,6 +18,7 @@ type CRUD struct {
 func NewCRUD() *CRUD {
 	return &CRUD{kv: sync.Map{}}
 }
+
 func (c *CRUD) Create(_ context.Context, req *pb.CreateCRUD) (*pb.CRUDObject, error) {
 	c.kv.Store(req.Name, req.Value)
 	return &pb.CRUDObject{

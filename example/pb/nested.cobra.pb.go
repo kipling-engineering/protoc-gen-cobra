@@ -23,14 +23,14 @@ import (
 	time "time"
 )
 
-var NestedMessagesClientDefaultConfig = &_NestedMessagesClientConfig{
+var NestedClientDefaultConfig = &_NestedClientConfig{
 	ServerAddr:     "localhost:8080",
 	ResponseFormat: "json",
 	Timeout:        10 * time.Second,
 	AuthTokenType:  "Bearer",
 }
 
-type _NestedMessagesClientConfig struct {
+type _NestedClientConfig struct {
 	ServerAddr         string
 	RequestFile        string
 	Stdin              bool
@@ -48,7 +48,7 @@ type _NestedMessagesClientConfig struct {
 	JWTKeyFile         string
 }
 
-func (o *_NestedMessagesClientConfig) addFlags(fs *pflag.FlagSet) {
+func (o *_NestedClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVarP(&o.ServerAddr, "server-addr", "s", o.ServerAddr, "server address in form of host:port")
 	fs.StringVarP(&o.RequestFile, "request-file", "f", o.RequestFile, "client request file (must be json, yaml, or xml); use \"-\" for stdin + json")
 	fs.BoolVar(&o.Stdin, "stdin", o.Stdin, "read client request from STDIN; alternative for '-f -'")
@@ -66,22 +66,22 @@ func (o *_NestedMessagesClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.JWTKeyFile, "jwt-key-file", o.JWTKeyFile, "jwt key file")
 }
 
-func NestedMessagesClientCommand() *cobra.Command {
+func NestedClientCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "nestedmessages",
-		Short: "NestedMessages service client",
+		Use:   "nested",
+		Short: "Nested service client",
 		Long:  "",
 	}
-	NestedMessagesClientDefaultConfig.addFlags(cmd.PersistentFlags())
+	NestedClientDefaultConfig.addFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_NestedMessagesGetCommand(),
-		_NestedMessagesGetDeeplyNestedCommand(),
+		_NestedGetCommand(),
+		_NestedGetDeeplyNestedCommand(),
 	)
 	return cmd
 }
 
-func _NestedMessagesDial(ctx context.Context) (*grpc.ClientConn, NestedMessagesClient, error) {
-	cfg := NestedMessagesClientDefaultConfig
+func _NestedDial(ctx context.Context) (*grpc.ClientConn, NestedClient, error) {
+	cfg := NestedClientDefaultConfig
 	opts := []grpc.DialOption{grpc.WithBlock()}
 	if cfg.TLS {
 		tlsConfig := &tls.Config{InsecureSkipVerify: cfg.InsecureSkipVerify}
@@ -145,13 +145,13 @@ func _NestedMessagesDial(ctx context.Context) (*grpc.ClientConn, NestedMessagesC
 	if err != nil {
 		return nil, nil, err
 	}
-	return conn, NewNestedMessagesClient(conn), nil
+	return conn, NewNestedClient(conn), nil
 }
 
-type _NestedMessagesRoundTripFunc func(cli NestedMessagesClient, in iocodec.Decoder, out iocodec.Encoder) error
+type _NestedRoundTripFunc func(cli NestedClient, in iocodec.Decoder, out iocodec.Encoder) error
 
-func _NestedMessagesRoundTrip(ctx context.Context, fn _NestedMessagesRoundTripFunc) error {
-	cfg := NestedMessagesClientDefaultConfig
+func _NestedRoundTrip(ctx context.Context, fn _NestedRoundTripFunc) error {
+	cfg := NestedClientDefaultConfig
 	var dm iocodec.DecoderMaker
 	r := os.Stdin
 	if cfg.Stdin || cfg.RequestFile == "-" {
@@ -178,7 +178,7 @@ func _NestedMessagesRoundTrip(ctx context.Context, fn _NestedMessagesRoundTripFu
 	} else if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
 		return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
 	}
-	conn, client, err := _NestedMessagesDial(ctx)
+	conn, client, err := _NestedDial(ctx)
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func _NestedMessagesRoundTrip(ctx context.Context, fn _NestedMessagesRoundTripFu
 	return fn(client, dm.NewDecoder(r), em.NewEncoder(os.Stdout))
 }
 
-func _NestedMessagesGetCommand() *cobra.Command {
+func _NestedGetCommand() *cobra.Command {
 	req := &NestedRequest{
 		Inner:    &NestedRequest_InnerNestedType{},
 		TopLevel: &TopLevelNestedType{},
@@ -197,7 +197,7 @@ func _NestedMessagesGetCommand() *cobra.Command {
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return _NestedMessagesRoundTrip(cmd.Context(), func(cli NestedMessagesClient, in iocodec.Decoder, out iocodec.Encoder) error {
+			return _NestedRoundTrip(cmd.Context(), func(cli NestedClient, in iocodec.Decoder, out iocodec.Encoder) error {
 				v := &NestedRequest{}
 
 				if err := in.Decode(v); err != nil {
@@ -223,7 +223,7 @@ func _NestedMessagesGetCommand() *cobra.Command {
 	return cmd
 }
 
-func _NestedMessagesGetDeeplyNestedCommand() *cobra.Command {
+func _NestedGetDeeplyNestedCommand() *cobra.Command {
 	req := &DeeplyNested{
 		L0: &DeeplyNested_DeeplyNestedOuter{
 			L1: &DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner{
@@ -237,7 +237,7 @@ func _NestedMessagesGetDeeplyNestedCommand() *cobra.Command {
 		Short: "GetDeeplyNested RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return _NestedMessagesRoundTrip(cmd.Context(), func(cli NestedMessagesClient, in iocodec.Decoder, out iocodec.Encoder) error {
+			return _NestedRoundTrip(cmd.Context(), func(cli NestedClient, in iocodec.Decoder, out iocodec.Encoder) error {
 				v := &DeeplyNested{}
 
 				if err := in.Decode(v); err != nil {

@@ -14,13 +14,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	opts := []grpc.ServerOption{}
-	srv := grpc.NewServer(opts...)
+	srv := grpc.NewServer()
 	pb.RegisterBankServer(srv, NewBank())
 	pb.RegisterCacheServer(srv, NewCache())
 	pb.RegisterTimerServer(srv, NewTimer())
 	pb.RegisterCRUDServer(srv, NewCRUD())
-	pb.RegisterNestedMessagesServer(srv, &NestedMessage{})
+	pb.RegisterNestedServer(srv, NewNested())
+	pb.RegisterTypesServer(srv, NewTypes())
 	err = srv.Serve(ln)
 	if err != nil {
 		log.Fatal(err)

@@ -23,14 +23,14 @@ import (
 	time "time"
 )
 
-var MapListClientDefaultConfig = &_MapListClientConfig{
+var TypesClientDefaultConfig = &_TypesClientConfig{
 	ServerAddr:     "localhost:8080",
 	ResponseFormat: "json",
 	Timeout:        10 * time.Second,
 	AuthTokenType:  "Bearer",
 }
 
-type _MapListClientConfig struct {
+type _TypesClientConfig struct {
 	ServerAddr         string
 	RequestFile        string
 	Stdin              bool
@@ -48,7 +48,7 @@ type _MapListClientConfig struct {
 	JWTKeyFile         string
 }
 
-func (o *_MapListClientConfig) addFlags(fs *pflag.FlagSet) {
+func (o *_TypesClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVarP(&o.ServerAddr, "server-addr", "s", o.ServerAddr, "server address in form of host:port")
 	fs.StringVarP(&o.RequestFile, "request-file", "f", o.RequestFile, "client request file (must be json, yaml, or xml); use \"-\" for stdin + json")
 	fs.BoolVar(&o.Stdin, "stdin", o.Stdin, "read client request from STDIN; alternative for '-f -'")
@@ -66,21 +66,21 @@ func (o *_MapListClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.JWTKeyFile, "jwt-key-file", o.JWTKeyFile, "jwt key file")
 }
 
-func MapListClientCommand() *cobra.Command {
+func TypesClientCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "maplist",
-		Short: "MapList service client",
+		Use:   "types",
+		Short: "Types service client",
 		Long:  "",
 	}
-	MapListClientDefaultConfig.addFlags(cmd.PersistentFlags())
+	TypesClientDefaultConfig.addFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_MapListMethodCommand(),
+		_TypesEchoCommand(),
 	)
 	return cmd
 }
 
-func _MapListDial(ctx context.Context) (*grpc.ClientConn, MapListClient, error) {
-	cfg := MapListClientDefaultConfig
+func _TypesDial(ctx context.Context) (*grpc.ClientConn, TypesClient, error) {
+	cfg := TypesClientDefaultConfig
 	opts := []grpc.DialOption{grpc.WithBlock()}
 	if cfg.TLS {
 		tlsConfig := &tls.Config{InsecureSkipVerify: cfg.InsecureSkipVerify}
@@ -144,13 +144,13 @@ func _MapListDial(ctx context.Context) (*grpc.ClientConn, MapListClient, error) 
 	if err != nil {
 		return nil, nil, err
 	}
-	return conn, NewMapListClient(conn), nil
+	return conn, NewTypesClient(conn), nil
 }
 
-type _MapListRoundTripFunc func(cli MapListClient, in iocodec.Decoder, out iocodec.Encoder) error
+type _TypesRoundTripFunc func(cli TypesClient, in iocodec.Decoder, out iocodec.Encoder) error
 
-func _MapListRoundTrip(ctx context.Context, fn _MapListRoundTripFunc) error {
-	cfg := MapListClientDefaultConfig
+func _TypesRoundTrip(ctx context.Context, fn _TypesRoundTripFunc) error {
+	cfg := TypesClientDefaultConfig
 	var dm iocodec.DecoderMaker
 	r := os.Stdin
 	if cfg.Stdin || cfg.RequestFile == "-" {
@@ -177,7 +177,7 @@ func _MapListRoundTrip(ctx context.Context, fn _MapListRoundTripFunc) error {
 	} else if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
 		return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
 	}
-	conn, client, err := _MapListDial(ctx)
+	conn, client, err := _TypesDial(ctx)
 	if err != nil {
 		return err
 	}
@@ -185,23 +185,23 @@ func _MapListRoundTrip(ctx context.Context, fn _MapListRoundTripFunc) error {
 	return fn(client, dm.NewDecoder(r), em.NewEncoder(os.Stdout))
 }
 
-func _MapListMethodCommand() *cobra.Command {
-	req := &MapListRequest{}
+func _TypesEchoCommand() *cobra.Command {
+	req := &Sound{}
 
 	cmd := &cobra.Command{
-		Use:   "method",
-		Short: "Method RPC client",
+		Use:   "echo",
+		Short: "Echo RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return _MapListRoundTrip(cmd.Context(), func(cli MapListClient, in iocodec.Decoder, out iocodec.Encoder) error {
-				v := &MapListRequest{}
+			return _TypesRoundTrip(cmd.Context(), func(cli TypesClient, in iocodec.Decoder, out iocodec.Encoder) error {
+				v := &Sound{}
 
 				if err := in.Decode(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
 
-				res, err := cli.Method(cmd.Context(), v)
+				res, err := cli.Echo(cmd.Context(), v)
 
 				if err != nil {
 					return err

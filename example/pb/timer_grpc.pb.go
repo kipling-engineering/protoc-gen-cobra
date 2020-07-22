@@ -29,7 +29,7 @@ func NewTimerClient(cc grpc.ClientConnInterface) TimerClient {
 }
 
 func (c *timerClient) Tick(ctx context.Context, in *TickRequest, opts ...grpc.CallOption) (Timer_TickClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Timer_serviceDesc.Streams[0], "/pb.Timer/Tick", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Timer_serviceDesc.Streams[0], "/example.Timer/Tick", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (x *timerTickServer) Send(m *TickResponse) error {
 }
 
 var _Timer_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Timer",
+	ServiceName: "example.Timer",
 	HandlerType: (*TimerServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
