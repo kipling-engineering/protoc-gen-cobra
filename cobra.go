@@ -476,7 +476,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 				// TODO: support list of known types
 				fieldId := g.QualifiedGoIdent(fld.Message.GoIdent)
 				flagId := g.QualifiedGoIdent(flagType)
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Var(%s(func() *%s { return req.%s }, func(v *%s) { req.%s = v }), %q, %q)", flagId, fieldId, goPath, fieldId, goPath, flagName, comment)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Var(%s(func(v *%s) { req.%s = v }), %q, %q)", flagId, fieldId, goPath, flagName, comment)
 			} else {
 				i, f := walkFields(g, fld.Message, path, enums)
 				if i != "" {

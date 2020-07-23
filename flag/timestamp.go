@@ -7,13 +7,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type TimestampValue struct {
-	get func() *timestamp.Timestamp
-	set func(*timestamp.Timestamp)
-}
+type TimestampValue func(*timestamp.Timestamp)
 
-func NewTimestampValue(get func() *timestamp.Timestamp, set func(*timestamp.Timestamp)) *TimestampValue {
-	return &TimestampValue{get, set}
+func NewTimestampValue(set func(*timestamp.Timestamp)) *TimestampValue {
+	v := TimestampValue(set)
+	return &v
 }
 
 func (v *TimestampValue) Set(s string) (err error) {
@@ -33,7 +31,7 @@ func (v *TimestampValue) Set(s string) (err error) {
 		if err != nil {
 			continue
 		}
-		v.set(timestamppb.New(t))
+		(*v)(timestamppb.New(t))
 		break
 	}
 	return
@@ -41,9 +39,4 @@ func (v *TimestampValue) Set(s string) (err error) {
 
 func (v *TimestampValue) Type() string { return "Timestamp" }
 
-func (v *TimestampValue) String() string {
-	if w := v.get(); w != nil {
-		return w.AsTime().Format(time.RFC3339Nano)
-	}
-	return ""
-}
+func (v *TimestampValue) String() string { return "<nil>" }

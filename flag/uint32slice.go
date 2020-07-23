@@ -37,13 +37,7 @@ func (s *uint32SliceValue) Set(val string) error {
 
 func (s *uint32SliceValue) Type() string { return "uint32Slice" }
 
-func (s *uint32SliceValue) String() string {
-	out := make([]string, len(*s.value))
-	for i, d := range *s.value {
-		out[i] = s.toString(d)
-	}
-	return "[" + strings.Join(out, ",") + "]"
-}
+func (s *uint32SliceValue) String() string { return "[]" }
 
 func (s *uint32SliceValue) Append(val string) error {
 	d, err := s.fromString(val)
