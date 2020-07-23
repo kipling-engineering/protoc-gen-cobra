@@ -1,5 +1,9 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+
 package example;
 
 option go_package = ".;pb";
@@ -46,6 +50,30 @@ message Sound {
     NestedEnum nested_enum = 43;
     GlobalEnum global_enum = 44;
     repeated NestedEnum list_enum = 45;
+
+    google.protobuf.Timestamp timestamp = 51;
+    google.protobuf.Duration duration = 52;
+    google.protobuf.BoolValue wrapper_bool = 53;
+    google.protobuf.BytesValue wrapper_bytes = 54;
+    google.protobuf.DoubleValue wrapper_double = 55;
+    google.protobuf.FloatValue wrapper_float = 56;
+    google.protobuf.Int32Value wrapper_int32 = 57;
+    google.protobuf.Int64Value wrapper_int64 = 58;
+    google.protobuf.StringValue wrapper_string = 59;
+    google.protobuf.UInt32Value wrapper_uint32 = 60;
+    google.protobuf.UInt64Value wrapper_uint64 = 61;
+
+    repeated google.protobuf.Timestamp list_timestamp = 71;
+    repeated google.protobuf.Duration list_duration = 72;
+    repeated google.protobuf.BoolValue list_wrapper_bool = 73;
+    repeated google.protobuf.BytesValue list_wrapper_bytes = 74;
+    repeated google.protobuf.DoubleValue list_wrapper_double = 75;
+    repeated google.protobuf.FloatValue list_wrapper_float = 76;
+    repeated google.protobuf.Int32Value list_wrapper_int32 = 77;
+    repeated google.protobuf.Int64Value list_wrapper_int64 = 78;
+    repeated google.protobuf.StringValue list_wrapper_string = 79;
+    repeated google.protobuf.UInt32Value list_wrapper_uint32 = 80;
+    repeated google.protobuf.UInt64Value list_wrapper_uint64 = 81;
 
     enum NestedEnum {
         JAN = 0;

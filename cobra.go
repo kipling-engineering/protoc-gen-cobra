@@ -355,7 +355,25 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 	return methodTemplate.Execute(g, data)
 }
 
-var flagPkg = protogen.GoImportPath("github.com/NathanBaulch/protoc-gen-cobra/flag")
+var (
+	flagPkg      = protogen.GoImportPath("github.com/NathanBaulch/protoc-gen-cobra/flag")
+	wrappersPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/wrappers")
+	timestampPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/timestamp")
+	durationPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/duration")
+	knownTypes   = map[protogen.GoIdent]protogen.GoIdent{
+		timestampPkg.Ident("Timestamp"):  flagPkg.Ident("NewTimestampValue"),
+		durationPkg.Ident("Duration"):    flagPkg.Ident("NewDurationValue"),
+		wrappersPkg.Ident("DoubleValue"): flagPkg.Ident("NewDoubleWrapperValue"),
+		wrappersPkg.Ident("FloatValue"):  flagPkg.Ident("NewFloatWrapperValue"),
+		wrappersPkg.Ident("Int64Value"):  flagPkg.Ident("NewInt64WrapperValue"),
+		wrappersPkg.Ident("UInt64Value"): flagPkg.Ident("NewUInt64WrapperValue"),
+		wrappersPkg.Ident("Int32Value"):  flagPkg.Ident("NewInt32WrapperValue"),
+		wrappersPkg.Ident("UInt32Value"): flagPkg.Ident("NewUInt32WrapperValue"),
+		wrappersPkg.Ident("BoolValue"):   flagPkg.Ident("NewBoolWrapperValue"),
+		wrappersPkg.Ident("StringValue"): flagPkg.Ident("NewStringWrapperValue"),
+		wrappersPkg.Ident("BytesValue"):  flagPkg.Ident("NewBytesBase64WrapperValue"),
+	}
+)
 
 func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum) (string, string) {
 	var initLines []string
@@ -454,6 +472,11 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 					}
 				}
+			} else if flagType, ok := knownTypes[fld.Message.GoIdent]; ok {
+				// TODO: support list of known types
+				fieldId := g.QualifiedGoIdent(fld.Message.GoIdent)
+				flagId := g.QualifiedGoIdent(flagType)
+				flagLine = fmt.Sprintf("cmd.PersistentFlags().Var(%s(func() *%s { return req.%s }, func(v *%s) { req.%s = v }), %q, %q)", flagId, fieldId, goPath, fieldId, goPath, flagName, comment)
 			} else {
 				i, f := walkFields(g, fld.Message, path, enums)
 				if i != "" {
