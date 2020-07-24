@@ -421,7 +421,8 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			}
 		case protoreflect.BytesKind:
 			if fld.Desc.IsList() {
-				// bytes list not supported
+				id := g.QualifiedGoIdent(flagPkg.Ident("BytesBase64SliceVar"))
+				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
 			} else {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().BytesBase64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 			}

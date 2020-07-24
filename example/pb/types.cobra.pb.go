@@ -245,6 +245,7 @@ func _TypesEchoCommand() *cobra.Command {
 	cmd.PersistentFlags().Uint32Var(&req.Uint32, "uint32", 0, "")
 	cmd.PersistentFlags().Uint64Var(&req.Fixed64, "fixed64", 0, "")
 	cmd.PersistentFlags().Uint64Var(&req.Uint64, "uint64", 0, "")
+	flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.ListBytes, "listbytes", "")
 	flag.Uint32SliceVar(cmd.PersistentFlags(), &req.ListFixed32, "listfixed32", "")
 	flag.Uint32SliceVar(cmd.PersistentFlags(), &req.ListUint32, "listuint32", "")
 	flag.Uint64SliceVar(cmd.PersistentFlags(), &req.ListFixed64, "listfixed64", "")
