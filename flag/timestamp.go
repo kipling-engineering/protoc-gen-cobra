@@ -2,16 +2,18 @@ package flag
 
 import (
 	"time"
+	"unsafe"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type TimestampValue func(*timestamp.Timestamp)
+type TimestampValue struct {
+	ptr unsafe.Pointer
+}
 
-func NewTimestampValue(set func(*timestamp.Timestamp)) *TimestampValue {
-	v := TimestampValue(set)
-	return &v
+func NewTimestampValue(value **timestamp.Timestamp) *TimestampValue {
+	return &TimestampValue{unsafe.Pointer(value)}
 }
 
 func (v *TimestampValue) Set(s string) (err error) {
@@ -31,7 +33,7 @@ func (v *TimestampValue) Set(s string) (err error) {
 		if err != nil {
 			continue
 		}
-		(*v)(timestamppb.New(t))
+		*(**timestamp.Timestamp)(v.ptr) = timestamppb.New(t)
 		break
 	}
 	return

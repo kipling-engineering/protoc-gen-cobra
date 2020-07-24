@@ -2,16 +2,18 @@ package flag
 
 import (
 	"time"
+	"unsafe"
 
 	"github.com/golang/protobuf/ptypes/duration"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-type DurationValue func(*duration.Duration)
+type DurationValue struct {
+	ptr unsafe.Pointer
+}
 
-func NewDurationValue(set func(*duration.Duration)) *DurationValue {
-	v := DurationValue(set)
-	return &v
+func NewDurationValue(value **duration.Duration) *DurationValue {
+	return &DurationValue{unsafe.Pointer(value)}
 }
 
 func (v *DurationValue) Set(s string) error {
@@ -19,7 +21,7 @@ func (v *DurationValue) Set(s string) error {
 	if err != nil {
 		return err
 	}
-	(*v)(durationpb.New(d))
+	*(**duration.Duration)(v.ptr) = durationpb.New(d)
 	return nil
 }
 

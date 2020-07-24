@@ -10,9 +10,6 @@ import (
 	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	proto "github.com/golang/protobuf/proto"
-	duration "github.com/golang/protobuf/ptypes/duration"
-	timestamp "github.com/golang/protobuf/ptypes/timestamp"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	cobra "github.com/spf13/cobra"
 	pflag "github.com/spf13/pflag"
 	oauth2 "golang.org/x/oauth2"
@@ -248,17 +245,17 @@ func _TypesEchoCommand() *cobra.Command {
 	cmd.PersistentFlags().Uint32Var(&req.Uint32, "uint32", 0, "")
 	cmd.PersistentFlags().Uint64Var(&req.Fixed64, "fixed64", 0, "")
 	cmd.PersistentFlags().Uint64Var(&req.Uint64, "uint64", 0, "")
-	cmd.PersistentFlags().Var(flag.NewBoolWrapperValue(func(v *wrappers.BoolValue) { req.WrapperBool = v }), "wrapperbool", "")
-	cmd.PersistentFlags().Var(flag.NewBytesBase64WrapperValue(func(v *wrappers.BytesValue) { req.WrapperBytes = v }), "wrapperbytes", "")
-	cmd.PersistentFlags().Var(flag.NewDoubleWrapperValue(func(v *wrappers.DoubleValue) { req.WrapperDouble = v }), "wrapperdouble", "")
-	cmd.PersistentFlags().Var(flag.NewDurationValue(func(v *duration.Duration) { req.Duration = v }), "duration", "")
-	cmd.PersistentFlags().Var(flag.NewFloatWrapperValue(func(v *wrappers.FloatValue) { req.WrapperFloat = v }), "wrapperfloat", "")
-	cmd.PersistentFlags().Var(flag.NewInt32WrapperValue(func(v *wrappers.Int32Value) { req.WrapperInt32 = v }), "wrapperint32", "")
-	cmd.PersistentFlags().Var(flag.NewInt64WrapperValue(func(v *wrappers.Int64Value) { req.WrapperInt64 = v }), "wrapperint64", "")
-	cmd.PersistentFlags().Var(flag.NewStringWrapperValue(func(v *wrappers.StringValue) { req.WrapperString = v }), "wrapperstring", "")
-	cmd.PersistentFlags().Var(flag.NewTimestampValue(func(v *timestamp.Timestamp) { req.Timestamp = v }), "timestamp", "")
-	cmd.PersistentFlags().Var(flag.NewUInt32WrapperValue(func(v *wrappers.UInt32Value) { req.WrapperUint32 = v }), "wrapperuint32", "")
-	cmd.PersistentFlags().Var(flag.NewUInt64WrapperValue(func(v *wrappers.UInt64Value) { req.WrapperUint64 = v }), "wrapperuint64", "")
+	cmd.PersistentFlags().Var(flag.NewBoolWrapperValue(&req.WrapperBool), "wrapperbool", "")
+	cmd.PersistentFlags().Var(flag.NewBytesBase64WrapperValue(&req.WrapperBytes), "wrapperbytes", "")
+	cmd.PersistentFlags().Var(flag.NewDoubleWrapperValue(&req.WrapperDouble), "wrapperdouble", "")
+	cmd.PersistentFlags().Var(flag.NewDurationValue(&req.Duration), "duration", "")
+	cmd.PersistentFlags().Var(flag.NewFloatWrapperValue(&req.WrapperFloat), "wrapperfloat", "")
+	cmd.PersistentFlags().Var(flag.NewInt32WrapperValue(&req.WrapperInt32), "wrapperint32", "")
+	cmd.PersistentFlags().Var(flag.NewInt64WrapperValue(&req.WrapperInt64), "wrapperint64", "")
+	cmd.PersistentFlags().Var(flag.NewStringWrapperValue(&req.WrapperString), "wrapperstring", "")
+	cmd.PersistentFlags().Var(flag.NewTimestampValue(&req.Timestamp), "timestamp", "")
+	cmd.PersistentFlags().Var(flag.NewUInt32WrapperValue(&req.WrapperUint32), "wrapperuint32", "")
+	cmd.PersistentFlags().Var(flag.NewUInt64WrapperValue(&req.WrapperUint64), "wrapperuint64", "")
 	flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.ListBytes, "listbytes", "")
 	flag.Uint32SliceVar(cmd.PersistentFlags(), &req.ListFixed32, "listfixed32", "")
 	flag.Uint32SliceVar(cmd.PersistentFlags(), &req.ListUint32, "listuint32", "")
