@@ -1,196 +1,78 @@
 package flag
 
 import (
-	"encoding/base64"
-	"strconv"
-	"strings"
-	"unsafe"
-
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/spf13/pflag"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
-type DoubleWrapperValue struct {
-	ptr unsafe.Pointer
+func BoolWrapperVar(fs *pflag.FlagSet, p **wrappers.BoolValue, name, usage string) {
+	v := fs.Bool(name, false, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Bool(*v) }}
 }
 
-func NewDoubleWrapperValue(value **wrappers.DoubleValue) *DoubleWrapperValue {
-	return &DoubleWrapperValue{unsafe.Pointer(value)}
+func Int32WrapperVar(fs *pflag.FlagSet, p **wrappers.Int32Value, name, usage string) {
+	v := fs.Int32(name, 0, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Int32(*v) }}
 }
 
-func (v *DoubleWrapperValue) Set(s string) error {
-	f, err := strconv.ParseFloat(s, 64)
-	if err != nil {
+func Int64WrapperVar(fs *pflag.FlagSet, p **wrappers.Int64Value, name, usage string) {
+	v := fs.Int64(name, 0, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Int64(*v) }}
+}
+
+func UInt32WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt32Value, name, usage string) {
+	v := fs.Uint32(name, 0, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.UInt32(*v) }}
+}
+
+func UInt64WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt64Value, name, usage string) {
+	v := fs.Uint64(name, 0, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.UInt64(*v) }}
+}
+
+func FloatWrapperVar(fs *pflag.FlagSet, p **wrappers.FloatValue, name, usage string) {
+	v := fs.Float32(name, 0, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Float(*v) }}
+}
+
+func DoubleWrapperVar(fs *pflag.FlagSet, p **wrappers.DoubleValue, name, usage string) {
+	v := fs.Float64(name, 0, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Double(*v) }}
+}
+
+func StringWrapperVar(fs *pflag.FlagSet, p **wrappers.StringValue, name, usage string) {
+	v := fs.String(name, "", usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.String(*v) }}
+}
+
+func BytesBase64WrapperVar(fs *pflag.FlagSet, p **wrappers.BytesValue, name, usage string) {
+	v := fs.BytesBase64(name, nil, usage)
+	f := fs.Lookup(name)
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Bytes(*v) }}
+}
+
+type wrapperValue struct {
+	pflag.Value
+	set func()
+}
+
+func (v *wrapperValue) Set(s string) error {
+	if err := v.Value.Set(s); err != nil {
 		return err
 	}
-	*(**wrappers.DoubleValue)(v.ptr) = wrapperspb.Double(f)
+	v.set()
 	return nil
 }
 
-func (v *DoubleWrapperValue) Type() string { return "DoubleWrapper" }
+func (v *wrapperValue) Type() string { return v.Value.Type() + "Wrapper" }
 
-func (v *DoubleWrapperValue) String() string { return "<nil>" }
-
-type FloatWrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewFloatWrapperValue(value **wrappers.FloatValue) *FloatWrapperValue {
-	return &FloatWrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *FloatWrapperValue) Set(s string) error {
-	f, err := strconv.ParseFloat(s, 32)
-	if err != nil {
-		return err
-	}
-	*(**wrappers.FloatValue)(v.ptr) = wrapperspb.Float(float32(f))
-	return nil
-}
-
-func (v *FloatWrapperValue) Type() string { return "FloatWrapper" }
-
-func (v *FloatWrapperValue) String() string { return "<nil>" }
-
-type Int64WrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewInt64WrapperValue(value **wrappers.Int64Value) *Int64WrapperValue {
-	return &Int64WrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *Int64WrapperValue) Set(s string) error {
-	i, err := strconv.ParseInt(s, 0, 64)
-	if err != nil {
-		return err
-	}
-	*(**wrappers.Int64Value)(v.ptr) = wrapperspb.Int64(i)
-	return nil
-}
-
-func (v *Int64WrapperValue) Type() string { return "Int64Wrapper" }
-
-func (v *Int64WrapperValue) String() string { return "<nil>" }
-
-type UInt64WrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewUInt64WrapperValue(value **wrappers.UInt64Value) *UInt64WrapperValue {
-	return &UInt64WrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *UInt64WrapperValue) Set(s string) error {
-	i, err := strconv.ParseUint(s, 0, 64)
-	if err != nil {
-		return err
-	}
-	*(**wrappers.UInt64Value)(v.ptr) = wrapperspb.UInt64(i)
-	return nil
-}
-
-func (v *UInt64WrapperValue) Type() string { return "UInt64Wrapper" }
-
-func (v *UInt64WrapperValue) String() string { return "<nil>" }
-
-type Int32WrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewInt32WrapperValue(value **wrappers.Int32Value) *Int32WrapperValue {
-	return &Int32WrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *Int32WrapperValue) Set(s string) error {
-	i, err := strconv.ParseInt(s, 0, 32)
-	if err != nil {
-		return err
-	}
-	*(**wrappers.Int32Value)(v.ptr) = wrapperspb.Int32(int32(i))
-	return nil
-}
-
-func (v *Int32WrapperValue) Type() string { return "Int32Wrapper" }
-
-func (v *Int32WrapperValue) String() string { return "<nil>" }
-
-type UInt32WrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewUInt32WrapperValue(value **wrappers.UInt32Value) *UInt32WrapperValue {
-	return &UInt32WrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *UInt32WrapperValue) Set(s string) error {
-	i, err := strconv.ParseUint(s, 0, 32)
-	if err != nil {
-		return err
-	}
-	*(**wrappers.UInt32Value)(v.ptr) = wrapperspb.UInt32(uint32(i))
-	return nil
-}
-
-func (v *UInt32WrapperValue) Type() string { return "UInt32Wrapper" }
-
-func (v *UInt32WrapperValue) String() string { return "<nil>" }
-
-type BoolWrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewBoolWrapperValue(value **wrappers.BoolValue) *BoolWrapperValue {
-	return &BoolWrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *BoolWrapperValue) Set(s string) error {
-	b, err := strconv.ParseBool(s)
-	if err != nil {
-		return err
-	}
-	*(**wrappers.BoolValue)(v.ptr) = wrapperspb.Bool(b)
-	return nil
-}
-
-func (v *BoolWrapperValue) Type() string { return "BoolWrapper" }
-
-func (v *BoolWrapperValue) String() string { return "<nil>" }
-
-type StringWrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewStringWrapperValue(value **wrappers.StringValue) *StringWrapperValue {
-	return &StringWrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *StringWrapperValue) Set(s string) error {
-	*(**wrappers.StringValue)(v.ptr) = wrapperspb.String(s)
-	return nil
-}
-
-func (v *StringWrapperValue) Type() string { return "StringWrapper" }
-
-func (v *StringWrapperValue) String() string { return "<nil>" }
-
-type BytesBase64WrapperValue struct {
-	ptr unsafe.Pointer
-}
-
-func NewBytesBase64WrapperValue(value **wrappers.BytesValue) *BytesBase64WrapperValue {
-	return &BytesBase64WrapperValue{unsafe.Pointer(value)}
-}
-
-func (v *BytesBase64WrapperValue) Set(s string) error {
-	b, err := base64.StdEncoding.DecodeString(strings.TrimSpace(s))
-	if err != nil {
-		return err
-	}
-	*(**wrappers.BytesValue)(v.ptr) = wrapperspb.Bytes(b)
-	return nil
-}
-
-func (v *BytesBase64WrapperValue) Type() string { return "BytesBase64Wrapper" }
-
-func (v *BytesBase64WrapperValue) String() string { return "<nil>" }
+func (*wrapperValue) String() string { return "<nil>" }

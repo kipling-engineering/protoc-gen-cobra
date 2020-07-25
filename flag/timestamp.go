@@ -2,22 +2,36 @@ package flag
 
 import (
 	"time"
-	"unsafe"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/spf13/pflag"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type TimestampValue struct {
-	ptr unsafe.Pointer
+type timestampValue struct {
+	set func(*timestamp.Timestamp)
 }
 
-func NewTimestampValue(value **timestamp.Timestamp) *TimestampValue {
-	return &TimestampValue{unsafe.Pointer(value)}
+func TimestampVar(fs *pflag.FlagSet, p **timestamp.Timestamp, name, usage string) {
+	fs.Var(&timestampValue{func(d *timestamp.Timestamp) { *p = d }}, name, usage)
 }
 
-func (v *TimestampValue) Set(s string) (err error) {
-	for _, fmt := range []string{
+func (v *timestampValue) Set(val string) error {
+	if d, err := parseTimestamp(val); err != nil {
+		return err
+	} else {
+		v.set(d)
+		return nil
+	}
+}
+
+func (*timestampValue) Type() string { return "timestamp" }
+
+func (*timestampValue) String() string { return "<nil>" }
+
+func parseTimestamp(val string) (*timestamp.Timestamp, error) {
+	var err error
+	for _, layout := range []string{
 		"2006-01-02T15:04:05.999999999Z07:00",
 		"2006-01-02T15:04:05.999999999Z07",
 		"2006-01-02T15:04:05.999999999",
@@ -29,16 +43,11 @@ func (v *TimestampValue) Set(s string) (err error) {
 		"2006-01-02",
 	} {
 		var t time.Time
-		t, err = time.Parse(fmt, s)
+		t, err = time.Parse(layout, val)
 		if err != nil {
 			continue
 		}
-		*(**timestamp.Timestamp)(v.ptr) = timestamppb.New(t)
-		break
+		return timestamppb.New(t), nil
 	}
-	return
+	return nil, err
 }
-
-func (v *TimestampValue) Type() string { return "Timestamp" }
-
-func (v *TimestampValue) String() string { return "<nil>" }
