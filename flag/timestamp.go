@@ -1,6 +1,7 @@
 package flag
 
 import (
+	"strings"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -28,6 +29,40 @@ func (v *timestampValue) Set(val string) error {
 func (*timestampValue) Type() string { return "timestamp" }
 
 func (*timestampValue) String() string { return "<nil>" }
+
+type timestampSliceValue struct {
+	set func([]*timestamp.Timestamp)
+}
+
+func TimestampSliceVar(fs *pflag.FlagSet, p *[]*timestamp.Timestamp, name, usage string) {
+	var changed bool
+	set := func(out []*timestamp.Timestamp) {
+		if !changed {
+			*p = out
+			changed = true
+		} else {
+			*p = append(*p, out...)
+		}
+	}
+	fs.Var(&timestampSliceValue{set}, name, usage)
+}
+
+func (s *timestampSliceValue) Set(val string) error {
+	ss := strings.Split(val, ",")
+	out := make([]*timestamp.Timestamp, len(ss))
+	for i, v := range ss {
+		var err error
+		if out[i], err = parseTimestamp(v); err != nil {
+			return err
+		}
+	}
+	s.set(out)
+	return nil
+}
+
+func (s *timestampSliceValue) Type() string { return "timestampSlice" }
+
+func (s *timestampSliceValue) String() string { return "[]" }
 
 func parseTimestamp(val string) (*timestamp.Timestamp, error) {
 	var err error

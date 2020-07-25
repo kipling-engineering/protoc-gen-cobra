@@ -360,18 +360,18 @@ var (
 	wrappersPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/wrappers")
 	timestampPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/timestamp")
 	durationPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/duration")
-	knownTypes   = map[protogen.GoIdent]protogen.GoIdent{
-		timestampPkg.Ident("Timestamp"):  flagPkg.Ident("TimestampVar"),
-		durationPkg.Ident("Duration"):    flagPkg.Ident("DurationVar"),
-		wrappersPkg.Ident("DoubleValue"): flagPkg.Ident("DoubleWrapperVar"),
-		wrappersPkg.Ident("FloatValue"):  flagPkg.Ident("FloatWrapperVar"),
-		wrappersPkg.Ident("Int64Value"):  flagPkg.Ident("Int64WrapperVar"),
-		wrappersPkg.Ident("UInt64Value"): flagPkg.Ident("UInt64WrapperVar"),
-		wrappersPkg.Ident("Int32Value"):  flagPkg.Ident("Int32WrapperVar"),
-		wrappersPkg.Ident("UInt32Value"): flagPkg.Ident("UInt32WrapperVar"),
-		wrappersPkg.Ident("BoolValue"):   flagPkg.Ident("BoolWrapperVar"),
-		wrappersPkg.Ident("StringValue"): flagPkg.Ident("StringWrapperVar"),
-		wrappersPkg.Ident("BytesValue"):  flagPkg.Ident("BytesBase64WrapperVar"),
+	knownTypes   = map[protogen.GoIdent][]protogen.GoIdent{
+		timestampPkg.Ident("Timestamp"):  {flagPkg.Ident("TimestampVar"), flagPkg.Ident("TimestampSliceVar")},
+		durationPkg.Ident("Duration"):    {flagPkg.Ident("DurationVar"), flagPkg.Ident("DurationSliceVar")},
+		wrappersPkg.Ident("DoubleValue"): {flagPkg.Ident("DoubleWrapperVar"), flagPkg.Ident("DoubleWrapperSliceVar")},
+		wrappersPkg.Ident("FloatValue"):  {flagPkg.Ident("FloatWrapperVar"), flagPkg.Ident("FloatWrapperSliceVar")},
+		wrappersPkg.Ident("Int64Value"):  {flagPkg.Ident("Int64WrapperVar"), flagPkg.Ident("Int64WrapperSliceVar")},
+		wrappersPkg.Ident("UInt64Value"): {flagPkg.Ident("UInt64WrapperVar"), flagPkg.Ident("UInt64WrapperSliceVar")},
+		wrappersPkg.Ident("Int32Value"):  {flagPkg.Ident("Int32WrapperVar"), flagPkg.Ident("Int32WrapperSliceVar")},
+		wrappersPkg.Ident("UInt32Value"): {flagPkg.Ident("UInt32WrapperVar"), flagPkg.Ident("UInt32WrapperSliceVar")},
+		wrappersPkg.Ident("BoolValue"):   {flagPkg.Ident("BoolWrapperVar"), flagPkg.Ident("BoolWrapperSliceVar")},
+		wrappersPkg.Ident("StringValue"): {flagPkg.Ident("StringWrapperVar"), flagPkg.Ident("StringWrapperSliceVar")},
+		wrappersPkg.Ident("BytesValue"):  {flagPkg.Ident("BytesBase64WrapperVar"), flagPkg.Ident("BytesBase64WrapperSliceVar")},
 	}
 )
 
@@ -460,6 +460,13 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		case protoreflect.MessageKind, protoreflect.GroupKind:
 			if fld.Desc.ContainingOneof() != nil {
 				// oneof not supported
+			} else if flagFuncs, ok := knownTypes[fld.Message.GoIdent]; ok {
+				i := 0
+				if fld.Desc.IsList() {
+					i = 1
+				}
+				flagId := g.QualifiedGoIdent(flagFuncs[i])
+				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", flagId, goPath, flagName, comment)
 			} else if fld.Desc.IsList() {
 				// message list not supported
 			} else if fld.Desc.IsMap() {
@@ -472,10 +479,6 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 					}
 				}
-			} else if flagFunc, ok := knownTypes[fld.Message.GoIdent]; ok {
-				// TODO: support list of known types
-				flagId := g.QualifiedGoIdent(flagFunc)
-				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", flagId, goPath, flagName, comment)
 			} else {
 				i, f := walkFields(g, fld.Message, path, enums)
 				if i != "" {
