@@ -560,34 +560,6 @@ func (s *_{{.GoIdent.GoName}}SliceValue) Set(val string) error {
 func (s *_{{.GoIdent.GoName}}SliceValue) Type() string { return "{{.GoIdent.GoName}}Slice" }
 
 func (s *_{{.GoIdent.GoName}}SliceValue) String() string { return "[]" }
-
-func (s *_{{.GoIdent.GoName}}SliceValue) Append(val string) error {
-	var e {{.GoIdent.GoName}}
-	if err := (*_{{.GoIdent.GoName}}Value)(&e).Set(val); err != nil {
-		return err
-	}
-	*s.value = append(*s.value, e)
-	return nil
-}
-
-func (s *_{{.GoIdent.GoName}}SliceValue) Replace(val []string) error {
-	out := make([]{{.GoIdent.GoName}}, len(val))
-	for i, s := range val {
-		if err := (*_{{.GoIdent.GoName}}Value)(&out[i]).Set(s); err != nil {
-			return err
-		}
-	}
-	*s.value = out
-	return nil
-}
-
-func (s *_{{.GoIdent.GoName}}SliceValue) GetSlice() []string {
-	out := make([]string, len(*s.value))
-	for i, v := range *s.value {
-		out[i] = v.String()
-	}
-	return out
-}
 {{end}}
 func parse{{.GoIdent.GoName}}(s string) ({{.GoIdent.GoName}}, error) {
 	if i, ok := {{.GoIdent.GoName}}_value[s]; ok {
@@ -601,7 +573,6 @@ func parse{{.GoIdent.GoName}}(s string) ({{.GoIdent.GoName}}, error) {
 `
 	enumTemplate = template.Must(template.New("enum").Parse(enumTemplateCode))
 	enumImports  = []protogen.GoImportPath{
-		"fmt",
 		"strconv",
 		"github.com/spf13/pflag",
 	}

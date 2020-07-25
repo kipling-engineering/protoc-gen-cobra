@@ -344,34 +344,6 @@ func (s *_Sound_NestedEnumSliceValue) Type() string { return "Sound_NestedEnumSl
 
 func (s *_Sound_NestedEnumSliceValue) String() string { return "[]" }
 
-func (s *_Sound_NestedEnumSliceValue) Append(val string) error {
-	var e Sound_NestedEnum
-	if err := (*_Sound_NestedEnumValue)(&e).Set(val); err != nil {
-		return err
-	}
-	*s.value = append(*s.value, e)
-	return nil
-}
-
-func (s *_Sound_NestedEnumSliceValue) Replace(val []string) error {
-	out := make([]Sound_NestedEnum, len(val))
-	for i, s := range val {
-		if err := (*_Sound_NestedEnumValue)(&out[i]).Set(s); err != nil {
-			return err
-		}
-	}
-	*s.value = out
-	return nil
-}
-
-func (s *_Sound_NestedEnumSliceValue) GetSlice() []string {
-	out := make([]string, len(*s.value))
-	for i, v := range *s.value {
-		out[i] = v.String()
-	}
-	return out
-}
-
 func parseSound_NestedEnum(s string) (Sound_NestedEnum, error) {
 	if i, ok := Sound_NestedEnum_value[s]; ok {
 		return Sound_NestedEnum(i), nil
