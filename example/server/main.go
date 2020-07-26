@@ -22,6 +22,7 @@ func main() {
 	pb.RegisterNestedServer(srv, NewNested())
 	pb.RegisterTypesServer(srv, NewTypes())
 	pb.RegisterProto2Server(srv, NewProto2())
+	pb.RegisterDeprecatedServer(srv, NewDeprecated())
 	err = srv.Serve(ln)
 	if err != nil {
 		log.Fatal(err)

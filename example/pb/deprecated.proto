@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = ".;pb";
+
+service Deprecated {
+    option deprecated = true;
+    rpc Obsolete (ObsoleteRequest) returns (ObsoleteResponse) {
+        option deprecated = true;
+    }
+}
+
+message ObsoleteRequest {
+    string Unused = 1 [deprecated = true];
+}
+
+message ObsoleteResponse {
+    string Unused = 1 [deprecated = true];
+}

@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/descriptorpb"
 )
 
 func genFile(gen *protogen.Plugin, file *protogen.File) error {
@@ -79,7 +80,8 @@ func {{.GoName}}ClientCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "{{.GoName | toLower}}",
 		Short: "{{.GoName}} service client",
-		Long: "{{.Comments.Leading | cleanComments}}",
+		Long: "{{.Comments.Leading | cleanComments}}",{{if .Desc.Options.GetDeprecated}}
+		Deprecated: "deprecated",{{end}}
 	}
 	{{.GoName}}ClientDefaultConfig.addFlags(cmd.PersistentFlags())
 	cmd.AddCommand({{range .Methods}}
@@ -260,7 +262,8 @@ func _{{.Parent.GoName}}{{.GoName}}Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "{{.GoName | toLower}}",
 		Short: "{{.GoName}} RPC client",
-		Long: "{{.Comments.Leading | cleanComments}}",
+		Long: "{{.Comments.Leading | cleanComments}}",{{if .Desc.Options.GetDeprecated}}
+		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return _{{.Parent.GoName}}RoundTrip(cmd.Context(), func(cli {{.Parent.GoName}}Client, in iocodec.Decoder, out iocodec.Encoder) error {
 				v := &{{.Input.GoIdent.GoName}}{}
@@ -346,7 +349,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "io"})
 	}
 
-	initCode, flagCode := walkFields(g, method.Input, nil, enums)
+	initCode, flagCode := walkFields(g, method.Input, nil, enums, false)
 	data := struct {
 		*protogen.Method
 		InputInitializerCode string
@@ -375,7 +378,7 @@ var (
 	}
 )
 
-func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum) (string, string) {
+func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum, deprecated bool) (string, string) {
 	var initLines []string
 	flagLines := make([]string, 0, len(message.Fields))
 
@@ -385,6 +388,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		goPath := strings.Join(path, ".")
 		flagName := strings.ToLower(strings.Join(path, "-"))
 		comment := cleanComments(fld.Comments.Leading)
+		deprecated := deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated()
 
 		switch fld.Desc.Kind() {
 		case protoreflect.BoolKind:
@@ -499,7 +503,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 					}
 				}
 			} else {
-				i, f := walkFields(g, fld.Message, path, enums)
+				i, f := walkFields(g, fld.Message, path, enums, deprecated)
 				if i != "" {
 					initLines = append(initLines, fld.GoName+": "+i+",")
 				}
@@ -510,6 +514,9 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		}
 
 		if flagLine != "" {
+			if deprecated {
+				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%q, \"deprecated\")", flagName)
+			}
 			flagLines = append(flagLines, flagLine)
 		}
 	}

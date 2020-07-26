@@ -28,6 +28,7 @@ func init() {
 	cmd.RootCmd.AddCommand(pb.CRUDClientCommand())
 	cmd.RootCmd.AddCommand(pb.TypesClientCommand())
 	cmd.RootCmd.AddCommand(pb.Proto2ClientCommand())
+	cmd.RootCmd.AddCommand(pb.DeprecatedClientCommand())
 }
 
 func main() {
