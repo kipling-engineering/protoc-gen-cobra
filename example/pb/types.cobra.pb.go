@@ -35,7 +35,6 @@ var TypesClientDefaultConfig = &_TypesClientConfig{
 type _TypesClientConfig struct {
 	ServerAddr         string
 	RequestFile        string
-	Stdin              bool
 	ResponseFormat     string
 	Timeout            time.Duration
 	TLS                bool
@@ -53,7 +52,6 @@ type _TypesClientConfig struct {
 func (o *_TypesClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVarP(&o.ServerAddr, "server-addr", "s", o.ServerAddr, "server address in form of host:port")
 	fs.StringVarP(&o.RequestFile, "request-file", "f", o.RequestFile, "client request file (must be json, yaml, or xml); use \"-\" for stdin + json")
-	fs.BoolVar(&o.Stdin, "stdin", o.Stdin, "read client request from STDIN; alternative for '-f -'")
 	fs.StringVarP(&o.ResponseFormat, "response-format", "o", o.ResponseFormat, "response format (json, prettyjson, xml, prettyxml, or yaml)")
 	fs.DurationVar(&o.Timeout, "timeout", o.Timeout, "client connection timeout")
 	fs.BoolVar(&o.TLS, "tls", o.TLS, "enable tls")
@@ -155,7 +153,7 @@ func _TypesRoundTrip(ctx context.Context, fn _TypesRoundTripFunc) error {
 	cfg := TypesClientDefaultConfig
 	var dm iocodec.DecoderMaker
 	r := os.Stdin
-	if cfg.Stdin || cfg.RequestFile == "-" {
+	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || cfg.RequestFile == "-" {
 		dm = iocodec.DefaultDecoders["json"]
 	} else if cfg.RequestFile != "" {
 		f, err := os.Open(cfg.RequestFile)

@@ -19,6 +19,7 @@ import (
 	net "net"
 	os "os"
 	filepath "path/filepath"
+	strings "strings"
 	time "time"
 )
 
@@ -32,7 +33,6 @@ var DeprecatedClientDefaultConfig = &_DeprecatedClientConfig{
 type _DeprecatedClientConfig struct {
 	ServerAddr         string
 	RequestFile        string
-	Stdin              bool
 	ResponseFormat     string
 	Timeout            time.Duration
 	TLS                bool
@@ -50,7 +50,6 @@ type _DeprecatedClientConfig struct {
 func (o *_DeprecatedClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVarP(&o.ServerAddr, "server-addr", "s", o.ServerAddr, "server address in form of host:port")
 	fs.StringVarP(&o.RequestFile, "request-file", "f", o.RequestFile, "client request file (must be json, yaml, or xml); use \"-\" for stdin + json")
-	fs.BoolVar(&o.Stdin, "stdin", o.Stdin, "read client request from STDIN; alternative for '-f -'")
 	fs.StringVarP(&o.ResponseFormat, "response-format", "o", o.ResponseFormat, "response format (json, prettyjson, xml, prettyxml, or yaml)")
 	fs.DurationVar(&o.Timeout, "timeout", o.Timeout, "client connection timeout")
 	fs.BoolVar(&o.TLS, "tls", o.TLS, "enable tls")
@@ -151,43 +150,38 @@ type _DeprecatedRoundTripFunc func(cli DeprecatedClient, in iocodec.Decoder, out
 
 func _DeprecatedRoundTrip(ctx context.Context, fn _DeprecatedRoundTripFunc) error {
 	cfg := DeprecatedClientDefaultConfig
-	var em iocodec.EncoderMaker
-	if cfg.ResponseFormat == "" {
-		em = iocodec.DefaultEncoders["json"]
-	} else {
-		var ok bool
-		em, ok = iocodec.DefaultEncoders[cfg.ResponseFormat]
-		if !ok {
-			return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
-		}
-	}
-	var d iocodec.Decoder
-	if cfg.Stdin || cfg.RequestFile == "-" {
-		d = iocodec.DefaultDecoders["json"].NewDecoder(os.Stdin)
+	var dm iocodec.DecoderMaker
+	r := os.Stdin
+	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || cfg.RequestFile == "-" {
+		dm = iocodec.DefaultDecoders["json"]
 	} else if cfg.RequestFile != "" {
 		f, err := os.Open(cfg.RequestFile)
 		if err != nil {
 			return fmt.Errorf("request file: %v", err)
 		}
 		defer f.Close()
-		ext := filepath.Ext(cfg.RequestFile)
-		if len(ext) > 0 && ext[0] == '.' {
-			ext = ext[1:]
+		if ext := strings.TrimLeft(filepath.Ext(cfg.RequestFile), "."); ext != "" {
+			dm = iocodec.DefaultDecoders[ext]
 		}
-		dm, ok := iocodec.DefaultDecoders[ext]
-		if !ok {
-			return fmt.Errorf("invalid request file format: %q", ext)
+		if dm == nil {
+			dm = iocodec.DefaultDecoders["json"]
 		}
-		d = dm.NewDecoder(f)
+		r = f
 	} else {
-		d = iocodec.DefaultDecoders["noop"].NewDecoder(os.Stdin)
+		dm = iocodec.DefaultDecoders["noop"]
+	}
+	var em iocodec.EncoderMaker
+	if cfg.ResponseFormat == "" {
+		em = iocodec.DefaultEncoders["json"]
+	} else if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
+		return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
 	}
 	conn, client, err := _DeprecatedDial(ctx)
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
-	return fn(client, d, em.NewEncoder(os.Stdout))
+	return fn(client, dm.NewDecoder(r), em.NewEncoder(os.Stdout))
 }
 
 func _DeprecatedObsoleteCommand() *cobra.Command {
