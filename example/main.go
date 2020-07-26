@@ -27,6 +27,7 @@ func init() {
 	cmd.RootCmd.AddCommand(pb.NestedClientCommand())
 	cmd.RootCmd.AddCommand(pb.CRUDClientCommand())
 	cmd.RootCmd.AddCommand(pb.TypesClientCommand())
+	cmd.RootCmd.AddCommand(pb.Proto2ClientCommand())
 }
 
 func main() {

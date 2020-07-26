@@ -1,0 +1,82 @@
+syntax = "proto2";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+
+package example;
+
+option go_package = ".;pb";
+
+service Proto2 {
+    rpc Echo (Sound2) returns (Sound2);
+}
+
+message Sound2 {
+    optional double double = 1;
+    optional float float = 2;
+    optional int32 int32 = 3;
+    optional int64 int64 = 4;
+    optional uint32 uint32 = 5;
+    optional uint64 uint64 = 6;
+    optional sint32 sint32 = 7;
+    optional sint64 sint64 = 8;
+    optional fixed32 fixed32 = 9;
+    optional fixed64 fixed64 = 10;
+    optional sfixed32 sfixed32 = 11;
+    optional sfixed64 sfixed64 = 12;
+    optional bool bool = 13;
+    optional string string = 14;
+    optional bytes bytes = 15;
+
+    repeated double list_double = 21;
+    repeated float list_float = 22;
+    repeated int32 list_int32 = 23;
+    repeated int64 list_int64 = 24;
+    repeated uint32 list_uint32 = 25;
+    repeated uint64 list_uint64 = 26;
+    repeated sint32 list_sint32 = 27;
+    repeated sint64 list_sint64 = 28;
+    repeated fixed32 list_fixed32 = 29;
+    repeated fixed64 list_fixed64 = 30;
+    repeated sfixed32 list_sfixed32 = 31;
+    repeated sfixed64 list_sfixed64 = 32;
+    repeated bool list_bool = 33;
+    repeated string list_string = 34;
+    repeated bytes list_bytes = 35;
+
+    map<string, int64> map_string_int64 = 41;
+    map<string, string> map_string_string = 42;
+    optional Enum enum = 43;
+    repeated Enum list_enum = 44;
+
+    optional google.protobuf.Timestamp timestamp = 51;
+    optional google.protobuf.Duration duration = 52;
+    optional google.protobuf.BoolValue wrapper_bool = 53;
+    optional google.protobuf.BytesValue wrapper_bytes = 54;
+    optional google.protobuf.DoubleValue wrapper_double = 55;
+    optional google.protobuf.FloatValue wrapper_float = 56;
+    optional google.protobuf.Int32Value wrapper_int32 = 57;
+    optional google.protobuf.Int64Value wrapper_int64 = 58;
+    optional google.protobuf.StringValue wrapper_string = 59;
+    optional google.protobuf.UInt32Value wrapper_uint32 = 60;
+    optional google.protobuf.UInt64Value wrapper_uint64 = 61;
+
+    repeated google.protobuf.Timestamp list_timestamp = 71;
+    repeated google.protobuf.Duration list_duration = 72;
+    repeated google.protobuf.BoolValue list_wrapper_bool = 73;
+    repeated google.protobuf.BytesValue list_wrapper_bytes = 74;
+    repeated google.protobuf.DoubleValue list_wrapper_double = 75;
+    repeated google.protobuf.FloatValue list_wrapper_float = 76;
+    repeated google.protobuf.Int32Value list_wrapper_int32 = 77;
+    repeated google.protobuf.Int64Value list_wrapper_int64 = 78;
+    repeated google.protobuf.StringValue list_wrapper_string = 79;
+    repeated google.protobuf.UInt32Value list_wrapper_uint32 = 80;
+    repeated google.protobuf.UInt64Value list_wrapper_uint64 = 81;
+
+    enum Enum {
+        JAN = 0;
+        FEB = 1;
+        MAR = 2;
+    }
+}

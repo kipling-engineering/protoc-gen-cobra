@@ -21,6 +21,7 @@ func main() {
 	pb.RegisterCRUDServer(srv, NewCRUD())
 	pb.RegisterNestedServer(srv, NewNested())
 	pb.RegisterTypesServer(srv, NewTypes())
+	pb.RegisterProto2Server(srv, NewProto2())
 	err = srv.Serve(ln)
 	if err != nil {
 		log.Fatal(err)

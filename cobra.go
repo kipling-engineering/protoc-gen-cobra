@@ -390,52 +390,68 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		case protoreflect.BoolKind:
 			if fld.Desc.IsList() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().BoolSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().BoolVar(&req.%s, %q, false, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.BoolPointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
 			if fld.Desc.IsList() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.Int32PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
 			if fld.Desc.IsList() {
 				id := g.QualifiedGoIdent(flagPkg.Ident("Uint32SliceVar"))
 				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.Uint32PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
 			if fld.Desc.IsList() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.Int64PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
 			if fld.Desc.IsList() {
 				id := g.QualifiedGoIdent(flagPkg.Ident("Uint64SliceVar"))
 				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.Uint64PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.FloatKind:
 			if fld.Desc.IsList() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.Float32PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.DoubleKind:
 			if fld.Desc.IsList() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.Float64PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.StringKind:
 			if fld.Desc.IsList() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().StringSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else {
+			} else if !fld.Desc.HasPresence() {
 				flagLine = fmt.Sprintf("cmd.PersistentFlags().StringVar(&req.%s, %q, \"\", %q)", goPath, flagName, comment)
+			} else {
+				flagLine = fmt.Sprintf("flag.StringPointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
 			}
 		case protoreflect.BytesKind:
 			if fld.Desc.IsList() {
@@ -453,6 +469,9 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			if fld.Desc.IsList() {
 				e.List = true
 				flagLine = fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
+			} else if fld.Desc.HasPresence() {
+				e.Pointer = true
+				flagLine = fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
 			} else {
 				e.Value = true
 				flagLine = fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
@@ -506,8 +525,9 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 type enum struct {
 	*protogen.Enum
-	Value bool
-	List  bool
+	Value   bool
+	Pointer bool
+	List    bool
 }
 
 var (
@@ -531,6 +551,28 @@ func (v *_{{.GoIdent.GoName}}Value) Set(val string) error {
 func (v *_{{.GoIdent.GoName}}Value) Type() string { return "{{.GoIdent.GoName}}" }
 
 func (v *_{{.GoIdent.GoName}}Value) String() string { return ({{.GoIdent.GoName}})(*v).String() }
+{{end}}
+{{if .Pointer }}
+type _{{.GoIdent.GoName}}PointerValue struct {
+	set func(*{{.GoIdent.GoName}})
+}
+
+func _{{.GoIdent.GoName}}PointerVar(fs *pflag.FlagSet, p **{{.GoIdent.GoName}}, name, usage string) *_{{.GoIdent.GoName}}PointerValue {
+	return &_{{.GoIdent.GoName}}PointerValue{func(e *{{.GoIdent.GoName}}) { *p = e }}
+}
+
+func (v *_{{.GoIdent.GoName}}PointerValue) Set(val string) error {
+	if e, err := parse{{.GoIdent.GoName}}(val); err != nil {
+		return err
+	} else {
+		v.set(&e)
+		return nil
+	}
+}
+
+func (v *_{{.GoIdent.GoName}}PointerValue) Type() string { return "{{.GoIdent.GoName}}Pointer" }
+
+func (v *_{{.GoIdent.GoName}}PointerValue) String() string { return "<nil>" }
 {{end}}
 {{if .List}}
 type _{{.GoIdent.GoName}}SliceValue struct {
