@@ -157,10 +157,9 @@ func _Proto2RoundTrip(ctx context.Context, fn _Proto2RoundTripFunc) error {
 	if cfg.ResponseFormat == "" {
 		cfg.RequestFormat = "json"
 	}
-	var dm iocodec.DecoderMaker
-	r := os.Stdin
+	var in iocodec.Decoder
 	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || cfg.RequestFile == "-" {
-		dm = iocodec.DefaultDecoders[cfg.RequestFormat]
+		in = iocodec.MakeDecoder(cfg.RequestFormat, os.Stdin)
 	} else if cfg.RequestFile != "" {
 		f, err := os.Open(cfg.RequestFile)
 		if err != nil {
@@ -168,24 +167,24 @@ func _Proto2RoundTrip(ctx context.Context, fn _Proto2RoundTripFunc) error {
 		}
 		defer f.Close()
 		if ext := strings.TrimLeft(filepath.Ext(cfg.RequestFile), "."); ext != "" && ext != cfg.ResponseFormat {
-			dm = iocodec.DefaultDecoders[ext]
+			in = iocodec.MakeDecoder(ext, f)
 		}
-		r = f
+		if in == nil {
+			in = iocodec.MakeDecoder(cfg.ResponseFormat, f)
+		}
+		if in == nil {
+			return fmt.Errorf("invalid request format: %q", cfg.RequestFormat)
+		}
 	} else {
-		dm = iocodec.DefaultDecoders["noop"]
+		in = iocodec.MakeDecoder("noop", os.Stdin)
 	}
-	if dm == nil {
-		return fmt.Errorf("invalid request format: %q", cfg.RequestFormat)
-	}
-	in := dm.NewDecoder(r)
 	if cfg.ResponseFormat == "" {
 		cfg.ResponseFormat = "json"
 	}
-	var em iocodec.EncoderMaker
-	if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
+	out := iocodec.MakeEncoder(cfg.ResponseFormat, os.Stdout)
+	if out == nil {
 		return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
 	}
-	out := em.NewEncoder(os.Stdout)
 	conn, client, err := _Proto2Dial(ctx)
 	if err != nil {
 		return err
@@ -205,7 +204,7 @@ func _Proto2EchoCommand() *cobra.Command {
 			return _Proto2RoundTrip(cmd.Context(), func(cli Proto2Client, in iocodec.Decoder, out iocodec.Encoder) error {
 				v := &Sound2{}
 
-				if err := in.Decode(v); err != nil {
+				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
@@ -216,7 +215,7 @@ func _Proto2EchoCommand() *cobra.Command {
 					return err
 				}
 
-				return out.Encode(res)
+				return out(res)
 
 			})
 		},

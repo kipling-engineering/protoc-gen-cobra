@@ -99,3 +99,24 @@ $ echo -ne '{"key":"hello"}\n{"key":"foo"}\n' | ./example cache multiget
 ```
 
 Idle server streams hang until the server closes the stream, or a timeout occurs.
+
+### Custom input/output formats
+
+New encoders and decoders can be registered in the host program before executing the command.
+
+```go
+client.DefaultConfig.RegisterEncoder("fmtprint", func(w io.Writer) iocodec.Encoder {
+	return func(v interface{}) error {
+		_, err := fmt.Fprint(w, v)
+		return err
+	}
+})
+```
+
+These formats can then be specified using the `-o` or `--response-format` flags.
+
+```
+$ ./example bank deposit --account foobar --amount 10 -o fmtprint
+```
+
+See the [yaml format extension](iocodec/yaml/init.go) for a complete example.

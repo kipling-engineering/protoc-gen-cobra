@@ -17,6 +17,7 @@ package main
 import (
 	"github.com/NathanBaulch/protoc-gen-cobra/example/cmd"
 	"github.com/NathanBaulch/protoc-gen-cobra/example/pb"
+	_ "github.com/NathanBaulch/protoc-gen-cobra/iocodec/yaml"
 )
 
 func init() {

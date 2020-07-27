@@ -166,10 +166,9 @@ func _{{.GoName}}RoundTrip(ctx context.Context, fn _{{.GoName}}RoundTripFunc) er
 	if cfg.ResponseFormat == "" {
 		cfg.RequestFormat = "json"
 	}
-	var dm iocodec.DecoderMaker
-	r := os.Stdin
+	var in iocodec.Decoder
 	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || cfg.RequestFile == "-" {
-		dm = iocodec.DefaultDecoders[cfg.RequestFormat]
+		in = iocodec.MakeDecoder(cfg.RequestFormat, os.Stdin)
 	} else if cfg.RequestFile != "" {
 		f, err := os.Open(cfg.RequestFile)
 		if err != nil {
@@ -177,24 +176,24 @@ func _{{.GoName}}RoundTrip(ctx context.Context, fn _{{.GoName}}RoundTripFunc) er
 		}
 		defer f.Close()
 		if ext := strings.TrimLeft(filepath.Ext(cfg.RequestFile), "."); ext != "" && ext != cfg.ResponseFormat {
-			dm = iocodec.DefaultDecoders[ext]
+			in = iocodec.MakeDecoder(ext, f)
 		}
-		r = f
+		if in == nil {
+			in = iocodec.MakeDecoder(cfg.ResponseFormat, f)
+		}
+		if in == nil {
+			return fmt.Errorf("invalid request format: %q", cfg.RequestFormat)
+		}
 	} else {
-		dm = iocodec.DefaultDecoders["noop"]
+		in = iocodec.MakeDecoder("noop", os.Stdin)
 	}
-	if dm == nil {
-		return fmt.Errorf("invalid request format: %q", cfg.RequestFormat)
-	}
-	in := dm.NewDecoder(r)
 	if cfg.ResponseFormat == "" {
 		cfg.ResponseFormat = "json"
 	}
-	var em iocodec.EncoderMaker
-	if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
+	out := iocodec.MakeEncoder(cfg.ResponseFormat, os.Stdout)
+	if out == nil {
 		return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
 	}
-	out := em.NewEncoder(os.Stdout)
 	conn, client, err := _{{.GoName}}Dial(ctx)
 	if err != nil {
 		return err
@@ -280,7 +279,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command() *cobra.Command {
 					return err
 				}
 				for {
-					if err := in.Decode(v); err != nil {
+					if err := in(v); err != nil {
 						if err == io.EOF {
 							_ = stm.CloseSend()
 							break
@@ -293,7 +292,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command() *cobra.Command {
 					}
 				}
 	{{else}}
-				if err := in.Decode(v); err != nil {
+				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
@@ -315,7 +314,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command() *cobra.Command {
 						}
 						return err
 					}
-					if err = out.Encode(res); err != nil {
+					if err = out(res); err != nil {
 						return err
 					}
 				}
@@ -327,7 +326,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command() *cobra.Command {
 					return err
 				}
 		{{end}}
-				return out.Encode(res)
+				return out(res)
 	{{end}}
 			})
 		},
