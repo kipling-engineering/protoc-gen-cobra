@@ -27,6 +27,7 @@ import (
 
 var TypesClientDefaultConfig = &_TypesClientConfig{
 	ServerAddr:     "localhost:8080",
+	RequestFormat:  "json",
 	ResponseFormat: "json",
 	Timeout:        10 * time.Second,
 	AuthTokenType:  "Bearer",
@@ -35,6 +36,7 @@ var TypesClientDefaultConfig = &_TypesClientConfig{
 type _TypesClientConfig struct {
 	ServerAddr         string
 	RequestFile        string
+	RequestFormat      string
 	ResponseFormat     string
 	Timeout            time.Duration
 	TLS                bool
@@ -52,6 +54,7 @@ type _TypesClientConfig struct {
 func (o *_TypesClientConfig) addFlags(fs *pflag.FlagSet) {
 	fs.StringVarP(&o.ServerAddr, "server-addr", "s", o.ServerAddr, "server address in form of host:port")
 	fs.StringVarP(&o.RequestFile, "request-file", "f", o.RequestFile, "client request file (must be json, yaml, or xml); use \"-\" for stdin + json")
+	fs.StringVarP(&o.RequestFormat, "request-format", "i", o.RequestFormat, "request format (json, yaml, or xml)")
 	fs.StringVarP(&o.ResponseFormat, "response-format", "o", o.ResponseFormat, "response format (json, prettyjson, xml, prettyxml, or yaml)")
 	fs.DurationVar(&o.Timeout, "timeout", o.Timeout, "client connection timeout")
 	fs.BoolVar(&o.TLS, "tls", o.TLS, "enable tls")
@@ -151,38 +154,44 @@ type _TypesRoundTripFunc func(cli TypesClient, in iocodec.Decoder, out iocodec.E
 
 func _TypesRoundTrip(ctx context.Context, fn _TypesRoundTripFunc) error {
 	cfg := TypesClientDefaultConfig
+	if cfg.ResponseFormat == "" {
+		cfg.RequestFormat = "json"
+	}
 	var dm iocodec.DecoderMaker
 	r := os.Stdin
 	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || cfg.RequestFile == "-" {
-		dm = iocodec.DefaultDecoders["json"]
+		dm = iocodec.DefaultDecoders[cfg.RequestFormat]
 	} else if cfg.RequestFile != "" {
 		f, err := os.Open(cfg.RequestFile)
 		if err != nil {
 			return fmt.Errorf("request file: %v", err)
 		}
 		defer f.Close()
-		if ext := strings.TrimLeft(filepath.Ext(cfg.RequestFile), "."); ext != "" {
+		if ext := strings.TrimLeft(filepath.Ext(cfg.RequestFile), "."); ext != "" && ext != cfg.ResponseFormat {
 			dm = iocodec.DefaultDecoders[ext]
-		}
-		if dm == nil {
-			dm = iocodec.DefaultDecoders["json"]
 		}
 		r = f
 	} else {
 		dm = iocodec.DefaultDecoders["noop"]
 	}
-	var em iocodec.EncoderMaker
+	if dm == nil {
+		return fmt.Errorf("invalid request format: %q", cfg.RequestFormat)
+	}
+	in := dm.NewDecoder(r)
 	if cfg.ResponseFormat == "" {
-		em = iocodec.DefaultEncoders["json"]
-	} else if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
+		cfg.ResponseFormat = "json"
+	}
+	var em iocodec.EncoderMaker
+	if em = iocodec.DefaultEncoders[cfg.ResponseFormat]; em == nil {
 		return fmt.Errorf("invalid response format: %q", cfg.ResponseFormat)
 	}
+	out := em.NewEncoder(os.Stdout)
 	conn, client, err := _TypesDial(ctx)
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
-	return fn(client, dm.NewDecoder(r), em.NewEncoder(os.Stdout))
+	return fn(client, in, out)
 }
 
 func _TypesEchoCommand() *cobra.Command {

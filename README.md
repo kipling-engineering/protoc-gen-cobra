@@ -78,7 +78,7 @@ This is an experiment. Was bored of writing the same boilerplate code to interac
 
 ### Streams
 
-gRPC client and server streams are supported, you can do pipes from the command line. On server streams, each response is printed out using the specified response format. Client streams input must be formatted as json, one document per line, from a file or stdin.
+gRPC client and server streams are supported, you can do pipes from the command line. On server streams, each response is printed out using the specified response format. Client streams input must be one document per line, from a file or stdin.
 
 Example client stream:
 
