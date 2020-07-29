@@ -120,3 +120,18 @@ $ ./example bank deposit --account foobar --amount 10 -o fmtprint
 ```
 
 See the [yaml format extension](iocodec/yaml/init.go) for a complete example.
+
+### Custom authentication schemes
+
+Dial option callbacks can be registered in the host program to support custom authentication schemes.
+
+```go
+client.DefaultConfig.RegisterDialOptions(func(ctx context.Context, opts *[]grpc.DialOption) error {
+	if creds, ok := ctx.Value(CredsContextKey).(*Creds); ok {
+		*opts = append(*opts, grpc.WithPerRPCCredentials(creds))
+	}
+	return nil
+})
+```
+
+See the [jwt authentication extension](auth/jwt/init.go) for a complete example.
