@@ -355,7 +355,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "io"})
 	}
 
-	initCode, flagCode := walkFields(g, method.Input, nil, enums, false)
+	initCode, flagCode := walkFields(g, method.Input, nil, enums, false, make(map[protogen.GoIdent]bool))
 	data := struct {
 		*protogen.Method
 		InputInitializerCode string
@@ -384,7 +384,7 @@ var (
 	}
 )
 
-func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum, deprecated bool) (string, string) {
+func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum, deprecated bool, visited map[protogen.GoIdent]bool) (string, string) {
 	var initLines []string
 	flagLines := make([]string, 0, len(message.Fields))
 
@@ -508,8 +508,15 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
 					}
 				}
+			} else if visited[message.GoIdent] = true; visited[fld.Message.GoIdent] {
+				// cycle detected
 			} else {
-				i, f := walkFields(g, fld.Message, path, enums, deprecated)
+				m := make(map[protogen.GoIdent]bool, len(visited))
+				for k, v := range visited {
+					m[k] = v
+				}
+
+				i, f := walkFields(g, fld.Message, path, enums, deprecated, m)
 				if i != "" {
 					initLines = append(initLines, fld.GoName+": "+i+",")
 				}

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = ".;pb";
+
+service Cyclical {
+    rpc Test (Foo) returns (Bar);
+}
+
+message Foo {
+    Bar bar1 = 1;
+    Bar bar2 = 2;
+    Foo foo = 3;
+    string value = 4;
+}
+
+message Bar {
+    Foo foo1 = 1;
+    Foo foo2 = 2;
+    Bar bar = 3;
+    string value = 4;
+}
