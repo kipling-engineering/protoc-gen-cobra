@@ -6,13 +6,14 @@ Cobra command line tool generator for Go gRPC.
 
 ### What's this?
 
-A plugin for the [protobuf](https://github.com/google/protobuf) compiler protoc, that generates Go code using [cobra](https://github.com/spf13/cobra). It is capable of generating client code for command line tools consistent with your protobuf description.
+A plugin for the [protobuf](https://github.com/google/protobuf) compiler protoc that generates Go code using [cobra](https://github.com/spf13/cobra). It is
+capable of generating client code for command line tools consistent with your protobuf description.
 
-This:
+This proto definition:
 
-```
+```proto
 service Bank {
-	rpc Deposit(DepositRequest) returns (DepositReply)
+	rpc Deposit(DepositRequest) returns (DepositReply);
 }
 
 message DepositRequest {
@@ -29,56 +30,49 @@ message DepositReply {
 produces a client that can do:
 
 ```
-echo '{"account":"foobar","amount":10}' | command bank deposit
+$ ./example bank deposit --account foobar --amount 10
+$ echo '{"account":"foobar"}' | ./example bank deposit --amount 10
 ```
 
-It generates one [cobra.Command](https://godoc.org/github.com/spf13/cobra#Command) per gRPC service (e.g. bank). The service's rpc methods are sub-commands, and share the same command line semantics. They take a request file for input, or stdin, and prints the response to the terminal, in the specified format. The client currently supports basic connectivity settings such as tls on/off, tls client authentication and so on.
+It generates one [cobra.Command](https://godoc.org/github.com/spf13/cobra#Command) per gRPC service (e.g. bank). The service's RPC methods are sub-commands and
+share the same command line semantics. They take flags, a request file, or stdin for input, and print the response to the terminal in the specified format. The
+client currently supports basic connectivity settings such as TLS on/off, TLS client authentication and so on.
 
 ```
 $ ./example bank deposit -h
-Deposit client
-
-You can use environment variables with the same name of the command flags.
-All caps and s/-/_, e.g. SERVER_ADDR.
+Deposit RPC client
 
 Usage:
   example bank deposit [flags]
 
-Examples:
-
-Save a sample request to a file (or refer to your protobuf descriptor to create one):
-	deposit -p > req.json
-
-Submit request using file:
-	deposit -f req.json
-
-Authenticate using the Authorization header (requires transport security):
-	export AUTH_TOKEN=your_access_token
-	export SERVER_ADDR=api.example.com:443
-	echo '{json}' | deposit --tls
-
 Flags:
-      --auth-token string          authorization token
-      --auth-token-type string     authorization token type (default "Bearer")
-      --jwt-key string             jwt key
-      --jwt-key-file string        jwt key file
-  -f, --request-file string        client request file (must be json, yaml, or xml); use "-" for stdin + json
-  -o, --response-format string     response format (json, prettyjson, xml, prettyxml, or yaml) (default "json")
-  -s, --server-addr string         server address in form of host:port (default "localhost:8080")
-      --timeout duration           client connection timeout (default 10s)
-      --tls                        enable tls
-      --tls-ca-cert-file string    ca certificate file
-      --tls-cert-file string       client certificate file
-      --tls-insecure-skip-verify   INSECURE: skip tls checks
-      --tls-key-file string        client key file
-      --tls-server-name string     tls server name override
-```
+      --account string   account number of recipient
+      --amount float     amount to deposit
+  -h, --help             help for deposit
 
-This is an experiment. Was bored of writing the same boilerplate code to interact with gRPC servers, wanted something like [kubectl](http://kubernetes.io/docs/user-guide/kubectl-overview/). At some point I might want to generate server code too, similar to what go-swagger does. Perhaps look at using go-openapi too. Tests are lacking.
+Global Flags:
+      --auth-access-token string   authorization access token
+      --auth-token-type string     authorization token type (default "Bearer")
+      --config string              config file (default is $HOME/.example.yaml)
+      --jwt-key string             JWT key
+      --jwt-key-file string        JWT key file
+  -f, --request-file string        client request file; use "-" for stdin
+  -i, --request-format string      request format (json, xml, yaml) (default "json")
+  -o, --response-format string     response format (json, prettyjson, xml, prettyxml, yaml) (default "json")
+  -s, --server-addr string         server address in the form host:port (default "localhost:8080")
+      --timeout duration           client connection timeout (default 10s)
+      --tls                        enable TLS
+      --tls-ca-cert-file string    CA certificate file
+      --tls-cert-file string       client certificate file
+      --tls-insecure-skip-verify   INSECURE: skip TLS checks
+      --tls-key-file string        client key file
+      --tls-server-name string     TLS server name override
+```
 
 ### Streams
 
-gRPC client and server streams are supported, you can do pipes from the command line. On server streams, each response is printed out using the specified response format. Client streams input must be one document per line, from a file or stdin.
+gRPC client and server streams are supported using pipes from the command line. For server streams each response is printed using the specified response format.
+Client stream input must be one document per line from a file or stdin.
 
 Example client stream:
 
@@ -98,7 +92,7 @@ $ echo -ne '{"key":"hello"}\n{"key":"foo"}\n' | ./example cache multiget
 {"value":"bar"}
 ```
 
-Idle server streams hang until the server closes the stream, or a timeout occurs.
+Idle server streams hang until the server closes the stream or a timeout occurs.
 
 ### Custom input/output formats
 
