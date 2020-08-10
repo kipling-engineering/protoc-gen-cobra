@@ -66,8 +66,8 @@ func _BankDepositCommand(d *client.Dialer) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Float64Var(&req.Amount, "amount", 0, "amount to deposit")
 	cmd.PersistentFlags().StringVar(&req.Account, "account", "", "account number of recipient")
+	cmd.PersistentFlags().Float64Var(&req.Amount, "amount", 0, "amount to deposit")
 
 	return cmd
 }

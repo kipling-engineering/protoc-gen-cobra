@@ -70,9 +70,9 @@ func _BankDepositCommand(d *client.Dialer) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Environment, "environment", "", "")
 	cmd.PersistentFlags().StringVar(&req.Parent, "parent", "", "")
 	cmd.PersistentFlags().StringVar(&req.Tenant, "tenant", "", "")
+	cmd.PersistentFlags().StringVar(&req.Environment, "environment", "", "")
 
 	return cmd
 }

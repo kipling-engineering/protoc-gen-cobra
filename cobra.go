@@ -232,8 +232,8 @@ var (
 )
 
 func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum, deprecated bool, visited map[protogen.GoIdent]bool) (string, string) {
-	var initLines []string
-	flagLines := make([]string, 0, len(message.Fields))
+	initLines := make(map[int]string)
+	flagLines := make(map[int]string, len(message.Fields))
 
 	for _, fld := range message.Fields {
 		var flagLine string
@@ -365,10 +365,10 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 				i, f := walkFields(g, fld.Message, path, enums, deprecated, m)
 				if i != "" {
-					initLines = append(initLines, fld.GoName+": "+i+",")
+					initLines[fld.Desc.Index()] = fld.GoName + ": " + i + ","
 				}
 				if f != "" {
-					flagLines = append(flagLines, f)
+					flagLines[fld.Desc.Index()] = f
 				}
 			}
 		}
@@ -377,17 +377,30 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			if deprecated {
 				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%q, \"deprecated\")", flagName)
 			}
-			flagLines = append(flagLines, flagLine)
+			flagLines[fld.Desc.Index()] = flagLine
 		}
 	}
 
 	initCode := ""
 	if len(initLines) > 0 {
-		sort.Strings(initLines)
-		initCode = fmt.Sprintf("\n%s\n", strings.Join(initLines, "\n"))
+		initCode = fmt.Sprintf("\n%s\n", strings.Join(sortedLines(initLines), "\n"))
 	}
-	sort.Strings(flagLines)
-	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(flagLines, "\n")
+	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(sortedLines(flagLines), "\n")
+}
+
+func sortedLines(m map[int]string) []string {
+	keys := make([]int, len(m))
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	sort.Ints(keys)
+	vals := make([]string, len(m))
+	for i, k := range keys {
+		vals[i] = m[k]
+	}
+	return vals
 }
 
 type enum struct {
