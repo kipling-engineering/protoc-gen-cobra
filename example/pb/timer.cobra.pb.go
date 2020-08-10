@@ -4,6 +4,7 @@ package pb
 
 import (
 	client "github.com/NathanBaulch/protoc-gen-cobra/client"
+	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	proto "github.com/golang/protobuf/proto"
 	cobra "github.com/spf13/cobra"
@@ -37,6 +38,14 @@ func _TimerTickCommand(d *client.Dialer) *cobra.Command {
 		Short: "Tick RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "TIMER", "TICK"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewTimerClient(cc)
 				v := &TickRequest{}

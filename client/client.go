@@ -28,6 +28,8 @@ type Config struct {
 	RequestFormat  string
 	ResponseFormat string
 	Timeout        time.Duration
+	UseEnvVars     bool
+	EnvVarPrefix   string
 
 	TLS                bool
 	ServerName         string
@@ -47,6 +49,7 @@ var DefaultConfig = &Config{
 	RequestFormat:  "json",
 	ResponseFormat: "json",
 	Timeout:        10 * time.Second,
+	UseEnvVars:     true,
 
 	decoders: map[string]iocodec.DecoderMaker{
 		"json": func(r io.Reader) iocodec.Decoder { return json.NewDecoder(r).Decode },

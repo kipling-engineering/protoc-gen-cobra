@@ -32,6 +32,7 @@ produces a client that can do:
 ```
 $ ./example bank deposit --account foobar --amount 10
 $ echo '{"account":"foobar"}' | ./example bank deposit --amount 10
+$ set BANK_DEPOSIT_ACCOUNT=foobar; ./example bank deposit --amount 10
 ```
 
 It generates one [cobra.Command](https://godoc.org/github.com/spf13/cobra#Command) per gRPC service (e.g. bank). The service's RPC methods are sub-commands and
@@ -107,10 +108,11 @@ client.DefaultConfig.RegisterEncoder("fmtprint", func(w io.Writer) iocodec.Encod
 })
 ```
 
-These formats can then be specified using the `-o` or `--response-format` flags.
+These formats can then be specified using the `-o` or `--response-format` flags or via a `RESPONSE_FORMAT` environment variable.
 
 ```
 $ ./example bank deposit --account foobar --amount 10 -o fmtprint
+$ set RESPONSE_FORMAT=fmtprint; ./example bank deposit --account foobar --amount 10
 ```
 
 See the [yaml format extension](iocodec/yaml/init.go) for a complete example.

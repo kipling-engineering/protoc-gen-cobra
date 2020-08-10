@@ -4,6 +4,7 @@ package pb
 
 import (
 	client "github.com/NathanBaulch/protoc-gen-cobra/client"
+	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	proto "github.com/golang/protobuf/proto"
 	cobra "github.com/spf13/cobra"
@@ -40,6 +41,14 @@ func _CacheSetCommand(d *client.Dialer) *cobra.Command {
 		Short: "Set RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "SET"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &SetRequest{}
@@ -75,6 +84,14 @@ func _CacheGetCommand(d *client.Dialer) *cobra.Command {
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "GET"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &GetRequest{}
@@ -109,6 +126,14 @@ func _CacheMultiSetCommand(d *client.Dialer) *cobra.Command {
 		Short: "MultiSet RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "MULTISET"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &SetRequest{}
@@ -156,6 +181,14 @@ func _CacheMultiGetCommand(d *client.Dialer) *cobra.Command {
 		Short: "MultiGet RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "MULTIGET"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &GetRequest{}

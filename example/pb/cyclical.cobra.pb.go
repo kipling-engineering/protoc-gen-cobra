@@ -4,6 +4,7 @@ package pb
 
 import (
 	client "github.com/NathanBaulch/protoc-gen-cobra/client"
+	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	proto "github.com/golang/protobuf/proto"
 	cobra "github.com/spf13/cobra"
@@ -39,6 +40,14 @@ func _CyclicalTestCommand(d *client.Dialer) *cobra.Command {
 		Short: "Test RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CYCLICAL", "TEST"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCyclicalClient(cc)
 				v := &Foo{}

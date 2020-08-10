@@ -106,6 +106,14 @@ func _{{.Parent.GoName}}{{.GoName}}Command(d *client.Dialer) *cobra.Command {
 		Long: "{{.Comments.Leading | cleanComments}}",{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "{{.Parent.GoName | toUpper}}", "{{.GoName | toUpper}}"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := New{{.Parent.GoName}}Client(cc)
 				v := &{{.Input.GoIdent.GoName}}{}
@@ -174,11 +182,12 @@ func _{{.Parent.GoName}}{{.GoName}}Command(d *client.Dialer) *cobra.Command {
 }
 `
 	methodTemplate = template.Must(template.New("method").
-		Funcs(template.FuncMap{"toLower": strings.ToLower, "cleanComments": cleanComments}).
+		Funcs(template.FuncMap{"toLower": strings.ToLower, "toUpper": strings.ToUpper, "cleanComments": cleanComments}).
 		Parse(methodTemplateCode))
 	methodImports = []protogen.GoImportPath{
 		"github.com/golang/protobuf/proto",
 		"github.com/NathanBaulch/protoc-gen-cobra/client",
+		"github.com/NathanBaulch/protoc-gen-cobra/flag",
 		"github.com/NathanBaulch/protoc-gen-cobra/iocodec",
 		"github.com/spf13/cobra",
 		"google.golang.org/grpc",

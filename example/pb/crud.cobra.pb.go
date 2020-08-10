@@ -4,6 +4,7 @@ package pb
 
 import (
 	client "github.com/NathanBaulch/protoc-gen-cobra/client"
+	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	proto "github.com/golang/protobuf/proto"
 	cobra "github.com/spf13/cobra"
@@ -39,6 +40,14 @@ func _CRUDCreateCommand(d *client.Dialer) *cobra.Command {
 		Short: "Create RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CRUD", "CREATE"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCRUDClient(cc)
 				v := &CreateCRUD{}
@@ -74,6 +83,14 @@ func _CRUDGetCommand(d *client.Dialer) *cobra.Command {
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CRUD", "GET"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCRUDClient(cc)
 				v := &GetCRUD{}
@@ -108,6 +125,14 @@ func _CRUDUpdateCommand(d *client.Dialer) *cobra.Command {
 		Short: "Update RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CRUD", "UPDATE"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCRUDClient(cc)
 				v := &CRUDObject{}
@@ -143,6 +168,14 @@ func _CRUDDeleteCommand(d *client.Dialer) *cobra.Command {
 		Short: "Delete RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if d.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CRUD", "DELETE"); err != nil {
+					return err
+				}
+			}
 			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCRUDClient(cc)
 				v := &CRUDObject{}
