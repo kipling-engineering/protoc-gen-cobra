@@ -146,7 +146,7 @@ func (v *_Sound2_EnumPointerValue) Set(val string) error {
 	}
 }
 
-func (v *_Sound2_EnumPointerValue) Type() string { return "Sound2_EnumPointer" }
+func (v *_Sound2_EnumPointerValue) Type() string { return "Sound2_Enum" }
 
 func (v *_Sound2_EnumPointerValue) String() string { return "<nil>" }
 

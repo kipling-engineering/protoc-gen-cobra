@@ -12,7 +12,7 @@ import (
 func BoolWrapperVar(fs *pflag.FlagSet, p **wrappers.BoolValue, name, usage string) {
 	v := fs.Bool(name, false, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Bool(*v) }, "BoolWrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Bool(*v) }}
 }
 
 func BoolWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BoolValue, name, usage string) {
@@ -31,7 +31,7 @@ func BoolWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BoolValue, name, usag
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "BoolWrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseBoolWrapper(val string) (interface{}, error) {
@@ -48,7 +48,7 @@ func ParseBoolWrapper(val string) (interface{}, error) {
 func Int32WrapperVar(fs *pflag.FlagSet, p **wrappers.Int32Value, name, usage string) {
 	v := fs.Int32(name, 0, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Int32(*v) }, "Int32Wrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Int32(*v) }}
 }
 
 func Int32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int32Value, name, usage string) {
@@ -67,7 +67,7 @@ func Int32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int32Value, name, us
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "Int32WrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseInt32Wrapper(val string) (interface{}, error) {
@@ -84,7 +84,7 @@ func ParseInt32Wrapper(val string) (interface{}, error) {
 func Int64WrapperVar(fs *pflag.FlagSet, p **wrappers.Int64Value, name, usage string) {
 	v := fs.Int64(name, 0, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Int64(*v) }, "Int64Wrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Int64(*v) }}
 }
 
 func Int64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int64Value, name, usage string) {
@@ -103,7 +103,7 @@ func Int64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int64Value, name, us
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "Int64WrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseInt64Wrapper(val string) (interface{}, error) {
@@ -120,7 +120,7 @@ func ParseInt64Wrapper(val string) (interface{}, error) {
 func UInt32WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt32Value, name, usage string) {
 	v := fs.Uint32(name, 0, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.UInt32(*v) }, "UInt32Wrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.UInt32(*v) }}
 }
 
 func UInt32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt32Value, name, usage string) {
@@ -140,7 +140,7 @@ func UInt32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt32Value, name, 
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "UInt32WrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseUInt32Wrapper(val string) (interface{}, error) {
@@ -157,7 +157,7 @@ func ParseUInt32Wrapper(val string) (interface{}, error) {
 func UInt64WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt64Value, name, usage string) {
 	v := fs.Uint64(name, 0, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.UInt64(*v) }, "UInt64Wrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.UInt64(*v) }}
 }
 
 func UInt64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt64Value, name, usage string) {
@@ -177,7 +177,7 @@ func UInt64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt64Value, name, 
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "UInt64WrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseUInt64Wrapper(val string) (interface{}, error) {
@@ -194,7 +194,7 @@ func ParseUInt64Wrapper(val string) (interface{}, error) {
 func FloatWrapperVar(fs *pflag.FlagSet, p **wrappers.FloatValue, name, usage string) {
 	v := fs.Float32(name, 0, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Float(*v) }, "FloatWrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Float(*v) }}
 }
 
 func FloatWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.FloatValue, name, usage string) {
@@ -213,7 +213,7 @@ func FloatWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.FloatValue, name, us
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "FloatWrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseFloatWrapper(val string) (interface{}, error) {
@@ -230,7 +230,7 @@ func ParseFloatWrapper(val string) (interface{}, error) {
 func DoubleWrapperVar(fs *pflag.FlagSet, p **wrappers.DoubleValue, name, usage string) {
 	v := fs.Float64(name, 0, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Double(*v) }, "DoubleWrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Double(*v) }}
 }
 
 func DoubleWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.DoubleValue, name, usage string) {
@@ -249,7 +249,7 @@ func DoubleWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.DoubleValue, name, 
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "DoubleWrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseDoubleWrapper(val string) (interface{}, error) {
@@ -266,7 +266,7 @@ func ParseDoubleWrapper(val string) (interface{}, error) {
 func StringWrapperVar(fs *pflag.FlagSet, p **wrappers.StringValue, name, usage string) {
 	v := fs.String(name, "", usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.String(*v) }, "StringWrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.String(*v) }}
 }
 
 func StringWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.StringValue, name, usage string) {
@@ -285,7 +285,7 @@ func StringWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.StringValue, name, 
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "StringWrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseStringWrapper(val string) (interface{}, error) {
@@ -298,7 +298,7 @@ func ParseStringWrapper(val string) (interface{}, error) {
 func BytesBase64WrapperVar(fs *pflag.FlagSet, p **wrappers.BytesValue, name, usage string) {
 	v := fs.BytesBase64(name, nil, usage)
 	f := fs.Lookup(name)
-	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Bytes(*v) }, "BytesBase64Wrapper"}
+	f.Value = &wrapperValue{f.Value, func() { *p = wrapperspb.Bytes(*v) }}
 }
 
 func BytesBase64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BytesValue, name, usage string) {
@@ -318,7 +318,7 @@ func BytesBase64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BytesValue, na
 			*p = append(*p, out...)
 		}
 	}
-	f.Value = &wrapperValue{f.Value, set, "BytesBase64WrapperSlice"}
+	f.Value = &wrapperValue{f.Value, set}
 }
 
 func ParseBytesBase64Wrapper(val string) (interface{}, error) {
@@ -335,7 +335,6 @@ func ParseBytesBase64Wrapper(val string) (interface{}, error) {
 type wrapperValue struct {
 	pflag.Value
 	set func()
-	typ string
 }
 
 func (v *wrapperValue) Set(s string) error {
@@ -345,7 +344,5 @@ func (v *wrapperValue) Set(s string) error {
 	v.set()
 	return nil
 }
-
-func (v *wrapperValue) Type() string { return v.typ }
 
 func (*wrapperValue) String() string { return "<nil>" }

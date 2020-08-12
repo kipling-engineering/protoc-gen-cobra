@@ -63,6 +63,4 @@ func (v *pointerValue) Set(s string) error {
 	return nil
 }
 
-func (v *pointerValue) Type() string { return v.Value.Type() + "Pointer" }
-
 func (*pointerValue) String() string { return "<nil>" }

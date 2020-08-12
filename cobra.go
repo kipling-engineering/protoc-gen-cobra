@@ -211,33 +211,38 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 	return methodTemplate.Execute(g, data)
 }
 
+type (
+	basicType struct{ Type, Parse, Value, Slice, Pointer, Default string }
+	knownType struct{ Type, Parse, Value, Slice string }
+)
+
 var (
-	basicTypes = map[protoreflect.Kind][]string{
-		protoreflect.BoolKind:   {"BoolVar", "BoolSliceVar", "BoolPointerVar", "false", "ParseBool"},
-		protoreflect.Int32Kind:  {"Int32Var", "Int32SliceVar", "Int32PointerVar", "0", "ParseInt32"},
-		protoreflect.Uint32Kind: {"Uint32Var", "", "Uint32PointerVar", "0", "ParseUint32"},
-		protoreflect.Int64Kind:  {"Int64Var", "Int64SliceVar", "Int64PointerVar", "0", "ParseInt64"},
-		protoreflect.Uint64Kind: {"Uint64Var", "", "Uint64PointerVar", "0", "ParseUint64"},
-		protoreflect.FloatKind:  {"Float32Var", "Float32SliceVar", "Float32PointerVar", "0", "ParseFloat32"},
-		protoreflect.DoubleKind: {"Float64Var", "Float64SliceVar", "Float64PointerVar", "0", "ParseFloat64"},
-		protoreflect.StringKind: {"StringVar", "StringSliceVar", "StringPointerVar", `""`, "ParseString"},
-		protoreflect.BytesKind:  {"BytesBase64Var", "BytesBase64SliceVar", "", "nil", "ParseBytesBase64"},
+	basicTypes = map[protoreflect.Kind]basicType{
+		protoreflect.BoolKind:   {"bool", "ParseBool", "BoolVar", "BoolSliceVar", "BoolPointerVar", "false"},
+		protoreflect.Int32Kind:  {"int32", "ParseInt32", "Int32Var", "Int32SliceVar", "Int32PointerVar", "0"},
+		protoreflect.Uint32Kind: {"uint32", "ParseUint32", "Uint32Var", "Uint32SliceVar", "Uint32PointerVar", "0"},
+		protoreflect.Int64Kind:  {"int64", "ParseInt64", "Int64Var", "Int64SliceVar", "Int64PointerVar", "0"},
+		protoreflect.Uint64Kind: {"uint64", "ParseUint64", "Uint64Var", "Uint64SliceVar", "Uint64PointerVar", "0"},
+		protoreflect.FloatKind:  {"float32", "ParseFloat32", "Float32Var", "Float32SliceVar", "Float32PointerVar", "0"},
+		protoreflect.DoubleKind: {"float64", "ParseFloat64", "Float64Var", "Float64SliceVar", "Float64PointerVar", "0"},
+		protoreflect.StringKind: {"string", "ParseString", "StringVar", "StringSliceVar", "StringPointerVar", `""`},
+		protoreflect.BytesKind:  {"bytesBase64", "ParseBytesBase64", "BytesBase64Var", "BytesBase64SliceVar", "", "nil"},
 	}
 	wrappersPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/wrappers")
 	timestampPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/timestamp")
 	durationPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/duration")
-	knownTypes   = map[protogen.GoIdent][]string{
-		timestampPkg.Ident("Timestamp"):  {"TimestampVar", "TimestampSliceVar", "ParseTimestamp"},
-		durationPkg.Ident("Duration"):    {"DurationVar", "DurationSliceVar", "ParseDuration"},
-		wrappersPkg.Ident("DoubleValue"): {"DoubleWrapperVar", "DoubleWrapperSliceVar", "ParseDoubleWrapper"},
-		wrappersPkg.Ident("FloatValue"):  {"FloatWrapperVar", "FloatWrapperSliceVar", "ParseFloatWrapper"},
-		wrappersPkg.Ident("Int64Value"):  {"Int64WrapperVar", "Int64WrapperSliceVar", "ParseInt64Wrapper"},
-		wrappersPkg.Ident("UInt64Value"): {"UInt64WrapperVar", "UInt64WrapperSliceVar", "ParseUInt64Wrapper"},
-		wrappersPkg.Ident("Int32Value"):  {"Int32WrapperVar", "Int32WrapperSliceVar", "ParseInt32Wrapper"},
-		wrappersPkg.Ident("UInt32Value"): {"UInt32WrapperVar", "UInt32WrapperSliceVar", "ParseUInt32Wrapper"},
-		wrappersPkg.Ident("BoolValue"):   {"BoolWrapperVar", "BoolWrapperSliceVar", "ParseBoolWrapper"},
-		wrappersPkg.Ident("StringValue"): {"StringWrapperVar", "StringWrapperSliceVar", "ParseStringWrapper"},
-		wrappersPkg.Ident("BytesValue"):  {"BytesBase64WrapperVar", "BytesBase64WrapperSliceVar", "ParseBytesBase64Wrapper"},
+	knownTypes   = map[protogen.GoIdent]knownType{
+		timestampPkg.Ident("Timestamp"):  {"timestamp", "ParseTimestamp", "TimestampVar", "TimestampSliceVar"},
+		durationPkg.Ident("Duration"):    {"duration", "ParseDuration", "DurationVar", "DurationSliceVar"},
+		wrappersPkg.Ident("DoubleValue"): {"float64", "ParseDoubleWrapper", "DoubleWrapperVar", "DoubleWrapperSliceVar"},
+		wrappersPkg.Ident("FloatValue"):  {"float32", "ParseFloatWrapper", "FloatWrapperVar", "FloatWrapperSliceVar"},
+		wrappersPkg.Ident("Int64Value"):  {"int64", "ParseInt64Wrapper", "Int64WrapperVar", "Int64WrapperSliceVar"},
+		wrappersPkg.Ident("UInt64Value"): {"uint64", "ParseUInt64Wrapper", "UInt64WrapperVar", "UInt64WrapperSliceVar"},
+		wrappersPkg.Ident("Int32Value"):  {"int32", "ParseInt32Wrapper", "Int32WrapperVar", "Int32WrapperSliceVar"},
+		wrappersPkg.Ident("UInt32Value"): {"uint32", "ParseUInt32Wrapper", "UInt32WrapperVar", "UInt32WrapperSliceVar"},
+		wrappersPkg.Ident("BoolValue"):   {"bool", "ParseBoolWrapper", "BoolWrapperVar", "BoolWrapperSliceVar"},
+		wrappersPkg.Ident("StringValue"): {"string", "ParseStringWrapper", "StringWrapperVar", "StringWrapperSliceVar"},
+		wrappersPkg.Ident("BytesValue"):  {"bytesBase64", "ParseBytesBase64Wrapper", "BytesBase64WrapperVar", "BytesBase64WrapperSliceVar"},
 	}
 )
 
@@ -297,18 +302,15 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 	if bt, ok := basicTypes[k]; ok {
 		if fld.Desc.IsList() {
 			switch k {
-			case protoreflect.Uint32Kind:
-				return "flag.Uint32SliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)"
-			case protoreflect.Uint64Kind:
-				return "flag.Uint64SliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)"
-			case protoreflect.BytesKind:
-				return "flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)"
+			case protoreflect.Uint32Kind, protoreflect.Uint64Kind, protoreflect.BytesKind:
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", bt.Slice)
+			default:
+				return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, nil, %%q)", bt.Slice)
 			}
-			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, nil, %%q)", bt[1])
 		} else if fld.Desc.HasPresence() && k != protoreflect.BytesKind {
-			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", bt[2])
+			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", bt.Pointer)
 		} else {
-			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, %s, %%q)", bt[0], bt[3])
+			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, %s, %%q)", bt.Value, bt.Default)
 		}
 	}
 
@@ -332,11 +334,11 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 		}
 	case protoreflect.MessageKind:
 		if kt, ok := knownTypes[fld.Message.GoIdent]; ok {
-			i := 0
 			if fld.Desc.IsList() {
-				i = 1
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", kt.Slice)
+			} else {
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", kt.Value)
 			}
-			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", kt[i])
 		}
 		if fld.Desc.IsMap() {
 			kk := normalizeKind(fld.Desc.MapKey().Kind())
@@ -351,8 +353,10 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 			}
 
 			if bt, ok := basicTypes[kk]; ok {
-				keyParser := "flag." + bt[4]
+				keyParser := "flag." + bt.Parse
+				keyType := bt.Type
 				valParser := ""
+				valType := ""
 				switch vk {
 				case protoreflect.EnumKind:
 					id := g.QualifiedGoIdent(fld.Message.Fields[1].Enum.GoIdent)
@@ -363,18 +367,22 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 					}
 					e.Map = true
 					valParser = fmt.Sprintf("_%sParse", id)
+					valType = id
 				case protoreflect.MessageKind:
 					id := fld.Message.Fields[1].Message.GoIdent
 					if kt, ok := knownTypes[id]; ok {
-						valParser = "flag." + kt[2]
+						valParser = "flag." + kt.Parse
+						valType = kt.Type
 					}
 				default:
 					if bt, ok := basicTypes[vk]; ok {
-						valParser = "flag." + bt[4]
+						valParser = "flag." + bt.Parse
+						valType = bt.Type
 					}
 				}
 				if valParser != "" {
-					return fmt.Sprintf("flag.ReflectMapVar(cmd.PersistentFlags(), %s, %s, &req.%%s, %%q, %%q)", keyParser, valParser)
+					typ := fmt.Sprintf("%s=%s", keyType, valType)
+					return fmt.Sprintf("flag.ReflectMapVar(cmd.PersistentFlags(), %s, %s, %q, &req.%%s, %%q, %%q)", keyParser, valParser, typ)
 				}
 			}
 		}
@@ -463,7 +471,7 @@ func (v *_{{.GoIdent.GoName}}PointerValue) Set(val string) error {
 	}
 }
 
-func (v *_{{.GoIdent.GoName}}PointerValue) Type() string { return "{{.GoIdent.GoName}}Pointer" }
+func (v *_{{.GoIdent.GoName}}PointerValue) Type() string { return "{{.GoIdent.GoName}}" }
 
 func (v *_{{.GoIdent.GoName}}PointerValue) String() string { return "<nil>" }
 {{end}}

@@ -10,12 +10,12 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func ReflectMapVar(fs *pflag.FlagSet, keyParser, valParser func(val string) (interface{}, error), p interface{}, name, usage string) {
+func ReflectMapVar(fs *pflag.FlagSet, keyParser, valParser func(val string) (interface{}, error), typ string, p interface{}, name, usage string) {
 	v := reflect.ValueOf(p)
 	if !v.IsValid() || v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Map {
 		panic("must be a pointer to a map")
 	}
-	fs.Var(&reflectMapValue{value: v, keyParser: keyParser, valParser: valParser}, name, usage)
+	fs.Var(&reflectMapValue{value: v, typ: typ, keyParser: keyParser, valParser: valParser}, name, usage)
 }
 
 func ParseBool(val string) (interface{}, error) { return strconv.ParseBool(val) }
@@ -56,6 +56,7 @@ func ParseBytesBase64(val string) (interface{}, error) { return base64.StdEncodi
 
 type reflectMapValue struct {
 	value     reflect.Value
+	typ       string
 	changed   bool
 	keyParser func(val string) (interface{}, error)
 	valParser func(val string) (interface{}, error)
@@ -90,6 +91,6 @@ func (s *reflectMapValue) Set(val string) error {
 	return nil
 }
 
-func (s *reflectMapValue) Type() string { return "ReflectMap" }
+func (s *reflectMapValue) Type() string { return s.typ }
 
-func (s *reflectMapValue) String() string { return "[]" }
+func (*reflectMapValue) String() string { return "<nil>" }
