@@ -4,8 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -52,14 +50,14 @@ var DefaultConfig = &Config{
 	UseEnvVars:     true,
 
 	decoders: map[string]iocodec.DecoderMaker{
-		"json": func(r io.Reader) iocodec.Decoder { return json.NewDecoder(r).Decode },
-		"xml":  func(r io.Reader) iocodec.Decoder { return xml.NewDecoder(r).Decode },
+		"json": iocodec.JSONDecoderMaker,
+		"xml":  iocodec.XMLDecoderMaker,
 	},
 	encoders: map[string]iocodec.EncoderMaker{
-		"json":       func(w io.Writer) iocodec.Encoder { return json.NewEncoder(w).Encode },
-		"prettyjson": func(w io.Writer) iocodec.Encoder { e := json.NewEncoder(w); e.SetIndent("", "  "); return e.Encode },
-		"xml":        func(w io.Writer) iocodec.Encoder { return xml.NewEncoder(w).Encode },
-		"prettyxml":  func(w io.Writer) iocodec.Encoder { e := xml.NewEncoder(w); e.Indent("", "  "); return e.Encode },
+		"json":       iocodec.JSONEncoderMaker(false),
+		"prettyjson": iocodec.JSONEncoderMaker(true),
+		"xml":        iocodec.XMLEncoderMaker(false),
+		"prettyxml":  iocodec.XMLEncoderMaker(true),
 	},
 }
 

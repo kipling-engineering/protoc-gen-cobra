@@ -10,6 +10,16 @@ import (
 )
 
 func init() {
-	client.DefaultConfig.RegisterDecoder("yaml", func(r io.Reader) iocodec.Decoder { return yaml.NewDecoder(r).Decode })
-	client.DefaultConfig.RegisterEncoder("yaml", func(w io.Writer) iocodec.Encoder { return yaml.NewEncoder(w).Encode })
+	client.DefaultConfig.RegisterDecoder("yaml", decoderMaker)
+	client.DefaultConfig.RegisterEncoder("yaml", encoderMaker)
+}
+
+func decoderMaker(r io.Reader) iocodec.Decoder {
+	return yaml.NewDecoder(r).Decode
+}
+
+func encoderMaker(w io.Writer) iocodec.Encoder {
+	e := yaml.NewEncoder(w)
+	defer e.Close()
+	return e.Encode
 }
