@@ -64,6 +64,8 @@ func (s *durationSliceValue) Type() string { return "durationSlice" }
 
 func (s *durationSliceValue) String() string { return "[]" }
 
+func ParseDuration(val string) (interface{}, error) { return parseDuration(val) }
+
 func parseDuration(val string) (*duration.Duration, error) {
 	if d, err := time.ParseDuration(val); err != nil {
 		return nil, err

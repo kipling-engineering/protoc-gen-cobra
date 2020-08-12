@@ -64,6 +64,8 @@ func (s *timestampSliceValue) Type() string { return "timestampSlice" }
 
 func (s *timestampSliceValue) String() string { return "[]" }
 
+func ParseTimestamp(val string) (interface{}, error) { return parseTimestamp(val) }
+
 func parseTimestamp(val string) (*timestamp.Timestamp, error) {
 	var err error
 	for _, layout := range []string{

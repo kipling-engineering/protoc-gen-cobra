@@ -1,6 +1,9 @@
 package flag
 
 import (
+	"encoding/base64"
+	"strconv"
+
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -31,6 +34,17 @@ func BoolWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BoolValue, name, usag
 	f.Value = &wrapperValue{f.Value, set, "BoolWrapperSlice"}
 }
 
+func ParseBoolWrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseBool(val); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.Bool(v), nil
+	}
+}
+
 func Int32WrapperVar(fs *pflag.FlagSet, p **wrappers.Int32Value, name, usage string) {
 	v := fs.Int32(name, 0, usage)
 	f := fs.Lookup(name)
@@ -56,6 +70,17 @@ func Int32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int32Value, name, us
 	f.Value = &wrapperValue{f.Value, set, "Int32WrapperSlice"}
 }
 
+func ParseInt32Wrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseInt(val, 0, 32); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.Int32(int32(v)), nil
+	}
+}
+
 func Int64WrapperVar(fs *pflag.FlagSet, p **wrappers.Int64Value, name, usage string) {
 	v := fs.Int64(name, 0, usage)
 	f := fs.Lookup(name)
@@ -79,6 +104,17 @@ func Int64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int64Value, name, us
 		}
 	}
 	f.Value = &wrapperValue{f.Value, set, "Int64WrapperSlice"}
+}
+
+func ParseInt64Wrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseInt(val, 0, 64); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.Int64(v), nil
+	}
 }
 
 func UInt32WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt32Value, name, usage string) {
@@ -107,6 +143,17 @@ func UInt32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt32Value, name, 
 	f.Value = &wrapperValue{f.Value, set, "UInt32WrapperSlice"}
 }
 
+func ParseUInt32Wrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseUint(val, 0, 32); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.UInt32(uint32(v)), nil
+	}
+}
+
 func UInt64WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt64Value, name, usage string) {
 	v := fs.Uint64(name, 0, usage)
 	f := fs.Lookup(name)
@@ -131,6 +178,17 @@ func UInt64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt64Value, name, 
 		}
 	}
 	f.Value = &wrapperValue{f.Value, set, "UInt64WrapperSlice"}
+}
+
+func ParseUInt64Wrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseUint(val, 0, 64); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.UInt64(v), nil
+	}
 }
 
 func FloatWrapperVar(fs *pflag.FlagSet, p **wrappers.FloatValue, name, usage string) {
@@ -158,6 +216,17 @@ func FloatWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.FloatValue, name, us
 	f.Value = &wrapperValue{f.Value, set, "FloatWrapperSlice"}
 }
 
+func ParseFloatWrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseFloat(val, 32); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.Float(float32(v)), nil
+	}
+}
+
 func DoubleWrapperVar(fs *pflag.FlagSet, p **wrappers.DoubleValue, name, usage string) {
 	v := fs.Float64(name, 0, usage)
 	f := fs.Lookup(name)
@@ -181,6 +250,17 @@ func DoubleWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.DoubleValue, name, 
 		}
 	}
 	f.Value = &wrapperValue{f.Value, set, "DoubleWrapperSlice"}
+}
+
+func ParseDoubleWrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := strconv.ParseFloat(val, 64); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.Double(v), nil
+	}
 }
 
 func StringWrapperVar(fs *pflag.FlagSet, p **wrappers.StringValue, name, usage string) {
@@ -208,6 +288,13 @@ func StringWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.StringValue, name, 
 	f.Value = &wrapperValue{f.Value, set, "StringWrapperSlice"}
 }
 
+func ParseStringWrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	return wrapperspb.String(val), nil
+}
+
 func BytesBase64WrapperVar(fs *pflag.FlagSet, p **wrappers.BytesValue, name, usage string) {
 	v := fs.BytesBase64(name, nil, usage)
 	f := fs.Lookup(name)
@@ -232,6 +319,17 @@ func BytesBase64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BytesValue, na
 		}
 	}
 	f.Value = &wrapperValue{f.Value, set, "BytesBase64WrapperSlice"}
+}
+
+func ParseBytesBase64Wrapper(val string) (interface{}, error) {
+	if val == "" {
+		return nil, nil
+	}
+	if v, err := base64.StdEncoding.DecodeString(val); err != nil {
+		return nil, err
+	} else {
+		return wrapperspb.Bytes(v), nil
+	}
 }
 
 type wrapperValue struct {

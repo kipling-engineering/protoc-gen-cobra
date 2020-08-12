@@ -84,6 +84,8 @@ func _TypesEchoCommand(d *client.Dialer) *cobra.Command {
 	cmd.PersistentFlags().BoolVar(&req.Bool, "bool", false, "")
 	cmd.PersistentFlags().StringVar(&req.String_, "string_", "", "")
 	cmd.PersistentFlags().BytesBase64Var(&req.Bytes, "bytes", nil, "")
+	_Sound_NestedEnumVar(cmd.PersistentFlags(), &req.NestedEnum, "nestedenum", "")
+	_GlobalEnumVar(cmd.PersistentFlags(), &req.GlobalEnum, "globalenum", "")
 	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, "listdouble", nil, "")
 	cmd.PersistentFlags().Float32SliceVar(&req.ListFloat, "listfloat", nil, "")
 	cmd.PersistentFlags().Int32SliceVar(&req.ListInt32, "listint32", nil, "")
@@ -99,11 +101,36 @@ func _TypesEchoCommand(d *client.Dialer) *cobra.Command {
 	cmd.PersistentFlags().BoolSliceVar(&req.ListBool, "listbool", nil, "")
 	cmd.PersistentFlags().StringSliceVar(&req.ListString, "liststring", nil, "")
 	flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.ListBytes, "listbytes", "")
+	_Sound_NestedEnumSliceVar(cmd.PersistentFlags(), &req.ListNestedEnum, "listnestedenum", "")
+	_GlobalEnumSliceVar(cmd.PersistentFlags(), &req.ListGlobalEnum, "listglobalenum", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseFloat64, &req.MapStringDouble, "mapstringdouble", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseFloat32, &req.MapStringFloat, "mapstringfloat", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32, &req.MapStringInt32, "mapstringint32", "")
 	cmd.PersistentFlags().StringToInt64Var(&req.MapStringInt64, "mapstringint64", nil, "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint32, &req.MapStringUint32, "mapstringuint32", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint64, &req.MapStringUint64, "mapstringuint64", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32, &req.MapStringSint32, "mapstringsint32", "")
+	cmd.PersistentFlags().StringToInt64Var(&req.MapStringSint64, "mapstringsint64", nil, "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint32, &req.MapStringFixed32, "mapstringfixed32", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint64, &req.MapStringFixed64, "mapstringfixed64", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32, &req.MapStringSfixed32, "mapstringsfixed32", "")
+	cmd.PersistentFlags().StringToInt64Var(&req.MapStringSfixed64, "mapstringsfixed64", nil, "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBool, &req.MapStringBool, "mapstringbool", "")
 	cmd.PersistentFlags().StringToStringVar(&req.MapStringString, "mapstringstring", nil, "")
-	_Sound_NestedEnumVar(cmd.PersistentFlags(), &req.NestedEnum, "nestedenum", "")
-	_GlobalEnumVar(cmd.PersistentFlags(), &req.GlobalEnum, "globalenum", "")
-	_Sound_NestedEnumSliceVar(cmd.PersistentFlags(), &req.ListEnum, "listenum", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBytesBase64, &req.MapStringBytes, "mapstringbytes", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, _Sound_NestedEnumParse, &req.MapStringNestedEnum, "mapstringnestedenum", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, _GlobalEnumParse, &req.MapStringGlobalEnum, "mapstringglobalenum", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt32, flag.ParseString, &req.MapInt32String, "mapint32string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt64, flag.ParseString, &req.MapInt64String, "mapint64string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint32, flag.ParseString, &req.MapUint32String, "mapuint32string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint64, flag.ParseString, &req.MapUint64String, "mapuint64string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt32, flag.ParseString, &req.MapSint32String, "mapsint32string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt64, flag.ParseString, &req.MapSint64String, "mapsint64string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint32, flag.ParseString, &req.MapFixed32String, "mapfixed32string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint64, flag.ParseString, &req.MapFixed64String, "mapfixed64string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt32, flag.ParseString, &req.MapSfixed32String, "mapsfixed32string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt64, flag.ParseString, &req.MapSfixed64String, "mapsfixed64string", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseBool, flag.ParseString, &req.MapBoolString, "mapboolstring", "")
 	flag.TimestampVar(cmd.PersistentFlags(), &req.Timestamp, "timestamp", "")
 	flag.DurationVar(cmd.PersistentFlags(), &req.Duration, "duration", "")
 	flag.BoolWrapperVar(cmd.PersistentFlags(), &req.WrapperBool, "wrapperbool", "")
@@ -126,6 +153,17 @@ func _TypesEchoCommand(d *client.Dialer) *cobra.Command {
 	flag.StringWrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperString, "listwrapperstring", "")
 	flag.UInt32WrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperUint32, "listwrapperuint32", "")
 	flag.UInt64WrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperUint64, "listwrapperuint64", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseTimestamp, &req.MapStringTimestamp, "mapstringtimestamp", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseDuration, &req.MapStringDuration, "mapstringduration", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBoolWrapper, &req.MapStringWrapperBool, "mapstringwrapperbool", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBytesBase64Wrapper, &req.MapStringWrapperBytes, "mapstringwrapperbytes", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseDoubleWrapper, &req.MapStringWrapperDouble, "mapstringwrapperdouble", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseFloatWrapper, &req.MapStringWrapperFloat, "mapstringwrapperfloat", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32Wrapper, &req.MapStringWrapperInt32, "mapstringwrapperint32", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt64Wrapper, &req.MapStringWrapperInt64, "mapstringwrapperint64", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseStringWrapper, &req.MapStringWrapperString, "mapstringwrapperstring", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUInt32Wrapper, &req.MapStringWrapperUint32, "mapstringwrapperuint32", "")
+	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUInt64Wrapper, &req.MapStringWrapperUint64, "mapstringwrapperuint64", "")
 
 	return cmd
 }
@@ -148,6 +186,41 @@ func (v *_GlobalEnumValue) Set(val string) error {
 func (v *_GlobalEnumValue) Type() string { return "GlobalEnum" }
 
 func (v *_GlobalEnumValue) String() string { return (GlobalEnum)(*v).String() }
+
+type _GlobalEnumSliceValue struct {
+	value   *[]GlobalEnum
+	changed bool
+}
+
+func _GlobalEnumSliceVar(fs *pflag.FlagSet, p *[]GlobalEnum, name, usage string) {
+	fs.Var(&_GlobalEnumSliceValue{value: p}, name, usage)
+}
+
+func (s *_GlobalEnumSliceValue) Set(val string) error {
+	ss := strings.Split(val, ",")
+	out := make([]GlobalEnum, len(ss))
+	for i, s := range ss {
+		var err error
+		if out[i], err = parseGlobalEnum(s); err != nil {
+			return err
+		}
+	}
+	if !s.changed {
+		*s.value = out
+		s.changed = true
+	} else {
+		*s.value = append(*s.value, out...)
+	}
+	return nil
+}
+
+func (s *_GlobalEnumSliceValue) Type() string { return "GlobalEnumSlice" }
+
+func (s *_GlobalEnumSliceValue) String() string { return "[]" }
+
+func _GlobalEnumParse(val string) (interface{}, error) {
+	return parseGlobalEnum(val)
+}
 
 func parseGlobalEnum(s string) (GlobalEnum, error) {
 	if i, ok := GlobalEnum_value[s]; ok {
@@ -208,6 +281,10 @@ func (s *_Sound_NestedEnumSliceValue) Set(val string) error {
 func (s *_Sound_NestedEnumSliceValue) Type() string { return "Sound_NestedEnumSlice" }
 
 func (s *_Sound_NestedEnumSliceValue) String() string { return "[]" }
+
+func _Sound_NestedEnumParse(val string) (interface{}, error) {
+	return parseSound_NestedEnum(val)
+}
 
 func parseSound_NestedEnum(s string) (Sound_NestedEnum, error) {
 	if i, ok := Sound_NestedEnum_value[s]; ok {
