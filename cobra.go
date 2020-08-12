@@ -212,22 +212,32 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 }
 
 var (
-	flagPkg      = protogen.GoImportPath("github.com/NathanBaulch/protoc-gen-cobra/flag")
+	basicTypes = map[protoreflect.Kind][]string{
+		protoreflect.BoolKind:   {"BoolVar", "BoolSliceVar", "BoolPointerVar", "false"},
+		protoreflect.Int32Kind:  {"Int32Var", "Int32SliceVar", "Int32PointerVar", "0"},
+		protoreflect.Uint32Kind: {"Uint32Var", "", "Uint32PointerVar", "0"},
+		protoreflect.Int64Kind:  {"Int64Var", "Int64SliceVar", "Int64PointerVar", "0"},
+		protoreflect.Uint64Kind: {"Uint64Var", "", "Uint64PointerVar", "0"},
+		protoreflect.FloatKind:  {"Float32Var", "Float32SliceVar", "Float32PointerVar", "0"},
+		protoreflect.DoubleKind: {"Float64Var", "Float64SliceVar", "Float64PointerVar", "0"},
+		protoreflect.StringKind: {"StringVar", "StringSliceVar", "StringPointerVar", `""`},
+		protoreflect.BytesKind:  {"BytesBase64Var", "BytesBase64SliceVar", "", "nil"},
+	}
 	wrappersPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/wrappers")
 	timestampPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/timestamp")
 	durationPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/duration")
-	knownTypes   = map[protogen.GoIdent][]protogen.GoIdent{
-		timestampPkg.Ident("Timestamp"):  {flagPkg.Ident("TimestampVar"), flagPkg.Ident("TimestampSliceVar")},
-		durationPkg.Ident("Duration"):    {flagPkg.Ident("DurationVar"), flagPkg.Ident("DurationSliceVar")},
-		wrappersPkg.Ident("DoubleValue"): {flagPkg.Ident("DoubleWrapperVar"), flagPkg.Ident("DoubleWrapperSliceVar")},
-		wrappersPkg.Ident("FloatValue"):  {flagPkg.Ident("FloatWrapperVar"), flagPkg.Ident("FloatWrapperSliceVar")},
-		wrappersPkg.Ident("Int64Value"):  {flagPkg.Ident("Int64WrapperVar"), flagPkg.Ident("Int64WrapperSliceVar")},
-		wrappersPkg.Ident("UInt64Value"): {flagPkg.Ident("UInt64WrapperVar"), flagPkg.Ident("UInt64WrapperSliceVar")},
-		wrappersPkg.Ident("Int32Value"):  {flagPkg.Ident("Int32WrapperVar"), flagPkg.Ident("Int32WrapperSliceVar")},
-		wrappersPkg.Ident("UInt32Value"): {flagPkg.Ident("UInt32WrapperVar"), flagPkg.Ident("UInt32WrapperSliceVar")},
-		wrappersPkg.Ident("BoolValue"):   {flagPkg.Ident("BoolWrapperVar"), flagPkg.Ident("BoolWrapperSliceVar")},
-		wrappersPkg.Ident("StringValue"): {flagPkg.Ident("StringWrapperVar"), flagPkg.Ident("StringWrapperSliceVar")},
-		wrappersPkg.Ident("BytesValue"):  {flagPkg.Ident("BytesBase64WrapperVar"), flagPkg.Ident("BytesBase64WrapperSliceVar")},
+	knownTypes   = map[protogen.GoIdent][]string{
+		timestampPkg.Ident("Timestamp"):  {"TimestampVar", "TimestampSliceVar"},
+		durationPkg.Ident("Duration"):    {"DurationVar", "DurationSliceVar"},
+		wrappersPkg.Ident("DoubleValue"): {"DoubleWrapperVar", "DoubleWrapperSliceVar"},
+		wrappersPkg.Ident("FloatValue"):  {"FloatWrapperVar", "FloatWrapperSliceVar"},
+		wrappersPkg.Ident("Int64Value"):  {"Int64WrapperVar", "Int64WrapperSliceVar"},
+		wrappersPkg.Ident("UInt64Value"): {"UInt64WrapperVar", "UInt64WrapperSliceVar"},
+		wrappersPkg.Ident("Int32Value"):  {"Int32WrapperVar", "Int32WrapperSliceVar"},
+		wrappersPkg.Ident("UInt32Value"): {"UInt32WrapperVar", "UInt32WrapperSliceVar"},
+		wrappersPkg.Ident("BoolValue"):   {"BoolWrapperVar", "BoolWrapperSliceVar"},
+		wrappersPkg.Ident("StringValue"): {"StringWrapperVar", "StringWrapperSliceVar"},
+		wrappersPkg.Ident("BytesValue"):  {"BytesBase64WrapperVar", "BytesBase64WrapperSliceVar"},
 	}
 )
 
@@ -236,125 +246,25 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 	flagLines := make(map[int]string, len(message.Fields))
 
 	for _, fld := range message.Fields {
-		var flagLine string
 		path := append(path, fld.GoName)
 		goPath := strings.Join(path, ".")
 		flagName := strings.ToLower(strings.Join(path, "-"))
 		comment := cleanComments(fld.Comments.Leading)
 		deprecated := deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated()
 
-		switch fld.Desc.Kind() {
-		case protoreflect.BoolKind:
-			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().BoolSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().BoolVar(&req.%s, %q, false, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.BoolPointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
+		if f := flagFormat(g, fld, enums); f != "" {
+			flagLine := fmt.Sprintf(f, goPath, flagName, comment)
+			if deprecated {
+				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%q, \"deprecated\")", flagName)
 			}
-		case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
-			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.Int32PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
-			if fld.Desc.IsList() {
-				id := g.QualifiedGoIdent(flagPkg.Ident("Uint32SliceVar"))
-				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.Uint32PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
-			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Int64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.Int64PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
-			if fld.Desc.IsList() {
-				id := g.QualifiedGoIdent(flagPkg.Ident("Uint64SliceVar"))
-				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Uint64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.Uint64PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.FloatKind:
-			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float32SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float32Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.Float32PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.DoubleKind:
-			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float64SliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().Float64Var(&req.%s, %q, 0, %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.Float64PointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.StringKind:
-			if fld.Desc.IsList() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().StringSliceVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			} else if !fld.Desc.HasPresence() {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().StringVar(&req.%s, %q, \"\", %q)", goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("flag.StringPointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.BytesKind:
-			if fld.Desc.IsList() {
-				id := g.QualifiedGoIdent(flagPkg.Ident("BytesBase64SliceVar"))
-				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", id, goPath, flagName, comment)
-			} else {
-				flagLine = fmt.Sprintf("cmd.PersistentFlags().BytesBase64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-			}
-		case protoreflect.EnumKind:
-			e, ok := enums[fld.Enum.GoIdent.GoName]
-			if !ok {
-				e = &enum{Enum: fld.Enum}
-				enums[fld.Enum.GoIdent.GoName] = e
-			}
-			if fld.Desc.IsList() {
-				e.List = true
-				flagLine = fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
-			} else if fld.Desc.HasPresence() {
-				e.Pointer = true
-				flagLine = fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
-			} else {
-				e.Value = true
-				flagLine = fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%s, %q, %q)", fld.Enum.GoIdent.GoName, goPath, flagName, comment)
-			}
-		case protoreflect.MessageKind, protoreflect.GroupKind:
+			flagLines[fld.Desc.Index()] = flagLine
+		} else if normalizeKind(fld.Desc.Kind()) == protoreflect.MessageKind {
 			if fld.Desc.ContainingOneof() != nil {
 				// oneof not supported
-			} else if flagFuncs, ok := knownTypes[fld.Message.GoIdent]; ok {
-				i := 0
-				if fld.Desc.IsList() {
-					i = 1
-				}
-				flagId := g.QualifiedGoIdent(flagFuncs[i])
-				flagLine = fmt.Sprintf("%s(cmd.PersistentFlags(), &req.%s, %q, %q)", flagId, goPath, flagName, comment)
 			} else if fld.Desc.IsList() {
 				// message list not supported
 			} else if fld.Desc.IsMap() {
 				// TODO: expand map support
-				if fld.Desc.MapKey().Kind() == protoreflect.StringKind {
-					switch fld.Desc.MapValue().Kind() {
-					case protoreflect.StringKind:
-						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToStringVar(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-					case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
-						flagLine = fmt.Sprintf("cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)", goPath, flagName, comment)
-					}
-				}
 			} else if visited[message.GoIdent] = true; visited[fld.Message.GoIdent] {
 				// cycle detected
 			} else {
@@ -363,21 +273,14 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 					m[k] = v
 				}
 
-				i, f := walkFields(g, fld.Message, path, enums, deprecated, m)
-				if i != "" {
-					initLines[fld.Desc.Index()] = fld.GoName + ": " + i + ","
+				initLine, flagLine := walkFields(g, fld.Message, path, enums, deprecated, m)
+				if initLine != "" {
+					initLines[fld.Desc.Index()] = fmt.Sprintf("%s: %s,", fld.GoName, initLine)
 				}
-				if f != "" {
-					flagLines[fld.Desc.Index()] = f
+				if flagLine != "" {
+					flagLines[fld.Desc.Index()] = flagLine
 				}
 			}
-		}
-
-		if flagLine != "" {
-			if deprecated {
-				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%q, \"deprecated\")", flagName)
-			}
-			flagLines[fld.Desc.Index()] = flagLine
 		}
 	}
 
@@ -386,6 +289,83 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		initCode = fmt.Sprintf("\n%s\n", strings.Join(sortedLines(initLines), "\n"))
 	}
 	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(sortedLines(flagLines), "\n")
+}
+
+func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string]*enum) string {
+	k := normalizeKind(fld.Desc.Kind())
+
+	if bt, ok := basicTypes[k]; ok {
+		if fld.Desc.IsList() {
+			switch k {
+			case protoreflect.Uint32Kind:
+				return "flag.Uint32SliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)"
+			case protoreflect.Uint64Kind:
+				return "flag.Uint64SliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)"
+			case protoreflect.BytesKind:
+				return "flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.%s, %q, %q)"
+			}
+			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, nil, %%q)", bt[1])
+		} else if fld.Desc.HasPresence() && k != protoreflect.BytesKind {
+			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", bt[2])
+		} else {
+			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, %s, %%q)", bt[0], bt[3])
+		}
+	}
+
+	switch k {
+	case protoreflect.EnumKind:
+		id := g.QualifiedGoIdent(fld.Enum.GoIdent)
+		e, ok := enums[id]
+		if !ok {
+			e = &enum{Enum: fld.Enum}
+			enums[id] = e
+		}
+		if fld.Desc.IsList() {
+			e.List = true
+			return fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", id)
+		} else if fld.Desc.HasPresence() {
+			e.Pointer = true
+			return fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", id)
+		} else {
+			e.Value = true
+			return fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", id)
+		}
+	case protoreflect.MessageKind:
+		if kt, ok := knownTypes[fld.Message.GoIdent]; ok {
+			i := 0
+			if fld.Desc.IsList() {
+				i = 1
+			}
+			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", kt[i])
+		}
+		if fld.Desc.IsMap() && fld.Desc.MapKey().Kind() == protoreflect.StringKind {
+			switch normalizeKind(fld.Desc.MapValue().Kind()) {
+			case protoreflect.StringKind:
+				return "cmd.PersistentFlags().StringToStringVar(&req.%s, %q, nil, %q)"
+			case protoreflect.Int64Kind:
+				return "cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)"
+			}
+		}
+	}
+
+	return ""
+}
+
+func normalizeKind(kind protoreflect.Kind) protoreflect.Kind {
+	switch kind {
+	case protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
+		return protoreflect.Int32Kind
+	case protoreflect.Fixed32Kind:
+		return protoreflect.Uint32Kind
+	case protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
+		return protoreflect.Int64Kind
+	case protoreflect.Fixed64Kind:
+		return protoreflect.Uint64Kind
+	case protoreflect.GroupKind:
+		return protoreflect.MessageKind
+	default:
+		return kind
+	}
 }
 
 func sortedLines(m map[int]string) []string {
