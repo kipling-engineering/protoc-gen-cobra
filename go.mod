@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	cloud.google.com/go v0.63.0 // indirect
+	github.com/fatih/structs v1.1.0
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/mitchellh/go-homedir v1.1.0
