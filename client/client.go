@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net"
 	"os"
@@ -166,32 +165,38 @@ func RoundTrip(ctx context.Context, cfg *Config, fn func(grpc.ClientConnInterfac
 }
 
 func (c *Config) makeDecoder() (iocodec.Decoder, error) {
-	var r io.Reader
-	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || c.RequestFile == "-" {
-		r = os.Stdin
-	} else if c.RequestFile != "" {
+	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) != 0 && c.RequestFile != "-" {
+		if c.RequestFile == "" {
+			return iocodec.NoOp, nil
+		}
+
 		f, err := os.Open(c.RequestFile)
 		if err != nil {
 			return nil, fmt.Errorf("request file: %v", err)
 		}
-		defer f.Close()
+		var m iocodec.DecoderMaker
 		if ext := strings.TrimLeft(filepath.Ext(c.RequestFile), "."); ext != "" {
-			if m, ok := c.inDecoders[ext]; ok {
-				return m(f), nil
+			m = c.inDecoders[ext]
+		}
+		if m == nil {
+			var ok bool
+			if m, ok = c.inDecoders[c.RequestFormat]; !ok {
+				return nil, fmt.Errorf("unknown request format: %s", c.RequestFormat)
 			}
 		}
-		r = f
-	} else {
-		r = nil
+		return func(v interface{}) error {
+			defer f.Close()
+			return m(f)(v)
+		}, nil
 	}
 
-	if r == nil || c.RequestFormat == "" {
+	if c.RequestFormat == "" {
 		return iocodec.NoOp, nil
 	}
 	if m, ok := c.inDecoders[c.RequestFormat]; !ok {
 		return nil, fmt.Errorf("unknown request format: %s", c.RequestFormat)
 	} else {
-		return m(r), nil
+		return m(os.Stdin), nil
 	}
 }
 
