@@ -11,11 +11,8 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func DeprecatedClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func DeprecatedClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use:        "deprecated",
 		Short:      "Deprecated service client",
@@ -23,14 +20,13 @@ func DeprecatedClientCommand(cfgs ...*client.Config) *cobra.Command {
 		Deprecated: "deprecated",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand(
-		_DeprecatedObsoleteCommand(d),
+		_DeprecatedObsoleteCommand(cfg),
 	)
 	return cmd
 }
 
-func _DeprecatedObsoleteCommand(d *client.Dialer) *cobra.Command {
+func _DeprecatedObsoleteCommand(cfg *client.Config) *cobra.Command {
 	req := &ObsoleteRequest{}
 
 	cmd := &cobra.Command{
@@ -39,15 +35,15 @@ func _DeprecatedObsoleteCommand(d *client.Dialer) *cobra.Command {
 		Long:       "",
 		Deprecated: "deprecated",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "DEPRECATED", "OBSOLETE"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "DEPRECATED", "OBSOLETE"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewDeprecatedClient(cc)
 				v := &ObsoleteRequest{}
 

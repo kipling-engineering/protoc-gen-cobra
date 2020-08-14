@@ -11,26 +11,22 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func NestedClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func NestedClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use:   "nested",
 		Short: "Nested service client",
 		Long:  "",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand(
-		_NestedGetCommand(d),
-		_NestedGetDeeplyNestedCommand(d),
+		_NestedGetCommand(cfg),
+		_NestedGetDeeplyNestedCommand(cfg),
 	)
 	return cmd
 }
 
-func _NestedGetCommand(d *client.Dialer) *cobra.Command {
+func _NestedGetCommand(cfg *client.Config) *cobra.Command {
 	req := &NestedRequest{
 		Inner:    &NestedRequest_InnerNestedType{},
 		TopLevel: &TopLevelNestedType{},
@@ -41,15 +37,15 @@ func _NestedGetCommand(d *client.Dialer) *cobra.Command {
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "NESTED", "GET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "NESTED", "GET"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewNestedClient(cc)
 				v := &NestedRequest{}
 
@@ -76,7 +72,7 @@ func _NestedGetCommand(d *client.Dialer) *cobra.Command {
 	return cmd
 }
 
-func _NestedGetDeeplyNestedCommand(d *client.Dialer) *cobra.Command {
+func _NestedGetDeeplyNestedCommand(cfg *client.Config) *cobra.Command {
 	req := &DeeplyNested{
 		L0: &DeeplyNested_DeeplyNestedOuter{
 			L1: &DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner{
@@ -90,15 +86,15 @@ func _NestedGetDeeplyNestedCommand(d *client.Dialer) *cobra.Command {
 		Short: "GetDeeplyNested RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "NESTED", "GETDEEPLYNESTED"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "NESTED", "GETDEEPLYNESTED"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewNestedClient(cc)
 				v := &DeeplyNested{}
 

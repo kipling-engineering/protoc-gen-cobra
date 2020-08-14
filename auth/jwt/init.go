@@ -19,12 +19,12 @@ type config struct {
 }
 
 func init() {
-	client.DefaultConfig.RegisterFlags(func(fs *pflag.FlagSet) {
+	client.RegisterFlagBinder(func(fs *pflag.FlagSet) {
 		fs.StringVar(&Config.JWTKey, "jwt-key", Config.JWTKey, "JWT key")
 		fs.StringVar(&Config.JWTKeyFile, "jwt-key-file", Config.JWTKeyFile, "JWT key file")
 	})
 
-	client.DefaultConfig.RegisterDialOptions(func(_ context.Context, opts *[]grpc.DialOption) error {
+	client.RegisterPreDialer(func(_ context.Context, opts *[]grpc.DialOption) error {
 		cfg := Config
 
 		if cfg.JWTKey != "" {

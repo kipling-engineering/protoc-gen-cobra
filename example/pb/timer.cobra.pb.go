@@ -12,25 +12,21 @@ import (
 	io "io"
 )
 
-func TimerClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func TimerClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use:   "timer",
 		Short: "Timer service client",
 		Long:  "",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand(
-		_TimerTickCommand(d),
+		_TimerTickCommand(cfg),
 	)
 	return cmd
 }
 
-func _TimerTickCommand(d *client.Dialer) *cobra.Command {
+func _TimerTickCommand(cfg *client.Config) *cobra.Command {
 	req := &TickRequest{}
 
 	cmd := &cobra.Command{
@@ -38,15 +34,15 @@ func _TimerTickCommand(d *client.Dialer) *cobra.Command {
 		Short: "Tick RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "TIMER", "TICK"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "TIMER", "TICK"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewTimerClient(cc)
 				v := &TickRequest{}
 

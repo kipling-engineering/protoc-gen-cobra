@@ -11,25 +11,21 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func BankClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func BankClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use:   "bank",
 		Short: "Bank service client",
 		Long:  "",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand(
-		_BankDepositCommand(d),
+		_BankDepositCommand(cfg),
 	)
 	return cmd
 }
 
-func _BankDepositCommand(d *client.Dialer) *cobra.Command {
+func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 	req := &DepositRequest{
 		ClusterWithNamespaces: &DepositRequest_ClusterWithNamespaces{
 			Cluster: &Cluster{},
@@ -41,15 +37,15 @@ func _BankDepositCommand(d *client.Dialer) *cobra.Command {
 		Short: "Deposit RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "BANK", "DEPOSIT"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "BANK", "DEPOSIT"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewBankClient(cc)
 				v := &DepositRequest{}
 

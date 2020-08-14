@@ -20,6 +20,11 @@ import (
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 )
 
+type (
+	FlagBinder func(*pflag.FlagSet)
+	PreDialer  func(context.Context, *[]grpc.DialOption) error
+)
+
 type Config struct {
 	ServerAddr     string
 	RequestFile    string
@@ -36,10 +41,10 @@ type Config struct {
 	CertFile           string
 	KeyFile            string
 
-	flags       []func(*pflag.FlagSet)
-	dialOptions []func(context.Context, *[]grpc.DialOption) error
-	decoders    map[string]iocodec.DecoderMaker
-	encoders    map[string]iocodec.EncoderMaker
+	flagBinders []FlagBinder
+	preDialers  []PreDialer
+	inDecoders  map[string]iocodec.DecoderMaker
+	outEncoders map[string]iocodec.EncoderMaker
 }
 
 var DefaultConfig = &Config{
@@ -49,11 +54,11 @@ var DefaultConfig = &Config{
 	Timeout:        10 * time.Second,
 	UseEnvVars:     true,
 
-	decoders: map[string]iocodec.DecoderMaker{
+	inDecoders: map[string]iocodec.DecoderMaker{
 		"json": iocodec.JSONDecoderMaker,
 		"xml":  iocodec.XMLDecoderMaker,
 	},
-	encoders: map[string]iocodec.EncoderMaker{
+	outEncoders: map[string]iocodec.EncoderMaker{
 		"json":       iocodec.JSONEncoderMaker(false),
 		"prettyjson": iocodec.JSONEncoderMaker(true),
 		"xml":        iocodec.XMLEncoderMaker(false),
@@ -61,34 +66,28 @@ var DefaultConfig = &Config{
 	},
 }
 
-func (c Config) Clone() *Config {
-	d := make(map[string]iocodec.DecoderMaker, len(c.decoders))
-	for k, v := range c.decoders {
-		d[k] = v
+func NewConfig(options ...Option) *Config {
+	c := *DefaultConfig
+	for _, opt := range options {
+		opt(&c)
 	}
-	c.decoders = d
-	e := make(map[string]iocodec.EncoderMaker, len(c.encoders))
-	for k, v := range c.encoders {
-		e[k] = v
-	}
-	c.encoders = e
 	return &c
 }
 
-func (c *Config) RegisterFlags(f func(fs *pflag.FlagSet)) {
-	c.flags = append(c.flags, f)
+func RegisterFlagBinder(binder FlagBinder) {
+	DefaultConfig.flagBinders = append(DefaultConfig.flagBinders, binder)
 }
 
-func (c *Config) RegisterDialOptions(f func(context.Context, *[]grpc.DialOption) error) {
-	c.dialOptions = append(c.dialOptions, f)
+func RegisterPreDialer(dialer PreDialer) {
+	DefaultConfig.preDialers = append(DefaultConfig.preDialers, dialer)
 }
 
-func (c *Config) RegisterDecoder(format string, maker iocodec.DecoderMaker) {
-	c.decoders[format] = maker
+func RegisterInputDecoder(format string, maker iocodec.DecoderMaker) {
+	DefaultConfig.inDecoders[format] = maker
 }
 
-func (c *Config) RegisterEncoder(format string, maker iocodec.EncoderMaker) {
-	c.encoders[format] = maker
+func RegisterOutputEncoder(format string, maker iocodec.EncoderMaker) {
+	DefaultConfig.outEncoders[format] = maker
 }
 
 func (c *Config) BindFlags(fs *pflag.FlagSet) {
@@ -104,15 +103,15 @@ func (c *Config) BindFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&c.CertFile, "tls-cert-file", c.CertFile, "client certificate file")
 	fs.StringVar(&c.KeyFile, "tls-key-file", c.KeyFile, "client key file")
 
-	for _, h := range c.flags {
-		h(fs)
+	for _, binder := range c.flagBinders {
+		binder(fs)
 	}
 }
 
 func (c *Config) decoderFormats() []string {
-	f := make([]string, len(c.decoders))
+	f := make([]string, len(c.inDecoders))
 	i := 0
-	for k := range c.decoders {
+	for k := range c.inDecoders {
 		f[i] = k
 		i++
 	}
@@ -120,43 +119,41 @@ func (c *Config) decoderFormats() []string {
 }
 
 func (c *Config) encoderFormats() []string {
-	f := make([]string, len(c.encoders))
+	f := make([]string, len(c.outEncoders))
 	i := 0
-	for k := range c.encoders {
+	for k := range c.outEncoders {
 		f[i] = k
 		i++
 	}
 	return f
 }
 
-type Dialer struct{ *Config }
-
-func (d *Dialer) RoundTrip(ctx context.Context, fn func(grpc.ClientConnInterface, iocodec.Decoder, iocodec.Encoder) error) error {
+func RoundTrip(ctx context.Context, cfg *Config, fn func(grpc.ClientConnInterface, iocodec.Decoder, iocodec.Encoder) error) error {
 	var err error
 	var in iocodec.Decoder
-	if in, err = d.makeDecoder(); err != nil {
+	if in, err = cfg.makeDecoder(); err != nil {
 		return err
 	}
 	var out iocodec.Encoder
-	if out, err = d.makeEncoder(); err != nil {
+	if out, err = cfg.makeEncoder(); err != nil {
 		return err
 	}
 
 	opts := []grpc.DialOption{grpc.WithBlock()}
-	if err := d.dialOpts(ctx, &opts); err != nil {
+	if err := cfg.dialOpts(ctx, &opts); err != nil {
 		return err
 	}
 
-	if d.Timeout > 0 {
+	if cfg.Timeout > 0 {
 		var done context.CancelFunc
-		ctx, done = context.WithTimeout(ctx, d.Timeout)
+		ctx, done = context.WithTimeout(ctx, cfg.Timeout)
 		defer done()
 	}
 
-	cc, err := grpc.DialContext(ctx, d.ServerAddr, opts...)
+	cc, err := grpc.DialContext(ctx, cfg.ServerAddr, opts...)
 	if err != nil {
 		if err == context.DeadlineExceeded {
-			return fmt.Errorf("timeout dialing server: %s", d.ServerAddr)
+			return fmt.Errorf("timeout dialing server: %s", cfg.ServerAddr)
 		}
 		return err
 	}
@@ -165,18 +162,18 @@ func (d *Dialer) RoundTrip(ctx context.Context, fn func(grpc.ClientConnInterface
 	return fn(cc, in, out)
 }
 
-func (d *Dialer) makeDecoder() (iocodec.Decoder, error) {
+func (c *Config) makeDecoder() (iocodec.Decoder, error) {
 	var r io.Reader
-	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || d.RequestFile == "-" {
+	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) == 0 || c.RequestFile == "-" {
 		r = os.Stdin
-	} else if d.RequestFile != "" {
-		f, err := os.Open(d.RequestFile)
+	} else if c.RequestFile != "" {
+		f, err := os.Open(c.RequestFile)
 		if err != nil {
 			return nil, fmt.Errorf("request file: %v", err)
 		}
 		defer f.Close()
-		if ext := strings.TrimLeft(filepath.Ext(d.RequestFile), "."); ext != "" {
-			if m, ok := d.decoders[ext]; ok {
+		if ext := strings.TrimLeft(filepath.Ext(c.RequestFile), "."); ext != "" {
+			if m, ok := c.inDecoders[ext]; ok {
 				return m(f), nil
 			}
 		}
@@ -185,32 +182,32 @@ func (d *Dialer) makeDecoder() (iocodec.Decoder, error) {
 		r = nil
 	}
 
-	if r == nil || d.RequestFormat == "" {
+	if r == nil || c.RequestFormat == "" {
 		return iocodec.NoOp, nil
 	}
-	if m, ok := d.decoders[d.RequestFormat]; !ok {
-		return nil, fmt.Errorf("unknown request format: %s", d.RequestFormat)
+	if m, ok := c.inDecoders[c.RequestFormat]; !ok {
+		return nil, fmt.Errorf("unknown request format: %s", c.RequestFormat)
 	} else {
 		return m(r), nil
 	}
 }
 
-func (d *Dialer) makeEncoder() (iocodec.Encoder, error) {
-	if d.ResponseFormat == "" {
+func (c *Config) makeEncoder() (iocodec.Encoder, error) {
+	if c.ResponseFormat == "" {
 		return iocodec.NoOp, nil
 	}
-	if m, ok := d.encoders[d.ResponseFormat]; !ok {
-		return nil, fmt.Errorf("unknown response format: %s", d.ResponseFormat)
+	if m, ok := c.outEncoders[c.ResponseFormat]; !ok {
+		return nil, fmt.Errorf("unknown response format: %s", c.ResponseFormat)
 	} else {
 		return m(os.Stdout), nil
 	}
 }
 
-func (d *Dialer) dialOpts(ctx context.Context, opts *[]grpc.DialOption) error {
-	if d.TLS {
-		tlsConfig := &tls.Config{InsecureSkipVerify: d.InsecureSkipVerify}
-		if d.CACertFile != "" {
-			caCert, err := ioutil.ReadFile(d.CACertFile)
+func (c *Config) dialOpts(ctx context.Context, opts *[]grpc.DialOption) error {
+	if c.TLS {
+		tlsConfig := &tls.Config{InsecureSkipVerify: c.InsecureSkipVerify}
+		if c.CACertFile != "" {
+			caCert, err := ioutil.ReadFile(c.CACertFile)
 			if err != nil {
 				return fmt.Errorf("ca cert: %v", err)
 			}
@@ -218,20 +215,20 @@ func (d *Dialer) dialOpts(ctx context.Context, opts *[]grpc.DialOption) error {
 			certPool.AppendCertsFromPEM(caCert)
 			tlsConfig.RootCAs = certPool
 		}
-		if d.CertFile != "" {
-			if d.KeyFile == "" {
+		if c.CertFile != "" {
+			if c.KeyFile == "" {
 				return fmt.Errorf("key file not specified")
 			}
-			pair, err := tls.LoadX509KeyPair(d.CertFile, d.KeyFile)
+			pair, err := tls.LoadX509KeyPair(c.CertFile, c.KeyFile)
 			if err != nil {
 				return fmt.Errorf("cert/key: %v", err)
 			}
 			tlsConfig.Certificates = []tls.Certificate{pair}
 		}
-		if d.ServerName != "" {
-			tlsConfig.ServerName = d.ServerName
+		if c.ServerName != "" {
+			tlsConfig.ServerName = c.ServerName
 		} else {
-			addr, _, _ := net.SplitHostPort(d.ServerAddr)
+			addr, _, _ := net.SplitHostPort(c.ServerAddr)
 			tlsConfig.ServerName = addr
 		}
 		cred := credentials.NewTLS(tlsConfig)
@@ -240,8 +237,8 @@ func (d *Dialer) dialOpts(ctx context.Context, opts *[]grpc.DialOption) error {
 		*opts = append(*opts, grpc.WithInsecure())
 	}
 
-	for _, h := range d.dialOptions {
-		if err := h(ctx, opts); err != nil {
+	for _, dialer := range c.preDialers {
+		if err := dialer(ctx, opts); err != nil {
 			return err
 		}
 	}

@@ -11,25 +11,21 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func CyclicalClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func CyclicalClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use:   "cyclical",
 		Short: "Cyclical service client",
 		Long:  "",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand(
-		_CyclicalTestCommand(d),
+		_CyclicalTestCommand(cfg),
 	)
 	return cmd
 }
 
-func _CyclicalTestCommand(d *client.Dialer) *cobra.Command {
+func _CyclicalTestCommand(cfg *client.Config) *cobra.Command {
 	req := &Foo{
 		Bar1: &Bar{},
 		Bar2: &Bar{},
@@ -40,15 +36,15 @@ func _CyclicalTestCommand(d *client.Dialer) *cobra.Command {
 		Short: "Test RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CYCLICAL", "TEST"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CYCLICAL", "TEST"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCyclicalClient(cc)
 				v := &Foo{}
 

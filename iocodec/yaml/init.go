@@ -11,8 +11,8 @@ import (
 )
 
 func init() {
-	client.DefaultConfig.RegisterDecoder("yaml", decoderMaker)
-	client.DefaultConfig.RegisterEncoder("yaml", encoderMaker)
+	client.RegisterInputDecoder("yaml", decoderMaker)
+	client.RegisterOutputEncoder("yaml", encoderMaker)
 }
 
 func decoderMaker(r io.Reader) iocodec.Decoder {

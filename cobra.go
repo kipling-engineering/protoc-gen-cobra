@@ -33,11 +33,8 @@ func genFile(gen *protogen.Plugin, file *protogen.File) error {
 
 var (
 	serviceTemplateCode = `
-func {{.GoName}}ClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func {{.GoName}}ClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use: "{{.GoName | toLower}}",
 		Short: "{{.GoName}} service client",
@@ -45,9 +42,8 @@ func {{.GoName}}ClientCommand(cfgs ...*client.Config) *cobra.Command {
 		Deprecated: "deprecated",{{end}}
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand({{range .Methods}}
-		_{{$.GoName}}{{.GoName}}Command(d),{{end}}
+		_{{$.GoName}}{{.GoName}}Command(cfg),{{end}}
 	)
 	return cmd
 }
@@ -97,7 +93,7 @@ func genService(g *protogen.GeneratedFile, service *protogen.Service) error {
 
 var (
 	methodTemplateCode = `
-func _{{.Parent.GoName}}{{.GoName}}Command(d *client.Dialer) *cobra.Command {
+func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 	req := {{.InputInitializerCode}}
 
 	cmd := &cobra.Command{
@@ -106,15 +102,15 @@ func _{{.Parent.GoName}}{{.GoName}}Command(d *client.Dialer) *cobra.Command {
 		Long: "{{.Comments.Leading | cleanComments}}",{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "{{.Parent.GoName | toUpper}}", "{{.GoName | toUpper}}"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "{{.Parent.GoName | toUpper}}", "{{.GoName | toUpper}}"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := New{{.Parent.GoName}}Client(cc)
 				v := &{{.Input.GoIdent.GoName}}{}
 	{{if .Desc.IsStreamingClient}}

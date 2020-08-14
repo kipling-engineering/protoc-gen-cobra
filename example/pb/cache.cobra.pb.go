@@ -12,28 +12,24 @@ import (
 	io "io"
 )
 
-func CacheClientCommand(cfgs ...*client.Config) *cobra.Command {
-	cfg := client.DefaultConfig
-	if len(cfgs) > 0 {
-		cfg = cfgs[0]
-	}
+func CacheClientCommand(options ...client.Option) *cobra.Command {
+	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
 		Use:   "cache",
 		Short: "Cache service client",
 		Long:  "",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
-	d := &client.Dialer{Config: cfg}
 	cmd.AddCommand(
-		_CacheSetCommand(d),
-		_CacheGetCommand(d),
-		_CacheMultiSetCommand(d),
-		_CacheMultiGetCommand(d),
+		_CacheSetCommand(cfg),
+		_CacheGetCommand(cfg),
+		_CacheMultiSetCommand(cfg),
+		_CacheMultiGetCommand(cfg),
 	)
 	return cmd
 }
 
-func _CacheSetCommand(d *client.Dialer) *cobra.Command {
+func _CacheSetCommand(cfg *client.Config) *cobra.Command {
 	req := &SetRequest{}
 
 	cmd := &cobra.Command{
@@ -41,15 +37,15 @@ func _CacheSetCommand(d *client.Dialer) *cobra.Command {
 		Short: "Set RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "SET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "SET"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &SetRequest{}
 
@@ -76,7 +72,7 @@ func _CacheSetCommand(d *client.Dialer) *cobra.Command {
 	return cmd
 }
 
-func _CacheGetCommand(d *client.Dialer) *cobra.Command {
+func _CacheGetCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRequest{}
 
 	cmd := &cobra.Command{
@@ -84,15 +80,15 @@ func _CacheGetCommand(d *client.Dialer) *cobra.Command {
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "GET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "GET"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &GetRequest{}
 
@@ -118,7 +114,7 @@ func _CacheGetCommand(d *client.Dialer) *cobra.Command {
 	return cmd
 }
 
-func _CacheMultiSetCommand(d *client.Dialer) *cobra.Command {
+func _CacheMultiSetCommand(cfg *client.Config) *cobra.Command {
 	req := &SetRequest{}
 
 	cmd := &cobra.Command{
@@ -126,15 +122,15 @@ func _CacheMultiSetCommand(d *client.Dialer) *cobra.Command {
 		Short: "MultiSet RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "MULTISET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "MULTISET"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &SetRequest{}
 
@@ -173,7 +169,7 @@ func _CacheMultiSetCommand(d *client.Dialer) *cobra.Command {
 	return cmd
 }
 
-func _CacheMultiGetCommand(d *client.Dialer) *cobra.Command {
+func _CacheMultiGetCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRequest{}
 
 	cmd := &cobra.Command{
@@ -181,15 +177,15 @@ func _CacheMultiGetCommand(d *client.Dialer) *cobra.Command {
 		Short: "MultiGet RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if d.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), d.EnvVarPrefix); err != nil {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), d.EnvVarPrefix, "CACHE", "MULTIGET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "MULTIGET"); err != nil {
 					return err
 				}
 			}
-			return d.RoundTrip(cmd.Context(), func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewCacheClient(cc)
 				v := &GetRequest{}
 

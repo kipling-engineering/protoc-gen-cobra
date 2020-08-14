@@ -59,7 +59,7 @@ Global Flags:
       --jwt-key-file string        JWT key file
   -f, --request-file string        client request file; use "-" for stdin
   -i, --request-format string      request format (json, xml, yaml) (default "json")
-  -o, --response-format string     response format (json, prettyjson, xml, prettyxml, yaml) (default "json")
+  -o, --response-format string     response format (json, prettyjson, prettyxml, xml, yaml) (default "json")
   -s, --server-addr string         server address in the form host:port (default "localhost:8080")
       --timeout duration           client connection timeout (default 10s)
       --tls                        enable TLS
@@ -97,10 +97,10 @@ Idle server streams hang until the server closes the stream or a timeout occurs.
 
 ### Custom input/output formats
 
-New encoders and decoders can be registered in the host program before executing the command.
+New input decoders and output encoders can be registered in the host program prior to executing the command.
 
 ```go
-client.DefaultConfig.RegisterEncoder("fmtprint", func(w io.Writer) iocodec.Encoder {
+client.RegisterOutputEncoder("fmtprint", func(w io.Writer) iocodec.Encoder {
 	return func(v interface{}) error {
 		_, err := fmt.Fprint(w, v)
 		return err
@@ -119,10 +119,10 @@ See the [yaml format extension](iocodec/yaml/init.go) for a complete example.
 
 ### Custom authentication schemes
 
-Dial option callbacks can be registered in the host program to support custom authentication schemes.
+Pre-dial hooks can be registered in the host program to support custom authentication schemes.
 
 ```go
-client.DefaultConfig.RegisterDialOptions(func(ctx context.Context, opts *[]grpc.DialOption) error {
+client.RegisterPreDialer(func(ctx context.Context, opts *[]grpc.DialOption) error {
 	if creds, ok := ctx.Value(CredsContextKey).(*Creds); ok {
 		*opts = append(*opts, grpc.WithPerRPCCredentials(creds))
 	}

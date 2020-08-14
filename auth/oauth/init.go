@@ -21,12 +21,12 @@ type config struct {
 }
 
 func init() {
-	client.DefaultConfig.RegisterFlags(func(fs *pflag.FlagSet) {
+	client.RegisterFlagBinder(func(fs *pflag.FlagSet) {
 		fs.StringVar(&Config.AccessToken, "auth-access-token", Config.AccessToken, "authorization access token")
 		fs.StringVar(&Config.TokenType, "auth-token-type", Config.TokenType, "authorization token type")
 	})
 
-	client.DefaultConfig.RegisterDialOptions(func(_ context.Context, opts *[]grpc.DialOption) error {
+	client.RegisterPreDialer(func(_ context.Context, opts *[]grpc.DialOption) error {
 		cfg := Config
 
 		if cfg.AccessToken != "" {
