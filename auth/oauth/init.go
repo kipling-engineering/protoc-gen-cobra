@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/oauth"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/client"
+	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 )
 
 var Config = &config{
@@ -21,9 +22,9 @@ type config struct {
 }
 
 func init() {
-	client.RegisterFlagBinder(func(fs *pflag.FlagSet) {
-		fs.StringVar(&Config.AccessToken, "auth-access-token", Config.AccessToken, "authorization access token")
-		fs.StringVar(&Config.TokenType, "auth-token-type", Config.TokenType, "authorization token type")
+	client.RegisterFlagBinder(func(fs *pflag.FlagSet, namer naming.Namer) {
+		fs.StringVar(&Config.AccessToken, namer("Auth AccessToken"), Config.AccessToken, "authorization access token")
+		fs.StringVar(&Config.TokenType, namer("Auth TokenType"), Config.TokenType, "authorization token type")
 	})
 
 	client.RegisterPreDialer(func(_ context.Context, opts *[]grpc.DialOption) error {

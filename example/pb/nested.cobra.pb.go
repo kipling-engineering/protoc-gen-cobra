@@ -14,7 +14,7 @@ import (
 func NestedClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   "nested",
+		Use:   cfg.CommandNamer("Nested"),
 		Short: "Nested service client",
 		Long:  "",
 	}
@@ -33,15 +33,15 @@ func _NestedGetCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "get",
+		Use:   cfg.CommandNamer("Get"),
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "NESTED", "GET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Nested Get")); err != nil {
 					return err
 				}
 			}
@@ -66,8 +66,8 @@ func _NestedGetCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Inner.Value, "inner-value", "", "")
-	cmd.PersistentFlags().StringVar(&req.TopLevel.Value, "toplevel-value", "", "")
+	cmd.PersistentFlags().StringVar(&req.Inner.Value, cfg.FlagNamer("Inner Value"), "", "")
+	cmd.PersistentFlags().StringVar(&req.TopLevel.Value, cfg.FlagNamer("TopLevel Value"), "", "")
 
 	return cmd
 }
@@ -82,15 +82,15 @@ func _NestedGetDeeplyNestedCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "getdeeplynested",
+		Use:   cfg.CommandNamer("GetDeeplyNested"),
 		Short: "GetDeeplyNested RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "NESTED", "GETDEEPLYNESTED"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Nested GetDeeplyNested")); err != nil {
 					return err
 				}
 			}
@@ -115,7 +115,7 @@ func _NestedGetDeeplyNestedCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.L0.L1.L2.L3, "l0-l1-l2-l3", "", "")
+	cmd.PersistentFlags().StringVar(&req.L0.L1.L2.L3, cfg.FlagNamer("L0 L1 L2 L3"), "", "")
 
 	return cmd
 }

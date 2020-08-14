@@ -14,7 +14,7 @@ import (
 func BankClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   "bank",
+		Use:   cfg.CommandNamer("Bank"),
 		Short: "Bank service client",
 		Long:  "",
 	}
@@ -29,15 +29,15 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 	req := &DepositRequest{}
 
 	cmd := &cobra.Command{
-		Use:   "deposit",
+		Use:   cfg.CommandNamer("Deposit"),
 		Short: "Deposit RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "BANK", "DEPOSIT"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Bank Deposit")); err != nil {
 					return err
 				}
 			}
@@ -62,8 +62,8 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Account, "account", "", "account number of recipient")
-	cmd.PersistentFlags().Float64Var(&req.Amount, "amount", 0, "amount to deposit")
+	cmd.PersistentFlags().StringVar(&req.Account, cfg.FlagNamer("Account"), "", "account number of recipient")
+	cmd.PersistentFlags().Float64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "amount to deposit")
 
 	return cmd
 }

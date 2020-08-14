@@ -36,7 +36,7 @@ var (
 func {{.GoName}}ClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use: "{{.GoName | toLower}}",
+		Use: cfg.CommandNamer("{{.GoName}}"),
 		Short: "{{.GoName}} service client",
 		Long: {{.Comments.Leading | cleanComments | printf "%q"}},{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
@@ -49,7 +49,7 @@ func {{.GoName}}ClientCommand(options ...client.Option) *cobra.Command {
 }
 `
 	serviceTemplate = template.Must(template.New("service").
-		Funcs(template.FuncMap{"toLower": strings.ToLower, "cleanComments": cleanComments}).
+		Funcs(template.FuncMap{"cleanComments": cleanComments}).
 		Parse(serviceTemplateCode))
 	serviceImports = []protogen.GoImportPath{
 		"github.com/NathanBaulch/protoc-gen-cobra/client",
@@ -97,16 +97,16 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 	req := {{.InputInitializerCode}}
 
 	cmd := &cobra.Command{
-		Use: "{{.GoName | toLower}}",
+		Use: cfg.CommandNamer("{{.GoName}}"),
 		Short: "{{.GoName}} RPC client",
 		Long: {{.Comments.Leading | cleanComments | printf "%q"}},{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "{{.Parent.GoName | toUpper}}", "{{.GoName | toUpper}}"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("{{.Parent.GoName}} {{.GoName}}")); err != nil {
 					return err
 				}
 			}
@@ -178,7 +178,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 }
 `
 	methodTemplate = template.Must(template.New("method").
-		Funcs(template.FuncMap{"toLower": strings.ToLower, "toUpper": strings.ToUpper, "cleanComments": cleanComments}).
+		Funcs(template.FuncMap{"cleanComments": cleanComments}).
 		Parse(methodTemplateCode))
 	methodImports = []protogen.GoImportPath{
 		"github.com/golang/protobuf/proto",
@@ -251,11 +251,11 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 		if f := flagFormat(g, fld, enums); f != "" {
 			goPath := strings.Join(path, ".")
-			flagName := strings.ToLower(strings.Join(path, "-"))
+			flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
 			comment := cleanComments(fld.Comments.Leading)
 			flagLine := fmt.Sprintf(f, goPath, flagName, comment)
 			if deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated() {
-				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%q, \"deprecated\")", flagName)
+				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%s, \"deprecated\")", flagName)
 			}
 			flagLines[fld.Desc.Index()] = flagLine
 		} else if normalizeKind(fld.Desc.Kind()) == protoreflect.MessageKind {
@@ -298,14 +298,14 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 		if fld.Desc.IsList() {
 			switch k {
 			case protoreflect.Uint32Kind, protoreflect.Uint64Kind, protoreflect.BytesKind:
-				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", bt.Slice)
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", bt.Slice)
 			default:
-				return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, nil, %%q)", bt.Slice)
+				return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%s, nil, %%q)", bt.Slice)
 			}
 		} else if fld.Desc.HasPresence() && k != protoreflect.BytesKind {
-			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", bt.Pointer)
+			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", bt.Pointer)
 		} else {
-			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%q, %s, %%q)", bt.Value, bt.Default)
+			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%s, %s, %%q)", bt.Value, bt.Default)
 		}
 	}
 
@@ -319,20 +319,20 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 		}
 		if fld.Desc.IsList() {
 			e.List = true
-			return fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", id)
+			return fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", id)
 		} else if fld.Desc.HasPresence() {
 			e.Pointer = true
-			return fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", id)
+			return fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", id)
 		} else {
 			e.Value = true
-			return fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", id)
+			return fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", id)
 		}
 	case protoreflect.MessageKind:
 		if kt, ok := knownTypes[fld.Message.GoIdent]; ok {
 			if fld.Desc.IsList() {
-				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", kt.Slice)
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", kt.Slice)
 			} else {
-				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%q, %%q)", kt.Value)
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", kt.Value)
 			}
 		}
 		if fld.Desc.IsMap() {
@@ -341,9 +341,9 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 			if kk == protoreflect.StringKind {
 				switch vk {
 				case protoreflect.StringKind:
-					return "cmd.PersistentFlags().StringToStringVar(&req.%s, %q, nil, %q)"
+					return "cmd.PersistentFlags().StringToStringVar(&req.%s, %s, nil, %q)"
 				case protoreflect.Int64Kind:
-					return "cmd.PersistentFlags().StringToInt64Var(&req.%s, %q, nil, %q)"
+					return "cmd.PersistentFlags().StringToInt64Var(&req.%s, %s, nil, %q)"
 				}
 			}
 
@@ -377,7 +377,7 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 				}
 				if valParser != "" {
 					typ := fmt.Sprintf("%s=%s", keyType, valType)
-					return fmt.Sprintf("flag.ReflectMapVar(cmd.PersistentFlags(), %s, %s, %q, &req.%%s, %%q, %%q)", keyParser, valParser, typ)
+					return fmt.Sprintf("flag.ReflectMapVar(cmd.PersistentFlags(), %s, %s, %q, &req.%%s, %%s, %%q)", keyParser, valParser, typ)
 				}
 			}
 		}

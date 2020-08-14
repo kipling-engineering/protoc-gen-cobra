@@ -14,7 +14,7 @@ import (
 func CyclicalClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   "cyclical",
+		Use:   cfg.CommandNamer("Cyclical"),
 		Short: "Cyclical service client",
 		Long:  "",
 	}
@@ -32,15 +32,15 @@ func _CyclicalTestCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "test",
+		Use:   cfg.CommandNamer("Test"),
 		Short: "Test RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CYCLICAL", "TEST"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Cyclical Test")); err != nil {
 					return err
 				}
 			}
@@ -65,9 +65,9 @@ func _CyclicalTestCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Bar1.Value, "bar1-value", "", "")
-	cmd.PersistentFlags().StringVar(&req.Bar2.Value, "bar2-value", "", "")
-	cmd.PersistentFlags().StringVar(&req.Value, "value", "", "")
+	cmd.PersistentFlags().StringVar(&req.Bar1.Value, cfg.FlagNamer("Bar1 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Bar2.Value, cfg.FlagNamer("Bar2 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Value, cfg.FlagNamer("Value"), "", "")
 
 	return cmd
 }

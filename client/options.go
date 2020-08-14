@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
+	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 )
 
 type Option func(*Config)
@@ -36,6 +37,24 @@ func WithEnvVars(prefix string) Option {
 	return func(c *Config) {
 		c.UseEnvVars = true
 		c.EnvVarPrefix = prefix
+	}
+}
+
+func WithCommandNamer(namer naming.Namer) Option {
+	return func(c *Config) {
+		c.CommandNamer = namer
+	}
+}
+
+func WithFlagNamer(namer naming.Namer) Option {
+	return func(c *Config) {
+		c.FlagNamer = namer
+	}
+}
+
+func WithEnvVarNamer(namer naming.Namer) Option {
+	return func(c *Config) {
+		c.EnvVarNamer = namer
 	}
 }
 

@@ -18,10 +18,11 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
+	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 )
 
 type (
-	FlagBinder func(*pflag.FlagSet)
+	FlagBinder func(*pflag.FlagSet, naming.Namer)
 	PreDialer  func(context.Context, *[]grpc.DialOption) error
 )
 
@@ -33,6 +34,10 @@ type Config struct {
 	Timeout        time.Duration
 	UseEnvVars     bool
 	EnvVarPrefix   string
+
+	CommandNamer naming.Namer
+	FlagNamer    naming.Namer
+	EnvVarNamer  naming.Namer
 
 	TLS                bool
 	ServerName         string
@@ -54,6 +59,10 @@ var DefaultConfig = &Config{
 	Timeout:        10 * time.Second,
 	UseEnvVars:     true,
 
+	CommandNamer: naming.LowerKebab,
+	FlagNamer:    naming.LowerKebab,
+	EnvVarNamer:  naming.UpperSnake,
+
 	inDecoders: map[string]iocodec.DecoderMaker{
 		"json": iocodec.JSONDecoderMaker,
 		"xml":  iocodec.XMLDecoderMaker,
@@ -70,6 +79,15 @@ func NewConfig(options ...Option) *Config {
 	c := *DefaultConfig
 	for _, opt := range options {
 		opt(&c)
+	}
+	if c.CommandNamer == nil {
+		panic("CommandNamer not specified")
+	}
+	if c.FlagNamer == nil {
+		panic("FlagNamer not specified")
+	}
+	if c.EnvVarNamer == nil {
+		panic("EnvVarNamer not specified")
 	}
 	return &c
 }
@@ -91,20 +109,20 @@ func RegisterOutputEncoder(format string, maker iocodec.EncoderMaker) {
 }
 
 func (c *Config) BindFlags(fs *pflag.FlagSet) {
-	fs.StringVarP(&c.ServerAddr, "server-addr", "s", c.ServerAddr, "server address in the form host:port")
-	fs.StringVarP(&c.RequestFile, "request-file", "f", c.RequestFile, "client request file; use \"-\" for stdin")
-	fs.StringVarP(&c.RequestFormat, "request-format", "i", c.RequestFormat, "request format ("+strings.Join(c.decoderFormats(), ", ")+")")
-	fs.StringVarP(&c.ResponseFormat, "response-format", "o", c.ResponseFormat, "response format ("+strings.Join(c.encoderFormats(), ", ")+")")
-	fs.DurationVar(&c.Timeout, "timeout", c.Timeout, "client connection timeout")
-	fs.BoolVar(&c.TLS, "tls", c.TLS, "enable TLS")
-	fs.StringVar(&c.ServerName, "tls-server-name", c.ServerName, "TLS server name override")
-	fs.BoolVar(&c.InsecureSkipVerify, "tls-insecure-skip-verify", c.InsecureSkipVerify, "INSECURE: skip TLS checks")
-	fs.StringVar(&c.CACertFile, "tls-ca-cert-file", c.CACertFile, "CA certificate file")
-	fs.StringVar(&c.CertFile, "tls-cert-file", c.CertFile, "client certificate file")
-	fs.StringVar(&c.KeyFile, "tls-key-file", c.KeyFile, "client key file")
+	fs.StringVarP(&c.ServerAddr, c.FlagNamer("ServerAddr"), "s", c.ServerAddr, "server address in the form host:port")
+	fs.StringVarP(&c.RequestFile, c.FlagNamer("RequestFile"), "f", c.RequestFile, "client request file; use \"-\" for stdin")
+	fs.StringVarP(&c.RequestFormat, c.FlagNamer("RequestFormat"), "i", c.RequestFormat, "request format ("+strings.Join(c.decoderFormats(), ", ")+")")
+	fs.StringVarP(&c.ResponseFormat, c.FlagNamer("ResponseFormat"), "o", c.ResponseFormat, "response format ("+strings.Join(c.encoderFormats(), ", ")+")")
+	fs.DurationVar(&c.Timeout, c.FlagNamer("Timeout"), c.Timeout, "client connection timeout")
+	fs.BoolVar(&c.TLS, c.FlagNamer("TLS"), c.TLS, "enable TLS")
+	fs.StringVar(&c.ServerName, c.FlagNamer("TLS ServerName"), c.ServerName, "TLS server name override")
+	fs.BoolVar(&c.InsecureSkipVerify, c.FlagNamer("TLS InsecureSkipVerify"), c.InsecureSkipVerify, "INSECURE: skip TLS checks")
+	fs.StringVar(&c.CACertFile, c.FlagNamer("TLS CACertFile"), c.CACertFile, "CA certificate file")
+	fs.StringVar(&c.CertFile, c.FlagNamer("TLS CertFile"), c.CertFile, "client certificate file")
+	fs.StringVar(&c.KeyFile, c.FlagNamer("TLS KeyFile"), c.KeyFile, "client key file")
 
 	for _, binder := range c.flagBinders {
-		binder(fs)
+		binder(fs, c.FlagNamer)
 	}
 }
 

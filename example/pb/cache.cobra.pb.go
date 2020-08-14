@@ -15,7 +15,7 @@ import (
 func CacheClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   "cache",
+		Use:   cfg.CommandNamer("Cache"),
 		Short: "Cache service client",
 		Long:  "",
 	}
@@ -33,15 +33,15 @@ func _CacheSetCommand(cfg *client.Config) *cobra.Command {
 	req := &SetRequest{}
 
 	cmd := &cobra.Command{
-		Use:   "set",
+		Use:   cfg.CommandNamer("Set"),
 		Short: "Set RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "SET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Cache Set")); err != nil {
 					return err
 				}
 			}
@@ -66,8 +66,8 @@ func _CacheSetCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Key, "key", "", "")
-	cmd.PersistentFlags().StringVar(&req.Value, "value", "", "")
+	cmd.PersistentFlags().StringVar(&req.Key, cfg.FlagNamer("Key"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Value, cfg.FlagNamer("Value"), "", "")
 
 	return cmd
 }
@@ -76,15 +76,15 @@ func _CacheGetCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRequest{}
 
 	cmd := &cobra.Command{
-		Use:   "get",
+		Use:   cfg.CommandNamer("Get"),
 		Short: "Get RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "GET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Cache Get")); err != nil {
 					return err
 				}
 			}
@@ -109,7 +109,7 @@ func _CacheGetCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Key, "key", "", "")
+	cmd.PersistentFlags().StringVar(&req.Key, cfg.FlagNamer("Key"), "", "")
 
 	return cmd
 }
@@ -118,15 +118,15 @@ func _CacheMultiSetCommand(cfg *client.Config) *cobra.Command {
 	req := &SetRequest{}
 
 	cmd := &cobra.Command{
-		Use:   "multiset",
+		Use:   cfg.CommandNamer("MultiSet"),
 		Short: "MultiSet RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "MULTISET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Cache MultiSet")); err != nil {
 					return err
 				}
 			}
@@ -163,8 +163,8 @@ func _CacheMultiSetCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Key, "key", "", "")
-	cmd.PersistentFlags().StringVar(&req.Value, "value", "", "")
+	cmd.PersistentFlags().StringVar(&req.Key, cfg.FlagNamer("Key"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Value, cfg.FlagNamer("Value"), "", "")
 
 	return cmd
 }
@@ -173,15 +173,15 @@ func _CacheMultiGetCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRequest{}
 
 	cmd := &cobra.Command{
-		Use:   "multiget",
+		Use:   cfg.CommandNamer("MultiGet"),
 		Short: "MultiGet RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "CACHE", "MULTIGET"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Cache MultiGet")); err != nil {
 					return err
 				}
 			}
@@ -225,7 +225,7 @@ func _CacheMultiGetCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Key, "key", "", "")
+	cmd.PersistentFlags().StringVar(&req.Key, cfg.FlagNamer("Key"), "", "")
 
 	return cmd
 }

@@ -3,19 +3,17 @@ package flag
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 
+	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 	"github.com/spf13/pflag"
 )
 
-var nonWordChars = regexp.MustCompile(`[^\w]`)
-
-func SetFlagsFromEnv(fs *pflag.FlagSet, prefixes ...string) (err error) {
+func SetFlagsFromEnv(fs *pflag.FlagSet, namer naming.Namer, prefixes ...string) (err error) {
 	parts := make([]string, 0, len(prefixes)+1)
 	for _, prefix := range prefixes {
 		if prefix != "" {
-			parts = append(parts, format(prefix))
+			parts = append(parts, namer(prefix))
 		}
 	}
 
@@ -23,7 +21,7 @@ func SetFlagsFromEnv(fs *pflag.FlagSet, prefixes ...string) (err error) {
 		if err != nil || f.Changed {
 			return
 		}
-		name := strings.Join(append(parts, format(f.Name)), "_")
+		name := strings.Join(append(parts, namer(f.Name)), "_")
 		if val := os.Getenv(name); val != "" {
 			if err = f.Value.Set(val); err != nil {
 				err = fmt.Errorf("environment variable %s: %v", name, err)
@@ -32,8 +30,4 @@ func SetFlagsFromEnv(fs *pflag.FlagSet, prefixes ...string) (err error) {
 	})
 
 	return
-}
-
-func format(name string) string {
-	return strings.ToUpper(nonWordChars.ReplaceAllString(name, "_"))
 }

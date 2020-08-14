@@ -14,7 +14,7 @@ import (
 func BankClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   "bank",
+		Use:   cfg.CommandNamer("Bank"),
 		Short: "Bank service client",
 		Long:  "",
 	}
@@ -33,15 +33,15 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "deposit",
+		Use:   cfg.CommandNamer("Deposit"),
 		Short: "Deposit RPC client",
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarPrefix, "BANK", "DEPOSIT"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Bank Deposit")); err != nil {
 					return err
 				}
 			}
@@ -66,9 +66,9 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Parent, "parent", "", "")
-	cmd.PersistentFlags().StringVar(&req.Tenant, "tenant", "", "")
-	cmd.PersistentFlags().StringVar(&req.Environment, "environment", "", "")
+	cmd.PersistentFlags().StringVar(&req.Parent, cfg.FlagNamer("Parent"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Tenant, cfg.FlagNamer("Tenant"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Environment, cfg.FlagNamer("Environment"), "", "")
 
 	return cmd
 }
