@@ -10,6 +10,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -115,6 +116,7 @@ func (c *Config) decoderFormats() []string {
 		f[i] = k
 		i++
 	}
+	sort.Strings(f)
 	return f
 }
 
@@ -125,6 +127,7 @@ func (c *Config) encoderFormats() []string {
 		f[i] = k
 		i++
 	}
+	sort.Strings(f)
 	return f
 }
 
