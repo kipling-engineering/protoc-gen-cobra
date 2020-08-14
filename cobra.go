@@ -38,7 +38,7 @@ func {{.GoName}}ClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "{{.GoName | toLower}}",
 		Short: "{{.GoName}} service client",
-		Long: "{{.Comments.Leading | cleanComments}}",{{if .Desc.Options.GetDeprecated}}
+		Long: {{.Comments.Leading | cleanComments | printf "%q"}},{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
@@ -99,7 +99,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "{{.GoName | toLower}}",
 		Short: "{{.GoName}} RPC client",
-		Long: "{{.Comments.Leading | cleanComments}}",{{if .Desc.Options.GetDeprecated}}
+		Long: {{.Comments.Leading | cleanComments | printf "%q"}},{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
@@ -248,14 +248,13 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 	for _, fld := range message.Fields {
 		path := append(path, fld.GoName)
-		goPath := strings.Join(path, ".")
-		flagName := strings.ToLower(strings.Join(path, "-"))
-		comment := cleanComments(fld.Comments.Leading)
-		deprecated := deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated()
 
 		if f := flagFormat(g, fld, enums); f != "" {
+			goPath := strings.Join(path, ".")
+			flagName := strings.ToLower(strings.Join(path, "-"))
+			comment := cleanComments(fld.Comments.Leading)
 			flagLine := fmt.Sprintf(f, goPath, flagName, comment)
-			if deprecated {
+			if deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated() {
 				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%q, \"deprecated\")", flagName)
 			}
 			flagLines[fld.Desc.Index()] = flagLine
