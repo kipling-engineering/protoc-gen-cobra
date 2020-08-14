@@ -72,8 +72,9 @@ Global Flags:
 
 ### Streams
 
-gRPC client and server streams are supported using pipes from the command line. For server streams each response is printed using the specified response format.
-Client stream input must be one document per line from a file or stdin.
+gRPC client and server streams are supported by concatenating multiple requests and responses.
+Client stream requests can be passed from a file or stdin with optional whitespace between each document (typically a new line).
+Server stream responses are printed one per line using the specified response format.
 
 Example client stream:
 
@@ -88,7 +89,7 @@ $ ./example cache multiset -f req.json
 Example client and server streams:
 
 ```
-$ echo -ne '{"key":"hello"}\n{"key":"foo"}\n' | ./example cache multiget
+$ echo '{"key":"hello"}{"key":"foo"}' | ./example cache multiget
 {"value":"world"}
 {"value":"bar"}
 ```

@@ -41,7 +41,11 @@ func XMLEncoderMaker(pretty bool) EncoderMaker {
 			if pretty {
 				e.Indent("", "  ")
 			}
-			return e.Encode(v)
+			if err := e.Encode(v); err != nil {
+				return err
+			}
+			_, err := w.Write([]byte("\n"))
+			return err
 		}
 	}
 }
