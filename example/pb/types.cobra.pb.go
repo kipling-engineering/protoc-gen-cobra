@@ -37,10 +37,10 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Types"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Types Echo")); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Types", "Echo"); err != nil {
 					return err
 				}
 			}

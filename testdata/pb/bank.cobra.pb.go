@@ -38,10 +38,10 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Bank"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Bank Deposit")); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Bank", "Deposit"); err != nil {
 					return err
 				}
 			}

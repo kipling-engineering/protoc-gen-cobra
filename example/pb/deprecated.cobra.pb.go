@@ -36,10 +36,10 @@ func _DeprecatedObsoleteCommand(cfg *client.Config) *cobra.Command {
 		Deprecated: "deprecated",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Deprecated"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Deprecated Obsolete")); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Deprecated", "Obsolete"); err != nil {
 					return err
 				}
 			}

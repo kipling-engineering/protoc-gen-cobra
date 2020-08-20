@@ -38,10 +38,10 @@ func _NestedGetCommand(cfg *client.Config) *cobra.Command {
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Nested"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Nested Get")); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Nested", "Get"); err != nil {
 					return err
 				}
 			}
@@ -87,10 +87,10 @@ func _NestedGetDeeplyNestedCommand(cfg *client.Config) *cobra.Command {
 		Long:  "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Nested"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), cfg.EnvVarNamer, cfg.EnvVarPrefix, cfg.EnvVarNamer("Nested GetDeeplyNested")); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Nested", "GetDeeplyNested"); err != nil {
 					return err
 				}
 			}
