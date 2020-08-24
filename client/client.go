@@ -64,8 +64,8 @@ var DefaultConfig = &Config{
 	EnvVarNamer:  naming.UpperSnake,
 
 	inDecoders: map[string]iocodec.DecoderMaker{
-		"json": iocodec.JSONDecoderMaker,
-		"xml":  iocodec.XMLDecoderMaker,
+		"json": iocodec.JSONDecoderMaker(),
+		"xml":  iocodec.XMLDecoderMaker(),
 	},
 	outEncoders: map[string]iocodec.EncoderMaker{
 		"json":       iocodec.JSONEncoderMaker(false),

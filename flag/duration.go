@@ -2,11 +2,11 @@ package flag
 
 import (
 	"strings"
-	"time"
 
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/spf13/pflag"
-	"google.golang.org/protobuf/types/known/durationpb"
+
+	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
 )
 
 type durationValue struct {
@@ -18,7 +18,7 @@ func DurationVar(fs *pflag.FlagSet, p **duration.Duration, name, usage string) {
 }
 
 func (v *durationValue) Set(val string) error {
-	if d, err := parseDuration(val); err != nil {
+	if d, err := ptypes.ToDuration(val); err != nil {
 		return err
 	} else {
 		v.set(d)
@@ -52,7 +52,7 @@ func (s *durationSliceValue) Set(val string) error {
 	out := make([]*duration.Duration, len(ss))
 	for i, v := range ss {
 		var err error
-		if out[i], err = parseDuration(v); err != nil {
+		if out[i], err = ptypes.ToDuration(v); err != nil {
 			return err
 		}
 	}
@@ -64,12 +64,4 @@ func (s *durationSliceValue) Type() string { return "durationSlice" }
 
 func (s *durationSliceValue) String() string { return "[]" }
 
-func ParseDuration(val string) (interface{}, error) { return parseDuration(val) }
-
-func parseDuration(val string) (*duration.Duration, error) {
-	if d, err := time.ParseDuration(val); err != nil {
-		return nil, err
-	} else {
-		return durationpb.New(d), nil
-	}
-}
+func ParseDuration(val string) (interface{}, error) { return ptypes.ToDuration(val) }

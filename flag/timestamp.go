@@ -2,11 +2,11 @@ package flag
 
 import (
 	"strings"
-	"time"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/spf13/pflag"
-	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
 )
 
 type timestampValue struct {
@@ -18,7 +18,7 @@ func TimestampVar(fs *pflag.FlagSet, p **timestamp.Timestamp, name, usage string
 }
 
 func (v *timestampValue) Set(val string) error {
-	if d, err := parseTimestamp(val); err != nil {
+	if d, err := ptypes.ToTimestamp(val); err != nil {
 		return err
 	} else {
 		v.set(d)
@@ -52,7 +52,7 @@ func (s *timestampSliceValue) Set(val string) error {
 	out := make([]*timestamp.Timestamp, len(ss))
 	for i, v := range ss {
 		var err error
-		if out[i], err = parseTimestamp(v); err != nil {
+		if out[i], err = ptypes.ToTimestamp(v); err != nil {
 			return err
 		}
 	}
@@ -64,27 +64,4 @@ func (s *timestampSliceValue) Type() string { return "timestampSlice" }
 
 func (s *timestampSliceValue) String() string { return "[]" }
 
-func ParseTimestamp(val string) (interface{}, error) { return parseTimestamp(val) }
-
-func parseTimestamp(val string) (*timestamp.Timestamp, error) {
-	var err error
-	for _, layout := range []string{
-		"2006-01-02T15:04:05.999999999Z07:00",
-		"2006-01-02T15:04:05.999999999Z07",
-		"2006-01-02T15:04:05.999999999",
-		"2006-01-02T15:04:05Z07:00",
-		"2006-01-02T15:04:05Z07",
-		"2006-01-02T15:04:05",
-		"2006-01-02T15:04",
-		"2006-01-02T15",
-		"2006-01-02",
-	} {
-		var t time.Time
-		t, err = time.Parse(layout, val)
-		if err != nil {
-			continue
-		}
-		return timestamppb.New(t), nil
-	}
-	return nil, err
-}
+func ParseTimestamp(val string) (interface{}, error) { return ptypes.ToTimestamp(val) }
