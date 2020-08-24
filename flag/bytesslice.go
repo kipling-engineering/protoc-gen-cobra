@@ -21,7 +21,7 @@ func (s *bytesBase64SliceValue) Set(val string) error {
 	out := make([][]byte, len(ss))
 	for i, v := range ss {
 		var err error
-		if out[i], err = base64.StdEncoding.DecodeString(v); err != nil {
+		if out[i], err = base64.RawStdEncoding.DecodeString(v); err != nil {
 			return err
 		}
 	}

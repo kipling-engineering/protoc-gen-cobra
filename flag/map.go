@@ -52,7 +52,7 @@ func ParseFloat64(val string) (interface{}, error) { return strconv.ParseFloat(v
 
 func ParseString(val string) (interface{}, error) { return val, nil }
 
-func ParseBytesBase64(val string) (interface{}, error) { return base64.StdEncoding.DecodeString(val) }
+func ParseBytesBase64(val string) (interface{}, error) { return base64.RawStdEncoding.DecodeString(val) }
 
 type reflectMapValue struct {
 	value     reflect.Value
