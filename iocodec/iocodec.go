@@ -1,12 +1,13 @@
 package iocodec
 
 import (
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"io"
 	"reflect"
 
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -25,16 +26,22 @@ type (
 )
 
 func JSONDecoderMaker() DecoderMaker {
-	return func(r io.Reader) Decoder { return DecodeKnownTypes(json.NewDecoder(r).Decode) }
+	return func(r io.Reader) Decoder {
+		return func(v interface{}) error {
+			return jsonpb.Unmarshal(r, v.(proto.Message))
+		}
+	}
 }
 
 func JSONEncoderMaker(pretty bool) EncoderMaker {
+	m := &jsonpb.Marshaler{}
+	if pretty {
+		m.Indent = "  "
+	}
 	return func(w io.Writer) Encoder {
-		e := json.NewEncoder(w)
-		if pretty {
-			e.SetIndent("", "  ")
+		return func(v interface{}) error {
+			return m.Marshal(w, v.(proto.Message))
 		}
-		return EncodeKnownTypes(e.Encode)
 	}
 }
 
