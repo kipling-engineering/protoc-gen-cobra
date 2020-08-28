@@ -9,42 +9,26 @@ import (
 	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
 )
 
-type timestampValue struct {
-	set func(*timestamp.Timestamp)
-}
-
 func TimestampVar(fs *pflag.FlagSet, p **timestamp.Timestamp, name, usage string) {
-	fs.Var(&timestampValue{func(d *timestamp.Timestamp) { *p = d }}, name, usage)
-}
-
-func (v *timestampValue) Set(val string) error {
-	if d, err := ptypes.ToTimestamp(val); err != nil {
-		return err
-	} else {
-		v.set(d)
-		return nil
+	v := fs.String(name, "", usage)
+	hook := func() error {
+		if d, err := ptypes.ToTimestamp(v); err != nil {
+			return err
+		} else {
+			*p = d
+			return nil
+		}
 	}
+	WithPostSetHookE(fs, name, hook)
 }
-
-func (*timestampValue) Type() string { return "timestamp" }
-
-func (*timestampValue) String() string { return "<nil>" }
 
 type timestampSliceValue struct {
-	set func([]*timestamp.Timestamp)
+	value   *[]*timestamp.Timestamp
+	changed bool
 }
 
 func TimestampSliceVar(fs *pflag.FlagSet, p *[]*timestamp.Timestamp, name, usage string) {
-	var changed bool
-	set := func(out []*timestamp.Timestamp) {
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
-	}
-	fs.Var(&timestampSliceValue{set}, name, usage)
+	fs.Var(&timestampSliceValue{value: p}, name, usage)
 }
 
 func (s *timestampSliceValue) Set(val string) error {
@@ -56,12 +40,17 @@ func (s *timestampSliceValue) Set(val string) error {
 			return err
 		}
 	}
-	s.set(out)
+	if !s.changed {
+		*s.value = out
+		s.changed = true
+	} else {
+		*s.value = append(*s.value, out...)
+	}
 	return nil
 }
 
-func (s *timestampSliceValue) Type() string { return "timestampSlice" }
+func (*timestampSliceValue) Type() string { return "timestampSlice" }
 
-func (s *timestampSliceValue) String() string { return "[]" }
+func (*timestampSliceValue) String() string { return "[]" }
 
 func ParseTimestamp(val string) (interface{}, error) { return ptypes.ToTimestamp(val) }

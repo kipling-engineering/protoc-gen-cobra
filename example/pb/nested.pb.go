@@ -25,7 +25,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type TopLevelNestedType struct {
+type Top struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -33,8 +33,8 @@ type TopLevelNestedType struct {
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *TopLevelNestedType) Reset() {
-	*x = TopLevelNestedType{}
+func (x *Top) Reset() {
+	*x = Top{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_nested_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -42,13 +42,13 @@ func (x *TopLevelNestedType) Reset() {
 	}
 }
 
-func (x *TopLevelNestedType) String() string {
+func (x *Top) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TopLevelNestedType) ProtoMessage() {}
+func (*Top) ProtoMessage() {}
 
-func (x *TopLevelNestedType) ProtoReflect() protoreflect.Message {
+func (x *Top) ProtoReflect() protoreflect.Message {
 	mi := &file_nested_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -60,12 +60,12 @@ func (x *TopLevelNestedType) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TopLevelNestedType.ProtoReflect.Descriptor instead.
-func (*TopLevelNestedType) Descriptor() ([]byte, []int) {
+// Deprecated: Use Top.ProtoReflect.Descriptor instead.
+func (*Top) Descriptor() ([]byte, []int) {
 	return file_nested_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *TopLevelNestedType) GetValue() string {
+func (x *Top) GetValue() string {
 	if x != nil {
 		return x.Value
 	}
@@ -77,8 +77,8 @@ type NestedRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Inner    *NestedRequest_InnerNestedType `protobuf:"bytes,1,opt,name=inner,proto3" json:"inner,omitempty"`
-	TopLevel *TopLevelNestedType            `protobuf:"bytes,2,opt,name=top_level,json=topLevel,proto3" json:"top_level,omitempty"`
+	Top   *Top                 `protobuf:"bytes,1,opt,name=top,proto3" json:"top,omitempty"`
+	Inner *NestedRequest_Inner `protobuf:"bytes,2,opt,name=inner,proto3" json:"inner,omitempty"`
 }
 
 func (x *NestedRequest) Reset() {
@@ -113,16 +113,204 @@ func (*NestedRequest) Descriptor() ([]byte, []int) {
 	return file_nested_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *NestedRequest) GetInner() *NestedRequest_InnerNestedType {
+func (x *NestedRequest) GetTop() *Top {
+	if x != nil {
+		return x.Top
+	}
+	return nil
+}
+
+func (x *NestedRequest) GetInner() *NestedRequest_Inner {
 	if x != nil {
 		return x.Inner
 	}
 	return nil
 }
 
-func (x *NestedRequest) GetTopLevel() *TopLevelNestedType {
+type DeepRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L0 *DeepRequest_Outer `protobuf:"bytes,1,opt,name=l0,proto3" json:"l0,omitempty"`
+}
+
+func (x *DeepRequest) Reset() {
+	*x = DeepRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeepRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeepRequest) ProtoMessage() {}
+
+func (x *DeepRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeepRequest.ProtoReflect.Descriptor instead.
+func (*DeepRequest) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DeepRequest) GetL0() *DeepRequest_Outer {
 	if x != nil {
-		return x.TopLevel
+		return x.L0
+	}
+	return nil
+}
+
+type OneOfRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Choose:
+	//	*OneOfRequest_Option1
+	//	*OneOfRequest_Option2
+	//	*OneOfRequest_Option3
+	Choose isOneOfRequest_Choose `protobuf_oneof:"choose"`
+}
+
+func (x *OneOfRequest) Reset() {
+	*x = OneOfRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfRequest) ProtoMessage() {}
+
+func (x *OneOfRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfRequest.ProtoReflect.Descriptor instead.
+func (*OneOfRequest) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{3}
+}
+
+func (m *OneOfRequest) GetChoose() isOneOfRequest_Choose {
+	if m != nil {
+		return m.Choose
+	}
+	return nil
+}
+
+func (x *OneOfRequest) GetOption1() *OneOfRequest_First {
+	if x, ok := x.GetChoose().(*OneOfRequest_Option1); ok {
+		return x.Option1
+	}
+	return nil
+}
+
+func (x *OneOfRequest) GetOption2() *OneOfRequest_Second {
+	if x, ok := x.GetChoose().(*OneOfRequest_Option2); ok {
+		return x.Option2
+	}
+	return nil
+}
+
+func (x *OneOfRequest) GetOption3() *OneOfRequest_Third {
+	if x, ok := x.GetChoose().(*OneOfRequest_Option3); ok {
+		return x.Option3
+	}
+	return nil
+}
+
+type isOneOfRequest_Choose interface {
+	isOneOfRequest_Choose()
+}
+
+type OneOfRequest_Option1 struct {
+	Option1 *OneOfRequest_First `protobuf:"bytes,1,opt,name=option1,proto3,oneof"`
+}
+
+type OneOfRequest_Option2 struct {
+	Option2 *OneOfRequest_Second `protobuf:"bytes,2,opt,name=option2,proto3,oneof"`
+}
+
+type OneOfRequest_Option3 struct {
+	Option3 *OneOfRequest_Third `protobuf:"bytes,3,opt,name=option3,proto3,oneof"`
+}
+
+func (*OneOfRequest_Option1) isOneOfRequest_Choose() {}
+
+func (*OneOfRequest_Option2) isOneOfRequest_Choose() {}
+
+func (*OneOfRequest_Option3) isOneOfRequest_Choose() {}
+
+type OneOfDeepRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L0 *OneOfDeepRequest_Outer `protobuf:"bytes,1,opt,name=l0,proto3" json:"l0,omitempty"`
+}
+
+func (x *OneOfDeepRequest) Reset() {
+	*x = OneOfDeepRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest) ProtoMessage() {}
+
+func (x *OneOfDeepRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *OneOfDeepRequest) GetL0() *OneOfDeepRequest_Outer {
+	if x != nil {
+		return x.L0
 	}
 	return nil
 }
@@ -138,7 +326,7 @@ type NestedResponse struct {
 func (x *NestedResponse) Reset() {
 	*x = NestedResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_nested_proto_msgTypes[2]
+		mi := &file_nested_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -151,7 +339,7 @@ func (x *NestedResponse) String() string {
 func (*NestedResponse) ProtoMessage() {}
 
 func (x *NestedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_nested_proto_msgTypes[2]
+	mi := &file_nested_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -164,7 +352,7 @@ func (x *NestedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NestedResponse.ProtoReflect.Descriptor instead.
 func (*NestedResponse) Descriptor() ([]byte, []int) {
-	return file_nested_proto_rawDescGZIP(), []int{2}
+	return file_nested_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *NestedResponse) GetReturn() string {
@@ -174,54 +362,7 @@ func (x *NestedResponse) GetReturn() string {
 	return ""
 }
 
-type DeeplyNested struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	L0 *DeeplyNested_DeeplyNestedOuter `protobuf:"bytes,1,opt,name=l0,proto3" json:"l0,omitempty"`
-}
-
-func (x *DeeplyNested) Reset() {
-	*x = DeeplyNested{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_nested_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DeeplyNested) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeeplyNested) ProtoMessage() {}
-
-func (x *DeeplyNested) ProtoReflect() protoreflect.Message {
-	mi := &file_nested_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeeplyNested.ProtoReflect.Descriptor instead.
-func (*DeeplyNested) Descriptor() ([]byte, []int) {
-	return file_nested_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *DeeplyNested) GetL0() *DeeplyNested_DeeplyNestedOuter {
-	if x != nil {
-		return x.L0
-	}
-	return nil
-}
-
-type NestedRequest_InnerNestedType struct {
+type NestedRequest_Inner struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -229,102 +370,8 @@ type NestedRequest_InnerNestedType struct {
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *NestedRequest_InnerNestedType) Reset() {
-	*x = NestedRequest_InnerNestedType{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_nested_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *NestedRequest_InnerNestedType) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NestedRequest_InnerNestedType) ProtoMessage() {}
-
-func (x *NestedRequest_InnerNestedType) ProtoReflect() protoreflect.Message {
-	mi := &file_nested_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NestedRequest_InnerNestedType.ProtoReflect.Descriptor instead.
-func (*NestedRequest_InnerNestedType) Descriptor() ([]byte, []int) {
-	return file_nested_proto_rawDescGZIP(), []int{1, 0}
-}
-
-func (x *NestedRequest_InnerNestedType) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
-type DeeplyNested_DeeplyNestedOuter struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	L1 *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner `protobuf:"bytes,1,opt,name=l1,proto3" json:"l1,omitempty"`
-}
-
-func (x *DeeplyNested_DeeplyNestedOuter) Reset() {
-	*x = DeeplyNested_DeeplyNestedOuter{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_nested_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DeeplyNested_DeeplyNestedOuter) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeeplyNested_DeeplyNestedOuter) ProtoMessage() {}
-
-func (x *DeeplyNested_DeeplyNestedOuter) ProtoReflect() protoreflect.Message {
-	mi := &file_nested_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeeplyNested_DeeplyNestedOuter.ProtoReflect.Descriptor instead.
-func (*DeeplyNested_DeeplyNestedOuter) Descriptor() ([]byte, []int) {
-	return file_nested_proto_rawDescGZIP(), []int{3, 0}
-}
-
-func (x *DeeplyNested_DeeplyNestedOuter) GetL1() *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner {
-	if x != nil {
-		return x.L1
-	}
-	return nil
-}
-
-type DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	L2 *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost `protobuf:"bytes,1,opt,name=l2,proto3" json:"l2,omitempty"`
-}
-
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Reset() {
-	*x = DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner{}
+func (x *NestedRequest_Inner) Reset() {
+	*x = NestedRequest_Inner{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_nested_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -332,13 +379,13 @@ func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Reset() {
 	}
 }
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) String() string {
+func (x *NestedRequest_Inner) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) ProtoMessage() {}
+func (*NestedRequest_Inner) ProtoMessage() {}
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) ProtoReflect() protoreflect.Message {
+func (x *NestedRequest_Inner) ProtoReflect() protoreflect.Message {
 	mi := &file_nested_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -350,28 +397,28 @@ func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) ProtoReflect() protor
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner.ProtoReflect.Descriptor instead.
-func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) Descriptor() ([]byte, []int) {
-	return file_nested_proto_rawDescGZIP(), []int{3, 0, 0}
+// Deprecated: Use NestedRequest_Inner.ProtoReflect.Descriptor instead.
+func (*NestedRequest_Inner) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{1, 0}
 }
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner) GetL2() *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost {
+func (x *NestedRequest_Inner) GetValue() string {
 	if x != nil {
-		return x.L2
+		return x.Value
 	}
-	return nil
+	return ""
 }
 
-type DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost struct {
+type DeepRequest_Outer struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	L3 string `protobuf:"bytes,1,opt,name=l3,proto3" json:"l3,omitempty"`
+	L1 *DeepRequest_Outer_Middle `protobuf:"bytes,1,opt,name=l1,proto3" json:"l1,omitempty"`
 }
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) Reset() {
-	*x = DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost{}
+func (x *DeepRequest_Outer) Reset() {
+	*x = DeepRequest_Outer{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_nested_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -379,13 +426,13 @@ func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 	}
 }
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) String() string {
+func (x *DeepRequest_Outer) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) ProtoMessage() {}
+func (*DeepRequest_Outer) ProtoMessage() {}
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) ProtoReflect() protoreflect.Message {
+func (x *DeepRequest_Outer) ProtoReflect() protoreflect.Message {
 	mi := &file_nested_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -397,14 +444,766 @@ func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost.ProtoReflect.Descriptor instead.
-func (*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) Descriptor() ([]byte, []int) {
-	return file_nested_proto_rawDescGZIP(), []int{3, 0, 0, 0}
+// Deprecated: Use DeepRequest_Outer.ProtoReflect.Descriptor instead.
+func (*DeepRequest_Outer) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{2, 0}
 }
 
-func (x *DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost) GetL3() string {
+func (x *DeepRequest_Outer) GetL1() *DeepRequest_Outer_Middle {
 	if x != nil {
-		return x.L3
+		return x.L1
+	}
+	return nil
+}
+
+type DeepRequest_Outer_Middle struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L2 *DeepRequest_Outer_Middle_Inner `protobuf:"bytes,1,opt,name=l2,proto3" json:"l2,omitempty"`
+}
+
+func (x *DeepRequest_Outer_Middle) Reset() {
+	*x = DeepRequest_Outer_Middle{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeepRequest_Outer_Middle) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeepRequest_Outer_Middle) ProtoMessage() {}
+
+func (x *DeepRequest_Outer_Middle) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeepRequest_Outer_Middle.ProtoReflect.Descriptor instead.
+func (*DeepRequest_Outer_Middle) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{2, 0, 0}
+}
+
+func (x *DeepRequest_Outer_Middle) GetL2() *DeepRequest_Outer_Middle_Inner {
+	if x != nil {
+		return x.L2
+	}
+	return nil
+}
+
+type DeepRequest_Outer_Middle_Inner struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *DeepRequest_Outer_Middle_Inner) Reset() {
+	*x = DeepRequest_Outer_Middle_Inner{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeepRequest_Outer_Middle_Inner) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeepRequest_Outer_Middle_Inner) ProtoMessage() {}
+
+func (x *DeepRequest_Outer_Middle_Inner) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeepRequest_Outer_Middle_Inner.ProtoReflect.Descriptor instead.
+func (*DeepRequest_Outer_Middle_Inner) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{2, 0, 0, 0}
+}
+
+func (x *DeepRequest_Outer_Middle_Inner) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type OneOfRequest_First struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *OneOfRequest_First) Reset() {
+	*x = OneOfRequest_First{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfRequest_First) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfRequest_First) ProtoMessage() {}
+
+func (x *OneOfRequest_First) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfRequest_First.ProtoReflect.Descriptor instead.
+func (*OneOfRequest_First) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{3, 0}
+}
+
+func (x *OneOfRequest_First) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type OneOfRequest_Second struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *OneOfRequest_Second) Reset() {
+	*x = OneOfRequest_Second{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfRequest_Second) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfRequest_Second) ProtoMessage() {}
+
+func (x *OneOfRequest_Second) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfRequest_Second.ProtoReflect.Descriptor instead.
+func (*OneOfRequest_Second) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{3, 1}
+}
+
+func (x *OneOfRequest_Second) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type OneOfRequest_Third struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *OneOfRequest_Third) Reset() {
+	*x = OneOfRequest_Third{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfRequest_Third) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfRequest_Third) ProtoMessage() {}
+
+func (x *OneOfRequest_Third) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfRequest_Third.ProtoReflect.Descriptor instead.
+func (*OneOfRequest_Third) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{3, 2}
+}
+
+func (x *OneOfRequest_Third) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type OneOfDeepRequest_Outer struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Choose:
+	//	*OneOfDeepRequest_Outer_Option1
+	//	*OneOfDeepRequest_Outer_Option2
+	//	*OneOfDeepRequest_Outer_Option3
+	Choose isOneOfDeepRequest_Outer_Choose `protobuf_oneof:"choose"`
+}
+
+func (x *OneOfDeepRequest_Outer) Reset() {
+	*x = OneOfDeepRequest_Outer{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0}
+}
+
+func (m *OneOfDeepRequest_Outer) GetChoose() isOneOfDeepRequest_Outer_Choose {
+	if m != nil {
+		return m.Choose
+	}
+	return nil
+}
+
+func (x *OneOfDeepRequest_Outer) GetOption1() *OneOfDeepRequest_Outer_First {
+	if x, ok := x.GetChoose().(*OneOfDeepRequest_Outer_Option1); ok {
+		return x.Option1
+	}
+	return nil
+}
+
+func (x *OneOfDeepRequest_Outer) GetOption2() *OneOfDeepRequest_Outer_Second {
+	if x, ok := x.GetChoose().(*OneOfDeepRequest_Outer_Option2); ok {
+		return x.Option2
+	}
+	return nil
+}
+
+func (x *OneOfDeepRequest_Outer) GetOption3() *OneOfDeepRequest_Outer_Third {
+	if x, ok := x.GetChoose().(*OneOfDeepRequest_Outer_Option3); ok {
+		return x.Option3
+	}
+	return nil
+}
+
+type isOneOfDeepRequest_Outer_Choose interface {
+	isOneOfDeepRequest_Outer_Choose()
+}
+
+type OneOfDeepRequest_Outer_Option1 struct {
+	Option1 *OneOfDeepRequest_Outer_First `protobuf:"bytes,1,opt,name=option1,proto3,oneof"`
+}
+
+type OneOfDeepRequest_Outer_Option2 struct {
+	Option2 *OneOfDeepRequest_Outer_Second `protobuf:"bytes,2,opt,name=option2,proto3,oneof"`
+}
+
+type OneOfDeepRequest_Outer_Option3 struct {
+	Option3 *OneOfDeepRequest_Outer_Third `protobuf:"bytes,3,opt,name=option3,proto3,oneof"`
+}
+
+func (*OneOfDeepRequest_Outer_Option1) isOneOfDeepRequest_Outer_Choose() {}
+
+func (*OneOfDeepRequest_Outer_Option2) isOneOfDeepRequest_Outer_Choose() {}
+
+func (*OneOfDeepRequest_Outer_Option3) isOneOfDeepRequest_Outer_Choose() {}
+
+type OneOfDeepRequest_Outer_Middle struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L2 *OneOfDeepRequest_Outer_Middle_Inner `protobuf:"bytes,1,opt,name=l2,proto3" json:"l2,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_Middle) Reset() {
+	*x = OneOfDeepRequest_Outer_Middle{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Middle) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Middle) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Middle.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Middle) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 0}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle) GetL2() *OneOfDeepRequest_Outer_Middle_Inner {
+	if x != nil {
+		return x.L2
+	}
+	return nil
+}
+
+type OneOfDeepRequest_Outer_First struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L1 *OneOfDeepRequest_Outer_Middle `protobuf:"bytes,1,opt,name=l1,proto3" json:"l1,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_First) Reset() {
+	*x = OneOfDeepRequest_Outer_First{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_First) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_First) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_First) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_First.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_First) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 1}
+}
+
+func (x *OneOfDeepRequest_Outer_First) GetL1() *OneOfDeepRequest_Outer_Middle {
+	if x != nil {
+		return x.L1
+	}
+	return nil
+}
+
+type OneOfDeepRequest_Outer_Second struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L1 *OneOfDeepRequest_Outer_Middle `protobuf:"bytes,1,opt,name=l1,proto3" json:"l1,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_Second) Reset() {
+	*x = OneOfDeepRequest_Outer_Second{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Second) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Second) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Second) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Second.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Second) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 2}
+}
+
+func (x *OneOfDeepRequest_Outer_Second) GetL1() *OneOfDeepRequest_Outer_Middle {
+	if x != nil {
+		return x.L1
+	}
+	return nil
+}
+
+type OneOfDeepRequest_Outer_Third struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	L1 *OneOfDeepRequest_Outer_Middle `protobuf:"bytes,1,opt,name=l1,proto3" json:"l1,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_Third) Reset() {
+	*x = OneOfDeepRequest_Outer_Third{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Third) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Third) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Third) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Third.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Third) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 3}
+}
+
+func (x *OneOfDeepRequest_Outer_Third) GetL1() *OneOfDeepRequest_Outer_Middle {
+	if x != nil {
+		return x.L1
+	}
+	return nil
+}
+
+type OneOfDeepRequest_Outer_Middle_Inner struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Choose:
+	//	*OneOfDeepRequest_Outer_Middle_Inner_Option1
+	//	*OneOfDeepRequest_Outer_Middle_Inner_Option2
+	//	*OneOfDeepRequest_Outer_Middle_Inner_Option3
+	Choose isOneOfDeepRequest_Outer_Middle_Inner_Choose `protobuf_oneof:"choose"`
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner) Reset() {
+	*x = OneOfDeepRequest_Outer_Middle_Inner{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Middle_Inner.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Middle_Inner) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 0, 0}
+}
+
+func (m *OneOfDeepRequest_Outer_Middle_Inner) GetChoose() isOneOfDeepRequest_Outer_Middle_Inner_Choose {
+	if m != nil {
+		return m.Choose
+	}
+	return nil
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner) GetOption1() *OneOfDeepRequest_Outer_Middle_Inner_First {
+	if x, ok := x.GetChoose().(*OneOfDeepRequest_Outer_Middle_Inner_Option1); ok {
+		return x.Option1
+	}
+	return nil
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner) GetOption2() *OneOfDeepRequest_Outer_Middle_Inner_Second {
+	if x, ok := x.GetChoose().(*OneOfDeepRequest_Outer_Middle_Inner_Option2); ok {
+		return x.Option2
+	}
+	return nil
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner) GetOption3() *OneOfDeepRequest_Outer_Middle_Inner_Third {
+	if x, ok := x.GetChoose().(*OneOfDeepRequest_Outer_Middle_Inner_Option3); ok {
+		return x.Option3
+	}
+	return nil
+}
+
+type isOneOfDeepRequest_Outer_Middle_Inner_Choose interface {
+	isOneOfDeepRequest_Outer_Middle_Inner_Choose()
+}
+
+type OneOfDeepRequest_Outer_Middle_Inner_Option1 struct {
+	Option1 *OneOfDeepRequest_Outer_Middle_Inner_First `protobuf:"bytes,1,opt,name=option1,proto3,oneof"`
+}
+
+type OneOfDeepRequest_Outer_Middle_Inner_Option2 struct {
+	Option2 *OneOfDeepRequest_Outer_Middle_Inner_Second `protobuf:"bytes,2,opt,name=option2,proto3,oneof"`
+}
+
+type OneOfDeepRequest_Outer_Middle_Inner_Option3 struct {
+	Option3 *OneOfDeepRequest_Outer_Middle_Inner_Third `protobuf:"bytes,3,opt,name=option3,proto3,oneof"`
+}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner_Option1) isOneOfDeepRequest_Outer_Middle_Inner_Choose() {}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner_Option2) isOneOfDeepRequest_Outer_Middle_Inner_Choose() {}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner_Option3) isOneOfDeepRequest_Outer_Middle_Inner_Choose() {}
+
+type OneOfDeepRequest_Outer_Middle_Inner_First struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_First) Reset() {
+	*x = OneOfDeepRequest_Outer_Middle_Inner_First{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_First) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner_First) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_First) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Middle_Inner_First.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Middle_Inner_First) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 0, 0, 0}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_First) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type OneOfDeepRequest_Outer_Middle_Inner_Second struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Second) Reset() {
+	*x = OneOfDeepRequest_Outer_Middle_Inner_Second{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Second) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner_Second) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Second) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Middle_Inner_Second.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Middle_Inner_Second) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 0, 0, 1}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Second) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type OneOfDeepRequest_Outer_Middle_Inner_Third struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Third) Reset() {
+	*x = OneOfDeepRequest_Outer_Middle_Inner_Third{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_nested_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Third) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OneOfDeepRequest_Outer_Middle_Inner_Third) ProtoMessage() {}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Third) ProtoReflect() protoreflect.Message {
+	mi := &file_nested_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OneOfDeepRequest_Outer_Middle_Inner_Third.ProtoReflect.Descriptor instead.
+func (*OneOfDeepRequest_Outer_Middle_Inner_Third) Descriptor() ([]byte, []int) {
+	return file_nested_proto_rawDescGZIP(), []int{4, 0, 0, 0, 2}
+}
+
+func (x *OneOfDeepRequest_Outer_Middle_Inner_Third) GetValue() string {
+	if x != nil {
+		return x.Value
 	}
 	return ""
 }
@@ -413,54 +1212,126 @@ var File_nested_proto protoreflect.FileDescriptor
 
 var file_nested_proto_rawDesc = []byte{
 	0x0a, 0x0c, 0x6e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x07,
-	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x22, 0x2a, 0x0a, 0x12, 0x54, 0x6f, 0x70, 0x4c, 0x65,
-	0x76, 0x65, 0x6c, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x54, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61,
-	0x6c, 0x75, 0x65, 0x22, 0xb0, 0x01, 0x0a, 0x0d, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x3c, 0x0a, 0x05, 0x69, 0x6e, 0x6e, 0x65, 0x72, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4e,
-	0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x49, 0x6e, 0x6e,
-	0x65, 0x72, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x54, 0x79, 0x70, 0x65, 0x52, 0x05, 0x69, 0x6e,
-	0x6e, 0x65, 0x72, 0x12, 0x38, 0x0a, 0x09, 0x74, 0x6f, 0x70, 0x5f, 0x6c, 0x65, 0x76, 0x65, 0x6c,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65,
-	0x2e, 0x54, 0x6f, 0x70, 0x4c, 0x65, 0x76, 0x65, 0x6c, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x54,
-	0x79, 0x70, 0x65, 0x52, 0x08, 0x74, 0x6f, 0x70, 0x4c, 0x65, 0x76, 0x65, 0x6c, 0x1a, 0x27, 0x0a,
-	0x0f, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x54, 0x79, 0x70, 0x65,
+	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x22, 0x1b, 0x0a, 0x03, 0x54, 0x6f, 0x70, 0x12, 0x14,
+	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x22, 0x82, 0x01, 0x0a, 0x0d, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1e, 0x0a, 0x03, 0x74, 0x6f, 0x70, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x54, 0x6f,
+	0x70, 0x52, 0x03, 0x74, 0x6f, 0x70, 0x12, 0x32, 0x0a, 0x05, 0x69, 0x6e, 0x6e, 0x65, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e,
+	0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x49, 0x6e,
+	0x6e, 0x65, 0x72, 0x52, 0x05, 0x69, 0x6e, 0x6e, 0x65, 0x72, 0x1a, 0x1d, 0x0a, 0x05, 0x49, 0x6e,
+	0x6e, 0x65, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0xd8, 0x01, 0x0a, 0x0b, 0x44, 0x65,
+	0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2a, 0x0a, 0x02, 0x6c, 0x30, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e,
+	0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65,
+	0x72, 0x52, 0x02, 0x6c, 0x30, 0x1a, 0x9c, 0x01, 0x0a, 0x05, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x12,
+	0x31, 0x0a, 0x02, 0x6c, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x65, 0x78,
+	0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x52, 0x02,
+	0x6c, 0x31, 0x1a, 0x60, 0x0a, 0x06, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x12, 0x37, 0x0a, 0x02,
+	0x6c, 0x32, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70,
+	0x6c, 0x65, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f,
+	0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x2e, 0x49, 0x6e, 0x6e, 0x65,
+	0x72, 0x52, 0x02, 0x6c, 0x32, 0x1a, 0x1d, 0x0a, 0x05, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x12, 0x14,
+	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x22, 0xa2, 0x02, 0x0a, 0x0c, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x37, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x31,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65,
+	0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x46, 0x69,
+	0x72, 0x73, 0x74, 0x48, 0x00, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x31, 0x12, 0x38,
+	0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x1c, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x48, 0x00, 0x52,
+	0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x12, 0x37, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x33, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x65, 0x78, 0x61, 0x6d,
+	0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x2e, 0x54, 0x68, 0x69, 0x72, 0x64, 0x48, 0x00, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x33, 0x1a, 0x1d, 0x0a, 0x05, 0x46, 0x69, 0x72, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x1a, 0x1e, 0x0a, 0x06, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x1a, 0x1d, 0x0a, 0x05, 0x54, 0x68, 0x69, 0x72, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x42,
+	0x08, 0x0a, 0x06, 0x63, 0x68, 0x6f, 0x6f, 0x73, 0x65, 0x22, 0x91, 0x07, 0x0a, 0x10, 0x4f, 0x6e,
+	0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2f,
+	0x0a, 0x02, 0x6c, 0x30, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x65, 0x78, 0x61,
+	0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x02, 0x6c, 0x30, 0x1a,
+	0xcb, 0x06, 0x0a, 0x05, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x12, 0x41, 0x0a, 0x07, 0x6f, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x65, 0x78, 0x61,
+	0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x46, 0x69, 0x72, 0x73,
+	0x74, 0x48, 0x00, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x31, 0x12, 0x42, 0x0a, 0x07,
+	0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e,
+	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65,
+	0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x53,
+	0x65, 0x63, 0x6f, 0x6e, 0x64, 0x48, 0x00, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x32,
+	0x12, 0x41, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x33, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x25, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f,
+	0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74,
+	0x65, 0x72, 0x2e, 0x54, 0x68, 0x69, 0x72, 0x64, 0x48, 0x00, 0x52, 0x07, 0x6f, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x33, 0x1a, 0xa9, 0x03, 0x0a, 0x06, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x12, 0x3c,
+	0x0a, 0x02, 0x6c, 0x32, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x65, 0x78, 0x61,
+	0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64,
+	0x6c, 0x65, 0x2e, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x52, 0x02, 0x6c, 0x32, 0x1a, 0xe0, 0x02, 0x0a,
+	0x05, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x12, 0x4e, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x32, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c,
+	0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x2e,
+	0x49, 0x6e, 0x6e, 0x65, 0x72, 0x2e, 0x46, 0x69, 0x72, 0x73, 0x74, 0x48, 0x00, 0x52, 0x07, 0x6f,
+	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x31, 0x12, 0x4f, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e,
+	0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x33, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c,
+	0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x2e,
+	0x49, 0x6e, 0x6e, 0x65, 0x72, 0x2e, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x48, 0x00, 0x52, 0x07,
+	0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x12, 0x4e, 0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x33, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x32, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70,
+	0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65,
+	0x2e, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x2e, 0x54, 0x68, 0x69, 0x72, 0x64, 0x48, 0x00, 0x52, 0x07,
+	0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x33, 0x1a, 0x1d, 0x0a, 0x05, 0x46, 0x69, 0x72, 0x73, 0x74,
 	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x28, 0x0a, 0x0e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x74, 0x75,
-	0x72, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e,
-	0x22, 0xc8, 0x02, 0x0a, 0x0c, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65,
-	0x64, 0x12, 0x37, 0x0a, 0x02, 0x6c, 0x30, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e,
-	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65,
-	0x73, 0x74, 0x65, 0x64, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65,
-	0x64, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x52, 0x02, 0x6c, 0x30, 0x1a, 0xfe, 0x01, 0x0a, 0x11, 0x44,
-	0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x4f, 0x75, 0x74, 0x65, 0x72,
-	0x12, 0x49, 0x0a, 0x02, 0x6c, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x39, 0x2e, 0x65,
-	0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73,
-	0x74, 0x65, 0x64, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64,
-	0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74,
-	0x65, 0x64, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x52, 0x02, 0x6c, 0x31, 0x1a, 0x9d, 0x01, 0x0a, 0x11,
-	0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x49, 0x6e, 0x6e, 0x65,
-	0x72, 0x12, 0x5f, 0x0a, 0x02, 0x6c, 0x32, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x4f, 0x2e,
-	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65,
-	0x73, 0x74, 0x65, 0x64, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65,
-	0x64, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73,
-	0x74, 0x65, 0x64, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e,
-	0x65, 0x73, 0x74, 0x65, 0x64, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x6d, 0x6f, 0x73, 0x74, 0x52, 0x02,
-	0x6c, 0x32, 0x1a, 0x27, 0x0a, 0x15, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74,
-	0x65, 0x64, 0x49, 0x6e, 0x6e, 0x65, 0x72, 0x6d, 0x6f, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x6c,
-	0x33, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x6c, 0x33, 0x32, 0x83, 0x01, 0x0a, 0x06,
-	0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x12, 0x36, 0x0a, 0x03, 0x47, 0x65, 0x74, 0x12, 0x16, 0x2e,
-	0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e,
-	0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x41,
-	0x0a, 0x0f, 0x47, 0x65, 0x74, 0x44, 0x65, 0x65, 0x70, 0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65,
-	0x64, 0x12, 0x15, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x44, 0x65, 0x65, 0x70,
-	0x6c, 0x79, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x1a, 0x17, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70,
-	0x6c, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x3b, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x1a, 0x1e, 0x0a, 0x06, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64,
+	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x1a, 0x1d, 0x0a, 0x05, 0x54, 0x68, 0x69, 0x72, 0x64, 0x12,
+	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x08, 0x0a, 0x06, 0x63, 0x68, 0x6f, 0x6f, 0x73, 0x65, 0x1a,
+	0x3f, 0x0a, 0x05, 0x46, 0x69, 0x72, 0x73, 0x74, 0x12, 0x36, 0x0a, 0x02, 0x6c, 0x31, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f,
+	0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e,
+	0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x52, 0x02, 0x6c, 0x31,
+	0x1a, 0x40, 0x0a, 0x06, 0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x12, 0x36, 0x0a, 0x02, 0x6c, 0x31,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65,
+	0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x52, 0x02,
+	0x6c, 0x31, 0x1a, 0x3f, 0x0a, 0x05, 0x54, 0x68, 0x69, 0x72, 0x64, 0x12, 0x36, 0x0a, 0x02, 0x6c,
+	0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c,
+	0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x2e, 0x4f, 0x75, 0x74, 0x65, 0x72, 0x2e, 0x4d, 0x69, 0x64, 0x64, 0x6c, 0x65, 0x52,
+	0x02, 0x6c, 0x31, 0x42, 0x08, 0x0a, 0x06, 0x63, 0x68, 0x6f, 0x6f, 0x73, 0x65, 0x22, 0x28, 0x0a,
+	0x0e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x16, 0x0a, 0x06, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x06, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x32, 0xfa, 0x01, 0x0a, 0x06, 0x4e, 0x65, 0x73, 0x74,
+	0x65, 0x64, 0x12, 0x36, 0x0a, 0x03, 0x47, 0x65, 0x74, 0x12, 0x16, 0x2e, 0x65, 0x78, 0x61, 0x6d,
+	0x70, 0x6c, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x17, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74,
+	0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x38, 0x0a, 0x07, 0x47, 0x65,
+	0x74, 0x44, 0x65, 0x65, 0x70, 0x12, 0x14, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e,
+	0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x65, 0x78,
+	0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3a, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x4f, 0x6e, 0x65, 0x4f, 0x66,
+	0x12, 0x15, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c,
+	0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x42, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x4f, 0x6e, 0x65, 0x4f, 0x66, 0x44, 0x65, 0x65, 0x70,
+	0x12, 0x19, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4f, 0x6e, 0x65, 0x4f, 0x66,
+	0x44, 0x65, 0x65, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x65, 0x78,
+	0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x3b, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -475,32 +1346,64 @@ func file_nested_proto_rawDescGZIP() []byte {
 	return file_nested_proto_rawDescData
 }
 
-var file_nested_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_nested_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_nested_proto_goTypes = []interface{}{
-	(*TopLevelNestedType)(nil),                               // 0: example.TopLevelNestedType
-	(*NestedRequest)(nil),                                    // 1: example.NestedRequest
-	(*NestedResponse)(nil),                                   // 2: example.NestedResponse
-	(*DeeplyNested)(nil),                                     // 3: example.DeeplyNested
-	(*NestedRequest_InnerNestedType)(nil),                    // 4: example.NestedRequest.InnerNestedType
-	(*DeeplyNested_DeeplyNestedOuter)(nil),                   // 5: example.DeeplyNested.DeeplyNestedOuter
-	(*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner)(nil), // 6: example.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner
-	(*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost)(nil), // 7: example.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner.DeeplyNestedInnermost
+	(*Top)(nil),                                        // 0: example.Top
+	(*NestedRequest)(nil),                              // 1: example.NestedRequest
+	(*DeepRequest)(nil),                                // 2: example.DeepRequest
+	(*OneOfRequest)(nil),                               // 3: example.OneOfRequest
+	(*OneOfDeepRequest)(nil),                           // 4: example.OneOfDeepRequest
+	(*NestedResponse)(nil),                             // 5: example.NestedResponse
+	(*NestedRequest_Inner)(nil),                        // 6: example.NestedRequest.Inner
+	(*DeepRequest_Outer)(nil),                          // 7: example.DeepRequest.Outer
+	(*DeepRequest_Outer_Middle)(nil),                   // 8: example.DeepRequest.Outer.Middle
+	(*DeepRequest_Outer_Middle_Inner)(nil),             // 9: example.DeepRequest.Outer.Middle.Inner
+	(*OneOfRequest_First)(nil),                         // 10: example.OneOfRequest.First
+	(*OneOfRequest_Second)(nil),                        // 11: example.OneOfRequest.Second
+	(*OneOfRequest_Third)(nil),                         // 12: example.OneOfRequest.Third
+	(*OneOfDeepRequest_Outer)(nil),                     // 13: example.OneOfDeepRequest.Outer
+	(*OneOfDeepRequest_Outer_Middle)(nil),              // 14: example.OneOfDeepRequest.Outer.Middle
+	(*OneOfDeepRequest_Outer_First)(nil),               // 15: example.OneOfDeepRequest.Outer.First
+	(*OneOfDeepRequest_Outer_Second)(nil),              // 16: example.OneOfDeepRequest.Outer.Second
+	(*OneOfDeepRequest_Outer_Third)(nil),               // 17: example.OneOfDeepRequest.Outer.Third
+	(*OneOfDeepRequest_Outer_Middle_Inner)(nil),        // 18: example.OneOfDeepRequest.Outer.Middle.Inner
+	(*OneOfDeepRequest_Outer_Middle_Inner_First)(nil),  // 19: example.OneOfDeepRequest.Outer.Middle.Inner.First
+	(*OneOfDeepRequest_Outer_Middle_Inner_Second)(nil), // 20: example.OneOfDeepRequest.Outer.Middle.Inner.Second
+	(*OneOfDeepRequest_Outer_Middle_Inner_Third)(nil),  // 21: example.OneOfDeepRequest.Outer.Middle.Inner.Third
 }
 var file_nested_proto_depIdxs = []int32{
-	4, // 0: example.NestedRequest.inner:type_name -> example.NestedRequest.InnerNestedType
-	0, // 1: example.NestedRequest.top_level:type_name -> example.TopLevelNestedType
-	5, // 2: example.DeeplyNested.l0:type_name -> example.DeeplyNested.DeeplyNestedOuter
-	6, // 3: example.DeeplyNested.DeeplyNestedOuter.l1:type_name -> example.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner
-	7, // 4: example.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner.l2:type_name -> example.DeeplyNested.DeeplyNestedOuter.DeeplyNestedInner.DeeplyNestedInnermost
-	1, // 5: example.Nested.Get:input_type -> example.NestedRequest
-	3, // 6: example.Nested.GetDeeplyNested:input_type -> example.DeeplyNested
-	2, // 7: example.Nested.Get:output_type -> example.NestedResponse
-	2, // 8: example.Nested.GetDeeplyNested:output_type -> example.NestedResponse
-	7, // [7:9] is the sub-list for method output_type
-	5, // [5:7] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	0,  // 0: example.NestedRequest.top:type_name -> example.Top
+	6,  // 1: example.NestedRequest.inner:type_name -> example.NestedRequest.Inner
+	7,  // 2: example.DeepRequest.l0:type_name -> example.DeepRequest.Outer
+	10, // 3: example.OneOfRequest.option1:type_name -> example.OneOfRequest.First
+	11, // 4: example.OneOfRequest.option2:type_name -> example.OneOfRequest.Second
+	12, // 5: example.OneOfRequest.option3:type_name -> example.OneOfRequest.Third
+	13, // 6: example.OneOfDeepRequest.l0:type_name -> example.OneOfDeepRequest.Outer
+	8,  // 7: example.DeepRequest.Outer.l1:type_name -> example.DeepRequest.Outer.Middle
+	9,  // 8: example.DeepRequest.Outer.Middle.l2:type_name -> example.DeepRequest.Outer.Middle.Inner
+	15, // 9: example.OneOfDeepRequest.Outer.option1:type_name -> example.OneOfDeepRequest.Outer.First
+	16, // 10: example.OneOfDeepRequest.Outer.option2:type_name -> example.OneOfDeepRequest.Outer.Second
+	17, // 11: example.OneOfDeepRequest.Outer.option3:type_name -> example.OneOfDeepRequest.Outer.Third
+	18, // 12: example.OneOfDeepRequest.Outer.Middle.l2:type_name -> example.OneOfDeepRequest.Outer.Middle.Inner
+	14, // 13: example.OneOfDeepRequest.Outer.First.l1:type_name -> example.OneOfDeepRequest.Outer.Middle
+	14, // 14: example.OneOfDeepRequest.Outer.Second.l1:type_name -> example.OneOfDeepRequest.Outer.Middle
+	14, // 15: example.OneOfDeepRequest.Outer.Third.l1:type_name -> example.OneOfDeepRequest.Outer.Middle
+	19, // 16: example.OneOfDeepRequest.Outer.Middle.Inner.option1:type_name -> example.OneOfDeepRequest.Outer.Middle.Inner.First
+	20, // 17: example.OneOfDeepRequest.Outer.Middle.Inner.option2:type_name -> example.OneOfDeepRequest.Outer.Middle.Inner.Second
+	21, // 18: example.OneOfDeepRequest.Outer.Middle.Inner.option3:type_name -> example.OneOfDeepRequest.Outer.Middle.Inner.Third
+	1,  // 19: example.Nested.Get:input_type -> example.NestedRequest
+	2,  // 20: example.Nested.GetDeep:input_type -> example.DeepRequest
+	3,  // 21: example.Nested.GetOneOf:input_type -> example.OneOfRequest
+	4,  // 22: example.Nested.GetOneOfDeep:input_type -> example.OneOfDeepRequest
+	5,  // 23: example.Nested.Get:output_type -> example.NestedResponse
+	5,  // 24: example.Nested.GetDeep:output_type -> example.NestedResponse
+	5,  // 25: example.Nested.GetOneOf:output_type -> example.NestedResponse
+	5,  // 26: example.Nested.GetOneOfDeep:output_type -> example.NestedResponse
+	23, // [23:27] is the sub-list for method output_type
+	19, // [19:23] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_nested_proto_init() }
@@ -510,7 +1413,7 @@ func file_nested_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_nested_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TopLevelNestedType); i {
+			switch v := v.(*Top); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -534,7 +1437,7 @@ func file_nested_proto_init() {
 			}
 		}
 		file_nested_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NestedResponse); i {
+			switch v := v.(*DeepRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -546,7 +1449,7 @@ func file_nested_proto_init() {
 			}
 		}
 		file_nested_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeeplyNested); i {
+			switch v := v.(*OneOfRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -558,7 +1461,7 @@ func file_nested_proto_init() {
 			}
 		}
 		file_nested_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NestedRequest_InnerNestedType); i {
+			switch v := v.(*OneOfDeepRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -570,7 +1473,7 @@ func file_nested_proto_init() {
 			}
 		}
 		file_nested_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeeplyNested_DeeplyNestedOuter); i {
+			switch v := v.(*NestedResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -582,7 +1485,7 @@ func file_nested_proto_init() {
 			}
 		}
 		file_nested_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner); i {
+			switch v := v.(*NestedRequest_Inner); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -594,7 +1497,175 @@ func file_nested_proto_init() {
 			}
 		}
 		file_nested_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeeplyNested_DeeplyNestedOuter_DeeplyNestedInner_DeeplyNestedInnermost); i {
+			switch v := v.(*DeepRequest_Outer); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeepRequest_Outer_Middle); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeepRequest_Outer_Middle_Inner); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfRequest_First); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfRequest_Second); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfRequest_Third); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Middle); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_First); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Second); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Third); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Middle_Inner); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Middle_Inner_First); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Middle_Inner_Second); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_nested_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OneOfDeepRequest_Outer_Middle_Inner_Third); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -606,13 +1677,28 @@ func file_nested_proto_init() {
 			}
 		}
 	}
+	file_nested_proto_msgTypes[3].OneofWrappers = []interface{}{
+		(*OneOfRequest_Option1)(nil),
+		(*OneOfRequest_Option2)(nil),
+		(*OneOfRequest_Option3)(nil),
+	}
+	file_nested_proto_msgTypes[13].OneofWrappers = []interface{}{
+		(*OneOfDeepRequest_Outer_Option1)(nil),
+		(*OneOfDeepRequest_Outer_Option2)(nil),
+		(*OneOfDeepRequest_Outer_Option3)(nil),
+	}
+	file_nested_proto_msgTypes[18].OneofWrappers = []interface{}{
+		(*OneOfDeepRequest_Outer_Middle_Inner_Option1)(nil),
+		(*OneOfDeepRequest_Outer_Middle_Inner_Option2)(nil),
+		(*OneOfDeepRequest_Outer_Middle_Inner_Option3)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_nested_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

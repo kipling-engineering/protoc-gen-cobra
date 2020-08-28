@@ -179,7 +179,7 @@ func (v *_GlobalEnumValue) Set(val string) error {
 	}
 }
 
-func (v *_GlobalEnumValue) Type() string { return "GlobalEnum" }
+func (*_GlobalEnumValue) Type() string { return "GlobalEnum" }
 
 func (v *_GlobalEnumValue) String() string { return (GlobalEnum)(*v).String() }
 
@@ -210,9 +210,9 @@ func (s *_GlobalEnumSliceValue) Set(val string) error {
 	return nil
 }
 
-func (s *_GlobalEnumSliceValue) Type() string { return "GlobalEnumSlice" }
+func (*_GlobalEnumSliceValue) Type() string { return "GlobalEnumSlice" }
 
-func (s *_GlobalEnumSliceValue) String() string { return "[]" }
+func (*_GlobalEnumSliceValue) String() string { return "[]" }
 
 func _GlobalEnumParse(val string) (interface{}, error) {
 	return parseGlobalEnum(val)
@@ -243,7 +243,7 @@ func (v *_Sound_NestedEnumValue) Set(val string) error {
 	}
 }
 
-func (v *_Sound_NestedEnumValue) Type() string { return "Sound_NestedEnum" }
+func (*_Sound_NestedEnumValue) Type() string { return "Sound_NestedEnum" }
 
 func (v *_Sound_NestedEnumValue) String() string { return (Sound_NestedEnum)(*v).String() }
 
@@ -274,9 +274,9 @@ func (s *_Sound_NestedEnumSliceValue) Set(val string) error {
 	return nil
 }
 
-func (s *_Sound_NestedEnumSliceValue) Type() string { return "Sound_NestedEnumSlice" }
+func (*_Sound_NestedEnumSliceValue) Type() string { return "Sound_NestedEnumSlice" }
 
-func (s *_Sound_NestedEnumSliceValue) String() string { return "[]" }
+func (*_Sound_NestedEnumSliceValue) String() string { return "[]" }
 
 func _Sound_NestedEnumParse(val string) (interface{}, error) {
 	return parseSound_NestedEnum(val)

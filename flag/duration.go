@@ -9,42 +9,26 @@ import (
 	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
 )
 
-type durationValue struct {
-	set func(*duration.Duration)
-}
-
 func DurationVar(fs *pflag.FlagSet, p **duration.Duration, name, usage string) {
-	fs.Var(&durationValue{func(d *duration.Duration) { *p = d }}, name, usage)
-}
-
-func (v *durationValue) Set(val string) error {
-	if d, err := ptypes.ToDuration(val); err != nil {
-		return err
-	} else {
-		v.set(d)
-		return nil
+	v := fs.String(name, "", usage)
+	hook := func() error {
+		if d, err := ptypes.ToDuration(v); err != nil {
+			return err
+		} else {
+			*p = d
+			return nil
+		}
 	}
+	WithPostSetHookE(fs, name, hook)
 }
-
-func (*durationValue) Type() string { return "duration" }
-
-func (*durationValue) String() string { return "<nil>" }
 
 type durationSliceValue struct {
-	set func([]*duration.Duration)
+	value   *[]*duration.Duration
+	changed bool
 }
 
 func DurationSliceVar(fs *pflag.FlagSet, p *[]*duration.Duration, name, usage string) {
-	var changed bool
-	set := func(out []*duration.Duration) {
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
-	}
-	fs.Var(&durationSliceValue{set}, name, usage)
+	fs.Var(&durationSliceValue{value: p}, name, usage)
 }
 
 func (s *durationSliceValue) Set(val string) error {
@@ -56,12 +40,17 @@ func (s *durationSliceValue) Set(val string) error {
 			return err
 		}
 	}
-	s.set(out)
+	if !s.changed {
+		*s.value = out
+		s.changed = true
+	} else {
+		*s.value = append(*s.value, out...)
+	}
 	return nil
 }
 
-func (s *durationSliceValue) Type() string { return "durationSlice" }
+func (*durationSliceValue) Type() string { return "durationSlice" }
 
-func (s *durationSliceValue) String() string { return "[]" }
+func (*durationSliceValue) String() string { return "[]" }
 
 func ParseDuration(val string) (interface{}, error) { return ptypes.ToDuration(val) }

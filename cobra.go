@@ -198,7 +198,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "io"})
 	}
 
-	initCode, flagCode := walkFields(g, method.Input, nil, enums, false, make(map[protogen.GoIdent]bool))
+	initCode, flagCode := walkFields(g, method.Input, nil, enums, false, make(map[protogen.GoIdent]bool), 0, "")
 	data := struct {
 		*protogen.Method
 		InputInitializerCode string
@@ -207,13 +207,8 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method, enums map[str
 	return methodTemplate.Execute(g, data)
 }
 
-type (
-	basicType struct{ Type, Parse, Value, Slice, Pointer, Default string }
-	knownType struct{ Type, Parse, Value, Slice string }
-)
-
 var (
-	basicTypes = map[protoreflect.Kind]basicType{
+	basicTypes = map[protoreflect.Kind]struct{ Type, Parse, Value, Slice, Pointer, Default string }{
 		protoreflect.BoolKind:   {"bool", "ParseBool", "BoolVar", "BoolSliceVar", "BoolPointerVar", "false"},
 		protoreflect.Int32Kind:  {"int32", "ParseInt32", "Int32Var", "Int32SliceVar", "Int32PointerVar", "0"},
 		protoreflect.Uint32Kind: {"uint32", "ParseUint32", "Uint32Var", "Uint32SliceVar", "Uint32PointerVar", "0"},
@@ -227,7 +222,7 @@ var (
 	wrappersPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/wrappers")
 	timestampPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/timestamp")
 	durationPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/duration")
-	knownTypes   = map[protogen.GoIdent]knownType{
+	knownTypes   = map[protogen.GoIdent]struct{ Type, Parse, Value, Slice string }{
 		timestampPkg.Ident("Timestamp"):  {"timestamp", "ParseTimestamp", "TimestampVar", "TimestampSliceVar"},
 		durationPkg.Ident("Duration"):    {"duration", "ParseDuration", "DurationVar", "DurationSliceVar"},
 		wrappersPkg.Ident("DoubleValue"): {"float64", "ParseDoubleWrapper", "DoubleWrapperVar", "DoubleWrapperSliceVar"},
@@ -242,26 +237,32 @@ var (
 	}
 )
 
-func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum, deprecated bool, visited map[protogen.GoIdent]bool) (string, string) {
+func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, enums map[string]*enum, deprecated bool, visited map[protogen.GoIdent]bool, level int, postSetCode string) (string, string) {
 	initLines := make(map[int]string)
 	flagLines := make(map[int]string, len(message.Fields))
+
+	target := "req"
+	if level > 0 {
+		target = strings.Join(path[:level], "")
+	}
 
 	for _, fld := range message.Fields {
 		path := append(path, fld.GoName)
 
 		if f := flagFormat(g, fld, enums); f != "" {
-			goPath := strings.Join(path, ".")
+			goPath := fmt.Sprintf("&%s.%s", target, strings.Join(path[level:], "."))
 			flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
 			comment := cleanComments(fld.Comments.Leading)
 			flagLine := fmt.Sprintf(f, goPath, flagName, comment)
+			if postSetCode != "" {
+				flagLine += fmt.Sprintf("\nflag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })", flagName, postSetCode)
+			}
 			if deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated() {
-				flagLine += fmt.Sprintf("; _ = cmd.PersistentFlags().MarkDeprecated(%s, \"deprecated\")", flagName)
+				flagLine += fmt.Sprintf("\n_ = cmd.PersistentFlags().MarkDeprecated(%s, \"deprecated\")", flagName)
 			}
 			flagLines[fld.Desc.Index()] = flagLine
 		} else if normalizeKind(fld.Desc.Kind()) == protoreflect.MessageKind {
-			if fld.Desc.ContainingOneof() != nil {
-				// oneof not supported
-			} else if fld.Desc.IsList() {
+			if fld.Desc.IsList() {
 				// message list not supported
 			} else if fld.Desc.IsMap() {
 				// limited map support
@@ -273,12 +274,25 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 					m[k] = v
 				}
 
-				initLine, flagLine := walkFields(g, fld.Message, path, enums, deprecated, m)
-				if initLine != "" {
-					initLines[fld.Desc.Index()] = fmt.Sprintf("%s: %s,", fld.GoName, initLine)
+				level := level
+				postSetCode := postSetCode
+				if fld.Oneof != nil {
+					if postSetCode != "" {
+						postSetCode += ";"
+					}
+					target := strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
+					postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, fld.GoIdent.GoName, fld.GoName, strings.Join(path, ""))
+					level = len(path)
 				}
-				if flagLine != "" {
-					flagLines[fld.Desc.Index()] = flagLine
+				initCode, flagCode := walkFields(g, fld.Message, path, enums, deprecated, m, level, postSetCode)
+				if initCode != "" && fld.Oneof == nil {
+					initLines[fld.Desc.Index()] = fmt.Sprintf("%s: %s,", fld.GoName, initCode)
+				}
+				if flagCode != "" {
+					if fld.Oneof != nil {
+						flagCode = fmt.Sprintf("%s := %s\n%s", strings.Join(path, ""), initCode, flagCode)
+					}
+					flagLines[fld.Desc.Index()] = flagCode
 				}
 			}
 		}
@@ -298,14 +312,14 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 		if fld.Desc.IsList() {
 			switch k {
 			case protoreflect.Uint32Kind, protoreflect.Uint64Kind, protoreflect.BytesKind:
-				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", bt.Slice)
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", bt.Slice)
 			default:
-				return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%s, nil, %%q)", bt.Slice)
+				return fmt.Sprintf("cmd.PersistentFlags().%s(%%s, %%s, nil, %%q)", bt.Slice)
 			}
 		} else if fld.Desc.HasPresence() && k != protoreflect.BytesKind {
-			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", bt.Pointer)
+			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", bt.Pointer)
 		} else {
-			return fmt.Sprintf("cmd.PersistentFlags().%s(&req.%%s, %%s, %s, %%q)", bt.Value, bt.Default)
+			return fmt.Sprintf("cmd.PersistentFlags().%s(%%s, %%s, %s, %%q)", bt.Value, bt.Default)
 		}
 	}
 
@@ -319,20 +333,20 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 		}
 		if fld.Desc.IsList() {
 			e.List = true
-			return fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", id)
+			return fmt.Sprintf("_%sSliceVar(cmd.PersistentFlags(), %%s, %%s, %%q)", id)
 		} else if fld.Desc.HasPresence() {
 			e.Pointer = true
-			return fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", id)
+			return fmt.Sprintf("_%sPointerVar(cmd.PersistentFlags(), %%s, %%s, %%q)", id)
 		} else {
 			e.Value = true
-			return fmt.Sprintf("_%sVar(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", id)
+			return fmt.Sprintf("_%sVar(cmd.PersistentFlags(), %%s, %%s, %%q)", id)
 		}
 	case protoreflect.MessageKind:
 		if kt, ok := knownTypes[fld.Message.GoIdent]; ok {
 			if fld.Desc.IsList() {
-				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", kt.Slice)
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", kt.Slice)
 			} else {
-				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), &req.%%s, %%s, %%q)", kt.Value)
+				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", kt.Value)
 			}
 		}
 		if fld.Desc.IsMap() {
@@ -341,9 +355,9 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 			if kk == protoreflect.StringKind {
 				switch vk {
 				case protoreflect.StringKind:
-					return "cmd.PersistentFlags().StringToStringVar(&req.%s, %s, nil, %q)"
+					return "cmd.PersistentFlags().StringToStringVar(%s, %s, nil, %q)"
 				case protoreflect.Int64Kind:
-					return "cmd.PersistentFlags().StringToInt64Var(&req.%s, %s, nil, %q)"
+					return "cmd.PersistentFlags().StringToInt64Var(%s, %s, nil, %q)"
 				}
 			}
 
@@ -377,7 +391,7 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 				}
 				if valParser != "" {
 					typ := fmt.Sprintf("%s=%s", keyType, valType)
-					return fmt.Sprintf("flag.ReflectMapVar(cmd.PersistentFlags(), %s, %s, %q, &req.%%s, %%s, %%q)", keyParser, valParser, typ)
+					return fmt.Sprintf("flag.ReflectMapVar(cmd.PersistentFlags(), %s, %s, %q, %%s, %%s, %%q)", keyParser, valParser, typ)
 				}
 			}
 		}
@@ -444,31 +458,23 @@ func (v *_{{.GoIdent.GoName}}Value) Set(val string) error {
 	}
 }
 
-func (v *_{{.GoIdent.GoName}}Value) Type() string { return "{{.GoIdent.GoName}}" }
+func (*_{{.GoIdent.GoName}}Value) Type() string { return "{{.GoIdent.GoName}}" }
 
 func (v *_{{.GoIdent.GoName}}Value) String() string { return ({{.GoIdent.GoName}})(*v).String() }
 {{end}}
 {{if .Pointer }}
-type _{{.GoIdent.GoName}}PointerValue struct {
-	set func(*{{.GoIdent.GoName}})
-}
-
-func _{{.GoIdent.GoName}}PointerVar(fs *pflag.FlagSet, p **{{.GoIdent.GoName}}, name, usage string) *_{{.GoIdent.GoName}}PointerValue {
-	return &_{{.GoIdent.GoName}}PointerValue{func(e *{{.GoIdent.GoName}}) { *p = e }}
-}
-
-func (v *_{{.GoIdent.GoName}}PointerValue) Set(val string) error {
-	if e, err := parse{{.GoIdent.GoName}}(val); err != nil {
-		return err
-	} else {
-		v.set(&e)
-		return nil
+func _{{.GoIdent.GoName}}PointerVar(fs *pflag.FlagSet, p **{{.GoIdent.GoName}}, name, usage string) {
+	v := fs.String(name, "", usage)
+	hook := func() error {
+		if e, err := parse{{.GoIdent.GoName}}(*v); err != nil {
+			return err
+		} else {
+			*p = &e
+			return nil
+		}
 	}
+	flag.WithPostSetHookE(fs, name, hook)
 }
-
-func (v *_{{.GoIdent.GoName}}PointerValue) Type() string { return "{{.GoIdent.GoName}}" }
-
-func (v *_{{.GoIdent.GoName}}PointerValue) String() string { return "<nil>" }
 {{end}}
 {{if .List}}
 type _{{.GoIdent.GoName}}SliceValue struct {
@@ -498,9 +504,9 @@ func (s *_{{.GoIdent.GoName}}SliceValue) Set(val string) error {
 	return nil
 }
 
-func (s *_{{.GoIdent.GoName}}SliceValue) Type() string { return "{{.GoIdent.GoName}}Slice" }
+func (*_{{.GoIdent.GoName}}SliceValue) Type() string { return "{{.GoIdent.GoName}}Slice" }
 
-func (s *_{{.GoIdent.GoName}}SliceValue) String() string { return "[]" }
+func (*_{{.GoIdent.GoName}}SliceValue) String() string { return "[]" }
 {{end}}
 {{if .Map}}
 func _{{.GoIdent.GoName}}Parse(val string) (interface{}, error) {

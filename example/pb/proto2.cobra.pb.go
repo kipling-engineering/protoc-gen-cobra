@@ -125,26 +125,18 @@ func _Proto2EchoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-type _Sound2_EnumPointerValue struct {
-	set func(*Sound2_Enum)
-}
-
-func _Sound2_EnumPointerVar(fs *pflag.FlagSet, p **Sound2_Enum, name, usage string) *_Sound2_EnumPointerValue {
-	return &_Sound2_EnumPointerValue{func(e *Sound2_Enum) { *p = e }}
-}
-
-func (v *_Sound2_EnumPointerValue) Set(val string) error {
-	if e, err := parseSound2_Enum(val); err != nil {
-		return err
-	} else {
-		v.set(&e)
-		return nil
+func _Sound2_EnumPointerVar(fs *pflag.FlagSet, p **Sound2_Enum, name, usage string) {
+	v := fs.String(name, "", usage)
+	hook := func() error {
+		if e, err := parseSound2_Enum(*v); err != nil {
+			return err
+		} else {
+			*p = &e
+			return nil
+		}
 	}
+	flag.WithPostSetHookE(fs, name, hook)
 }
-
-func (v *_Sound2_EnumPointerValue) Type() string { return "Sound2_Enum" }
-
-func (v *_Sound2_EnumPointerValue) String() string { return "<nil>" }
 
 type _Sound2_EnumSliceValue struct {
 	value   *[]Sound2_Enum
@@ -173,9 +165,9 @@ func (s *_Sound2_EnumSliceValue) Set(val string) error {
 	return nil
 }
 
-func (s *_Sound2_EnumSliceValue) Type() string { return "Sound2_EnumSlice" }
+func (*_Sound2_EnumSliceValue) Type() string { return "Sound2_EnumSlice" }
 
-func (s *_Sound2_EnumSliceValue) String() string { return "[]" }
+func (*_Sound2_EnumSliceValue) String() string { return "[]" }
 
 func parseSound2_Enum(s string) (Sound2_Enum, error) {
 	if i, ok := Sound2_Enum_value[s]; ok {

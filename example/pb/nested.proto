@@ -6,34 +6,92 @@ option go_package = ".;pb";
 
 service Nested {
     rpc Get (NestedRequest) returns (NestedResponse);
-    rpc GetDeeplyNested (DeeplyNested) returns (NestedResponse);
+    rpc GetDeep (DeepRequest) returns (NestedResponse);
+    rpc GetOneOf (OneOfRequest) returns (NestedResponse);
+    rpc GetOneOfDeep (OneOfDeepRequest) returns (NestedResponse);
 }
 
-message TopLevelNestedType {
+message Top {
     string value = 1;
 }
 
 message NestedRequest {
-    message InnerNestedType {
+    message Inner {
         string value = 1;
     }
-    InnerNestedType inner = 1;
-    TopLevelNestedType top_level = 2;
+    Top top = 1;
+    Inner inner = 2;
+}
+
+message DeepRequest {
+    message Outer {
+        message Middle {
+            message Inner {
+                string value = 1;
+            }
+            Inner l2 = 1;
+        }
+        Middle l1 = 1;
+    }
+    Outer l0 = 1;
+}
+
+message OneOfRequest {
+    message First {
+        string value = 1;
+    }
+    message Second {
+        string value = 1;
+    }
+    message Third {
+        string value = 1;
+    }
+    oneof choose {
+        First option1 = 1;
+        Second option2 = 2;
+        Third option3 = 3;
+    }
+}
+
+message OneOfDeepRequest {
+    message Outer {
+        message Middle {
+            message Inner {
+                message First {
+                    string value = 1;
+                }
+                message Second {
+                    string value = 1;
+                }
+                message Third {
+                    string value = 1;
+                }
+                oneof choose {
+                    First option1 = 1;
+                    Second option2 = 2;
+                    Third option3 = 3;
+                }
+            }
+            Inner l2 = 1;
+        }
+        message First {
+            Middle l1 = 1;
+        }
+        message Second {
+            Middle l1 = 1;
+        }
+        message Third {
+            Middle l1 = 1;
+        }
+        oneof choose {
+            First option1 = 1;
+            Second option2 = 2;
+            Third option3 = 3;
+        }
+    }
+    Outer l0 = 1;
 }
 
 message NestedResponse {
     string return = 1;
-}
-
-message DeeplyNested {
-    message DeeplyNestedOuter {
-        message DeeplyNestedInner {
-            message DeeplyNestedInnermost {
-                string l3 = 1;
-            }
-            DeeplyNestedInnermost l2 = 1;
-        }
-        DeeplyNestedInner l1 = 1;
-    }
-    DeeplyNestedOuter l0 = 1;
 }

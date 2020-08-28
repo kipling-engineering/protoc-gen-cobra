@@ -18,7 +18,9 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NestedClient interface {
 	Get(ctx context.Context, in *NestedRequest, opts ...grpc.CallOption) (*NestedResponse, error)
-	GetDeeplyNested(ctx context.Context, in *DeeplyNested, opts ...grpc.CallOption) (*NestedResponse, error)
+	GetDeep(ctx context.Context, in *DeepRequest, opts ...grpc.CallOption) (*NestedResponse, error)
+	GetOneOf(ctx context.Context, in *OneOfRequest, opts ...grpc.CallOption) (*NestedResponse, error)
+	GetOneOfDeep(ctx context.Context, in *OneOfDeepRequest, opts ...grpc.CallOption) (*NestedResponse, error)
 }
 
 type nestedClient struct {
@@ -38,9 +40,27 @@ func (c *nestedClient) Get(ctx context.Context, in *NestedRequest, opts ...grpc.
 	return out, nil
 }
 
-func (c *nestedClient) GetDeeplyNested(ctx context.Context, in *DeeplyNested, opts ...grpc.CallOption) (*NestedResponse, error) {
+func (c *nestedClient) GetDeep(ctx context.Context, in *DeepRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
 	out := new(NestedResponse)
-	err := c.cc.Invoke(ctx, "/example.Nested/GetDeeplyNested", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/example.Nested/GetDeep", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nestedClient) GetOneOf(ctx context.Context, in *OneOfRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
+	out := new(NestedResponse)
+	err := c.cc.Invoke(ctx, "/example.Nested/GetOneOf", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nestedClient) GetOneOfDeep(ctx context.Context, in *OneOfDeepRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
+	out := new(NestedResponse)
+	err := c.cc.Invoke(ctx, "/example.Nested/GetOneOfDeep", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +72,9 @@ func (c *nestedClient) GetDeeplyNested(ctx context.Context, in *DeeplyNested, op
 // for forward compatibility
 type NestedServer interface {
 	Get(context.Context, *NestedRequest) (*NestedResponse, error)
-	GetDeeplyNested(context.Context, *DeeplyNested) (*NestedResponse, error)
+	GetDeep(context.Context, *DeepRequest) (*NestedResponse, error)
+	GetOneOf(context.Context, *OneOfRequest) (*NestedResponse, error)
+	GetOneOfDeep(context.Context, *OneOfDeepRequest) (*NestedResponse, error)
 	mustEmbedUnimplementedNestedServer()
 }
 
@@ -63,8 +85,14 @@ type UnimplementedNestedServer struct {
 func (*UnimplementedNestedServer) Get(context.Context, *NestedRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedNestedServer) GetDeeplyNested(context.Context, *DeeplyNested) (*NestedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDeeplyNested not implemented")
+func (*UnimplementedNestedServer) GetDeep(context.Context, *DeepRequest) (*NestedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeep not implemented")
+}
+func (*UnimplementedNestedServer) GetOneOf(context.Context, *OneOfRequest) (*NestedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOneOf not implemented")
+}
+func (*UnimplementedNestedServer) GetOneOfDeep(context.Context, *OneOfDeepRequest) (*NestedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOneOfDeep not implemented")
 }
 func (*UnimplementedNestedServer) mustEmbedUnimplementedNestedServer() {}
 
@@ -90,20 +118,56 @@ func _Nested_Get_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Nested_GetDeeplyNested_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeeplyNested)
+func _Nested_GetDeep_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeepRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NestedServer).GetDeeplyNested(ctx, in)
+		return srv.(NestedServer).GetDeep(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/example.Nested/GetDeeplyNested",
+		FullMethod: "/example.Nested/GetDeep",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NestedServer).GetDeeplyNested(ctx, req.(*DeeplyNested))
+		return srv.(NestedServer).GetDeep(ctx, req.(*DeepRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nested_GetOneOf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OneOfRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NestedServer).GetOneOf(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/example.Nested/GetOneOf",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NestedServer).GetOneOf(ctx, req.(*OneOfRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nested_GetOneOfDeep_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OneOfDeepRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NestedServer).GetOneOfDeep(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/example.Nested/GetOneOfDeep",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NestedServer).GetOneOfDeep(ctx, req.(*OneOfDeepRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -117,8 +181,16 @@ var _Nested_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Nested_Get_Handler,
 		},
 		{
-			MethodName: "GetDeeplyNested",
-			Handler:    _Nested_GetDeeplyNested_Handler,
+			MethodName: "GetDeep",
+			Handler:    _Nested_GetDeep_Handler,
+		},
+		{
+			MethodName: "GetOneOf",
+			Handler:    _Nested_GetOneOf_Handler,
+		},
+		{
+			MethodName: "GetOneOfDeep",
+			Handler:    _Nested_GetOneOfDeep_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

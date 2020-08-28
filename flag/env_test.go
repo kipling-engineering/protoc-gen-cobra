@@ -13,7 +13,7 @@ import (
 type stringValue string
 
 func (s *stringValue) Set(val string) error { *s = stringValue(val); return nil }
-func (s *stringValue) Type() string         { return "string" }
+func (*stringValue) Type() string           { return "string" }
 func (s *stringValue) String() string       { return string(*s) }
 
 func TestSetFlagsFromEnv(t *testing.T) {
