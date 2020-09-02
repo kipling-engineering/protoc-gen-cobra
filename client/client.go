@@ -183,11 +183,10 @@ func RoundTrip(ctx context.Context, cfg *Config, fn func(grpc.ClientConnInterfac
 }
 
 func (c *Config) makeDecoder() (iocodec.Decoder, error) {
-	if stat, _ := os.Stdin.Stat(); (stat.Mode()&os.ModeCharDevice) != 0 && c.RequestFile != "-" {
-		if c.RequestFile == "" {
-			return iocodec.NoOp, nil
-		}
-
+	if c.RequestFile == "" {
+		return iocodec.NoOp, nil
+	}
+	if c.RequestFile != "-" {
 		f, err := os.Open(c.RequestFile)
 		if err != nil {
 			return nil, fmt.Errorf("request file: %v", err)

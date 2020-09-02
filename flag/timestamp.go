@@ -11,15 +11,7 @@ import (
 
 func TimestampVar(fs *pflag.FlagSet, p **timestamp.Timestamp, name, usage string) {
 	v := fs.String(name, "", usage)
-	hook := func() error {
-		if d, err := ptypes.ToTimestamp(v); err != nil {
-			return err
-		} else {
-			*p = d
-			return nil
-		}
-	}
-	WithPostSetHookE(fs, name, hook)
+	WithPostSetHookE(fs, name, func() (err error) { *p, err = ptypes.ToTimestamp(v); return })
 }
 
 type timestampSliceValue struct {

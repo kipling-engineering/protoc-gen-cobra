@@ -31,7 +31,7 @@ produces a client that can do:
 
 ```
 $ ./example bank deposit --account foobar --amount 10
-$ echo '{"account":"foobar"}' | ./example bank deposit --amount 10
+$ echo '{"account":"foobar"}' | ./example bank deposit --amount 10 -f -
 $ set BANK_DEPOSIT_ACCOUNT=foobar; ./example bank deposit --amount 10
 ```
 
@@ -89,7 +89,7 @@ $ ./example cache multiset -f req.json
 Example client and server streams:
 
 ```
-$ echo '{"key":"hello"}{"key":"foo"}' | ./example cache multiget
+$ echo '{"key":"hello"}{"key":"foo"}' | ./example cache multiget -f -
 {"value":"world"}
 {"value":"bar"}
 ```

@@ -11,15 +11,7 @@ import (
 
 func DurationVar(fs *pflag.FlagSet, p **duration.Duration, name, usage string) {
 	v := fs.String(name, "", usage)
-	hook := func() error {
-		if d, err := ptypes.ToDuration(v); err != nil {
-			return err
-		} else {
-			*p = d
-			return nil
-		}
-	}
-	WithPostSetHookE(fs, name, hook)
+	WithPostSetHookE(fs, name, func() (err error) { *p, err = ptypes.ToDuration(v); return })
 }
 
 type durationSliceValue struct {

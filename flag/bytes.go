@@ -2,20 +2,25 @@ package flag
 
 import (
 	"encoding/base64"
+	"io"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/spf13/pflag"
 )
 
+var stdin io.Reader = os.Stdin
+
 func BytesBase64Var(fs *pflag.FlagSet, p *[]byte, name, usage string) {
 	v := fs.String(name, "", usage)
-	hook := func() error {
-		if b, err := base64.RawStdEncoding.DecodeString(strings.TrimRight(*v, "=")); err != nil {
-			return err
+	hook := func() (err error) {
+		if *v == "-" {
+			*p, err = ioutil.ReadAll(stdin)
 		} else {
-			*p = b
-			return nil
+			*p, err = base64.RawStdEncoding.DecodeString(strings.TrimRight(*v, "="))
 		}
+		return
 	}
 	WithPostSetHookE(fs, name, hook)
 }
