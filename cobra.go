@@ -316,7 +316,9 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 			default:
 				return fmt.Sprintf("cmd.PersistentFlags().%s(%%s, %%s, nil, %%q)", bt.Slice)
 			}
-		} else if fld.Desc.HasPresence() && k != protoreflect.BytesKind {
+		} else if k == protoreflect.BytesKind {
+			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", bt.Value)
+		} else if fld.Desc.HasPresence() {
 			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", bt.Pointer)
 		} else {
 			return fmt.Sprintf("cmd.PersistentFlags().%s(%%s, %%s, %s, %%q)", bt.Value, bt.Default)

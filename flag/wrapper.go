@@ -163,8 +163,9 @@ func StringWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.StringValue, name, 
 func ParseStringWrapper(val string) (interface{}, error) { return ptypes.ToStringWrapper(val) }
 
 func BytesBase64WrapperVar(fs *pflag.FlagSet, p **wrappers.BytesValue, name, usage string) {
-	v := fs.BytesBase64(name, nil, usage)
-	WithPostSetHook(fs, name, func() { *p = wrapperspb.Bytes(*v) })
+	var v []byte
+	BytesBase64Var(fs, &v, name, usage)
+	WithPostSetHook(fs, name, func() { *p = wrapperspb.Bytes(v) })
 }
 
 func BytesBase64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BytesValue, name, usage string) {

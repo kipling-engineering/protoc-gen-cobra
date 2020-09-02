@@ -79,7 +79,7 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().Int64Var(&req.Sfixed64, cfg.FlagNamer("Sfixed64"), 0, "")
 	cmd.PersistentFlags().BoolVar(&req.Bool, cfg.FlagNamer("Bool"), false, "")
 	cmd.PersistentFlags().StringVar(&req.String_, cfg.FlagNamer("String_"), "", "")
-	cmd.PersistentFlags().BytesBase64Var(&req.Bytes, cfg.FlagNamer("Bytes"), nil, "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Bytes, cfg.FlagNamer("Bytes"), "")
 	_Sound_NestedEnumVar(cmd.PersistentFlags(), &req.NestedEnum, cfg.FlagNamer("NestedEnum"), "")
 	_GlobalEnumVar(cmd.PersistentFlags(), &req.GlobalEnum, cfg.FlagNamer("GlobalEnum"), "")
 	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, cfg.FlagNamer("ListDouble"), nil, "")

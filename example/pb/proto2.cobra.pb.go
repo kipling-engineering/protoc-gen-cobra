@@ -79,7 +79,7 @@ func _Proto2EchoCommand(cfg *client.Config) *cobra.Command {
 	flag.Int64PointerVar(cmd.PersistentFlags(), &req.Sfixed64, cfg.FlagNamer("Sfixed64"), "")
 	flag.BoolPointerVar(cmd.PersistentFlags(), &req.Bool, cfg.FlagNamer("Bool"), "")
 	flag.StringPointerVar(cmd.PersistentFlags(), &req.String_, cfg.FlagNamer("String_"), "")
-	cmd.PersistentFlags().BytesBase64Var(&req.Bytes, cfg.FlagNamer("Bytes"), nil, "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Bytes, cfg.FlagNamer("Bytes"), "")
 	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, cfg.FlagNamer("ListDouble"), nil, "")
 	cmd.PersistentFlags().Float32SliceVar(&req.ListFloat, cfg.FlagNamer("ListFloat"), nil, "")
 	cmd.PersistentFlags().Int32SliceVar(&req.ListInt32, cfg.FlagNamer("ListInt32"), nil, "")

@@ -2,6 +2,7 @@ package ptypes
 
 import (
 	"encoding/base64"
+	"strings"
 
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -131,7 +132,7 @@ func ToBytesWrapper(v interface{}) (*wrappers.BytesValue, error) {
 	}
 	if s, err := cast.ToStringE(v); err != nil {
 		return nil, err
-	} else if v, err := base64.RawStdEncoding.DecodeString(s); err != nil {
+	} else if v, err := base64.RawStdEncoding.DecodeString(strings.TrimRight(s, "=")); err != nil {
 		return nil, err
 	} else {
 		return wrapperspb.Bytes(v), nil
