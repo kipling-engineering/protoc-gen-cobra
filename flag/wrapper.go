@@ -15,18 +15,12 @@ func BoolWrapperVar(fs *pflag.FlagSet, p **wrappers.BoolValue, name, usage strin
 
 func BoolWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BoolValue, name, usage string) {
 	v := fs.BoolSlice(name, nil, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.BoolValue, len(*v))
 		for i, item := range *v {
 			out[i] = wrapperspb.Bool(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -40,18 +34,12 @@ func Int32WrapperVar(fs *pflag.FlagSet, p **wrappers.Int32Value, name, usage str
 
 func Int32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int32Value, name, usage string) {
 	v := fs.Int32Slice(name, nil, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.Int32Value, len(*v))
 		for i, item := range *v {
 			out[i] = wrapperspb.Int32(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -65,18 +53,12 @@ func Int64WrapperVar(fs *pflag.FlagSet, p **wrappers.Int64Value, name, usage str
 
 func Int64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.Int64Value, name, usage string) {
 	v := fs.Int64Slice(name, nil, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.Int64Value, len(*v))
 		for i, item := range *v {
 			out[i] = wrapperspb.Int64(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -91,18 +73,12 @@ func UInt32WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt32Value, name, usage s
 func UInt32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt32Value, name, usage string) {
 	var v []uint32
 	Uint32SliceVar(fs, &v, name, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.UInt32Value, len(v))
 		for i, item := range v {
 			out[i] = wrapperspb.UInt32(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -117,18 +93,12 @@ func UInt64WrapperVar(fs *pflag.FlagSet, p **wrappers.UInt64Value, name, usage s
 func UInt64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.UInt64Value, name, usage string) {
 	var v []uint64
 	Uint64SliceVar(fs, &v, name, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.UInt64Value, len(v))
 		for i, item := range v {
 			out[i] = wrapperspb.UInt64(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -142,18 +112,12 @@ func FloatWrapperVar(fs *pflag.FlagSet, p **wrappers.FloatValue, name, usage str
 
 func FloatWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.FloatValue, name, usage string) {
 	v := fs.Float32Slice(name, nil, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.FloatValue, len(*v))
 		for i, item := range *v {
 			out[i] = wrapperspb.Float(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -167,18 +131,12 @@ func DoubleWrapperVar(fs *pflag.FlagSet, p **wrappers.DoubleValue, name, usage s
 
 func DoubleWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.DoubleValue, name, usage string) {
 	v := fs.Float64Slice(name, nil, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.DoubleValue, len(*v))
 		for i, item := range *v {
 			out[i] = wrapperspb.Double(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -192,18 +150,12 @@ func StringWrapperVar(fs *pflag.FlagSet, p **wrappers.StringValue, name, usage s
 
 func StringWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.StringValue, name, usage string) {
 	v := fs.StringSlice(name, nil, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.StringValue, len(*v))
 		for i, item := range *v {
 			out[i] = wrapperspb.String(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
@@ -218,18 +170,12 @@ func BytesBase64WrapperVar(fs *pflag.FlagSet, p **wrappers.BytesValue, name, usa
 func BytesBase64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BytesValue, name, usage string) {
 	var v [][]byte
 	BytesBase64SliceVar(fs, &v, name, usage)
-	var changed bool
 	hook := func() {
 		out := make([]*wrappers.BytesValue, len(v))
 		for i, item := range v {
 			out[i] = wrapperspb.Bytes(item)
 		}
-		if !changed {
-			*p = out
-			changed = true
-		} else {
-			*p = append(*p, out...)
-		}
+		*p = out
 	}
 	WithPostSetHook(fs, name, hook)
 }
