@@ -9,6 +9,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestBoolWrapperVar(t *testing.T) {
+	testCases := []struct {
+		val  string
+		want bool
+	}{
+		{"0", false},
+		{"1", true},
+		{"false", false},
+		{"true", true},
+	}
+	for _, tc := range testCases {
+		fs := &pflag.FlagSet{}
+		var v *wrappers.BoolValue
+		BoolWrapperVar(fs, &v, "foo", "")
+		assert.NoError(t, fs.Set("foo", tc.val))
+		assert.NotNil(t, v)
+		assert.Equal(t, v.Value, tc.want)
+	}
+}
+
 func TestBytesBase64WrapperVar(t *testing.T) {
 	fs := &pflag.FlagSet{}
 	var v *wrappers.BytesValue

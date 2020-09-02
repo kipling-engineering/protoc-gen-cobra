@@ -9,8 +9,8 @@ import (
 )
 
 func BoolWrapperVar(fs *pflag.FlagSet, p **wrappers.BoolValue, name, usage string) {
-	v := fs.Bool(name, false, usage)
-	WithPostSetHook(fs, name, func() { *p = wrapperspb.Bool(*v) })
+	v := fs.String(name, "", usage)
+	WithPostSetHookE(fs, name, func() (err error) { *p, err = ptypes.ToBoolWrapper(v); return })
 }
 
 func BoolWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrappers.BoolValue, name, usage string) {
