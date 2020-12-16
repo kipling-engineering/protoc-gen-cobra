@@ -301,7 +301,11 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 				}
 				if flagCode != "" {
 					if fld.Oneof != nil {
-						flagCode = fmt.Sprintf("%s := %s\n%s", strings.Join(path, ""), initCode, flagCode)
+						flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
+						flagLine := fmt.Sprintf("%s := %s\n", strings.Join(path, ""), initCode)
+						flagLine += fmt.Sprintf("cmd.PersistentFlags().Bool(%s, false, \"\")\n", flagName)
+						flagLine += fmt.Sprintf("flag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })\n", flagName, postSetCode)
+						flagCode = flagLine + flagCode
 					}
 					flagLines[fld.Desc.Index()] = flagCode
 				}
