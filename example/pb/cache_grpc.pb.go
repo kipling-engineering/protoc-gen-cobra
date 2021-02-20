@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // CacheClient is the client API for Cache service.
 //
@@ -50,7 +51,7 @@ func (c *cacheClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.Call
 }
 
 func (c *cacheClient) MultiSet(ctx context.Context, opts ...grpc.CallOption) (Cache_MultiSetClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Cache_serviceDesc.Streams[0], "/example.Cache/MultiSet", opts...)
+	stream, err := c.cc.NewStream(ctx, &Cache_ServiceDesc.Streams[0], "/example.Cache/MultiSet", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +85,7 @@ func (x *cacheMultiSetClient) CloseAndRecv() (*SetResponse, error) {
 }
 
 func (c *cacheClient) MultiGet(ctx context.Context, opts ...grpc.CallOption) (Cache_MultiGetClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Cache_serviceDesc.Streams[1], "/example.Cache/MultiGet", opts...)
+	stream, err := c.cc.NewStream(ctx, &Cache_ServiceDesc.Streams[1], "/example.Cache/MultiGet", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,22 +130,29 @@ type CacheServer interface {
 type UnimplementedCacheServer struct {
 }
 
-func (*UnimplementedCacheServer) Set(context.Context, *SetRequest) (*SetResponse, error) {
+func (UnimplementedCacheServer) Set(context.Context, *SetRequest) (*SetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
-func (*UnimplementedCacheServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
+func (UnimplementedCacheServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedCacheServer) MultiSet(Cache_MultiSetServer) error {
+func (UnimplementedCacheServer) MultiSet(Cache_MultiSetServer) error {
 	return status.Errorf(codes.Unimplemented, "method MultiSet not implemented")
 }
-func (*UnimplementedCacheServer) MultiGet(Cache_MultiGetServer) error {
+func (UnimplementedCacheServer) MultiGet(Cache_MultiGetServer) error {
 	return status.Errorf(codes.Unimplemented, "method MultiGet not implemented")
 }
-func (*UnimplementedCacheServer) mustEmbedUnimplementedCacheServer() {}
+func (UnimplementedCacheServer) mustEmbedUnimplementedCacheServer() {}
 
-func RegisterCacheServer(s *grpc.Server, srv CacheServer) {
-	s.RegisterService(&_Cache_serviceDesc, srv)
+// UnsafeCacheServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CacheServer will
+// result in compilation errors.
+type UnsafeCacheServer interface {
+	mustEmbedUnimplementedCacheServer()
+}
+
+func RegisterCacheServer(s grpc.ServiceRegistrar, srv CacheServer) {
+	s.RegisterService(&Cache_ServiceDesc, srv)
 }
 
 func _Cache_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -235,7 +243,10 @@ func (x *cacheMultiGetServer) Recv() (*GetRequest, error) {
 	return m, nil
 }
 
-var _Cache_serviceDesc = grpc.ServiceDesc{
+// Cache_ServiceDesc is the grpc.ServiceDesc for Cache service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Cache_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Cache",
 	HandlerType: (*CacheServer)(nil),
 	Methods: []grpc.MethodDesc{

@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // Proto2Client is the client API for Proto2 service.
 //
@@ -49,13 +50,20 @@ type Proto2Server interface {
 type UnimplementedProto2Server struct {
 }
 
-func (*UnimplementedProto2Server) Echo(context.Context, *Sound2) (*Sound2, error) {
+func (UnimplementedProto2Server) Echo(context.Context, *Sound2) (*Sound2, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
-func (*UnimplementedProto2Server) mustEmbedUnimplementedProto2Server() {}
+func (UnimplementedProto2Server) mustEmbedUnimplementedProto2Server() {}
 
-func RegisterProto2Server(s *grpc.Server, srv Proto2Server) {
-	s.RegisterService(&_Proto2_serviceDesc, srv)
+// UnsafeProto2Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to Proto2Server will
+// result in compilation errors.
+type UnsafeProto2Server interface {
+	mustEmbedUnimplementedProto2Server()
+}
+
+func RegisterProto2Server(s grpc.ServiceRegistrar, srv Proto2Server) {
+	s.RegisterService(&Proto2_ServiceDesc, srv)
 }
 
 func _Proto2_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -76,7 +84,10 @@ func _Proto2_Echo_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Proto2_serviceDesc = grpc.ServiceDesc{
+// Proto2_ServiceDesc is the grpc.ServiceDesc for Proto2 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Proto2_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Proto2",
 	HandlerType: (*Proto2Server)(nil),
 	Methods: []grpc.MethodDesc{

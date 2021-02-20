@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // NestedClient is the client API for Nested service.
 //
@@ -82,22 +83,29 @@ type NestedServer interface {
 type UnimplementedNestedServer struct {
 }
 
-func (*UnimplementedNestedServer) Get(context.Context, *NestedRequest) (*NestedResponse, error) {
+func (UnimplementedNestedServer) Get(context.Context, *NestedRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedNestedServer) GetDeep(context.Context, *DeepRequest) (*NestedResponse, error) {
+func (UnimplementedNestedServer) GetDeep(context.Context, *DeepRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeep not implemented")
 }
-func (*UnimplementedNestedServer) GetOneOf(context.Context, *OneOfRequest) (*NestedResponse, error) {
+func (UnimplementedNestedServer) GetOneOf(context.Context, *OneOfRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOneOf not implemented")
 }
-func (*UnimplementedNestedServer) GetOneOfDeep(context.Context, *OneOfDeepRequest) (*NestedResponse, error) {
+func (UnimplementedNestedServer) GetOneOfDeep(context.Context, *OneOfDeepRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOneOfDeep not implemented")
 }
-func (*UnimplementedNestedServer) mustEmbedUnimplementedNestedServer() {}
+func (UnimplementedNestedServer) mustEmbedUnimplementedNestedServer() {}
 
-func RegisterNestedServer(s *grpc.Server, srv NestedServer) {
-	s.RegisterService(&_Nested_serviceDesc, srv)
+// UnsafeNestedServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NestedServer will
+// result in compilation errors.
+type UnsafeNestedServer interface {
+	mustEmbedUnimplementedNestedServer()
+}
+
+func RegisterNestedServer(s grpc.ServiceRegistrar, srv NestedServer) {
+	s.RegisterService(&Nested_ServiceDesc, srv)
 }
 
 func _Nested_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -172,7 +180,10 @@ func _Nested_GetOneOfDeep_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Nested_serviceDesc = grpc.ServiceDesc{
+// Nested_ServiceDesc is the grpc.ServiceDesc for Nested service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Nested_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Nested",
 	HandlerType: (*NestedServer)(nil),
 	Methods: []grpc.MethodDesc{

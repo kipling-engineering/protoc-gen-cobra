@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // CRUDClient is the client API for CRUD service.
 //
@@ -82,22 +83,29 @@ type CRUDServer interface {
 type UnimplementedCRUDServer struct {
 }
 
-func (*UnimplementedCRUDServer) Create(context.Context, *CreateCRUD) (*CRUDObject, error) {
+func (UnimplementedCRUDServer) Create(context.Context, *CreateCRUD) (*CRUDObject, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (*UnimplementedCRUDServer) Get(context.Context, *GetCRUD) (*CRUDObject, error) {
+func (UnimplementedCRUDServer) Get(context.Context, *GetCRUD) (*CRUDObject, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedCRUDServer) Update(context.Context, *CRUDObject) (*CRUDObject, error) {
+func (UnimplementedCRUDServer) Update(context.Context, *CRUDObject) (*CRUDObject, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (*UnimplementedCRUDServer) Delete(context.Context, *CRUDObject) (*Empty, error) {
+func (UnimplementedCRUDServer) Delete(context.Context, *CRUDObject) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (*UnimplementedCRUDServer) mustEmbedUnimplementedCRUDServer() {}
+func (UnimplementedCRUDServer) mustEmbedUnimplementedCRUDServer() {}
 
-func RegisterCRUDServer(s *grpc.Server, srv CRUDServer) {
-	s.RegisterService(&_CRUD_serviceDesc, srv)
+// UnsafeCRUDServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CRUDServer will
+// result in compilation errors.
+type UnsafeCRUDServer interface {
+	mustEmbedUnimplementedCRUDServer()
+}
+
+func RegisterCRUDServer(s grpc.ServiceRegistrar, srv CRUDServer) {
+	s.RegisterService(&CRUD_ServiceDesc, srv)
 }
 
 func _CRUD_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -172,7 +180,10 @@ func _CRUD_Delete_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-var _CRUD_serviceDesc = grpc.ServiceDesc{
+// CRUD_ServiceDesc is the grpc.ServiceDesc for CRUD service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CRUD_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.CRUD",
 	HandlerType: (*CRUDServer)(nil),
 	Methods: []grpc.MethodDesc{

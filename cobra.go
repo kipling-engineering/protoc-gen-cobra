@@ -219,9 +219,9 @@ var (
 		protoreflect.StringKind: {"string", "ParseString", "StringVar", "StringSliceVar", "StringPointerVar", `""`},
 		protoreflect.BytesKind:  {"bytesBase64", "ParseBytesBase64", "BytesBase64Var", "BytesBase64SliceVar", "", "nil"},
 	}
-	wrappersPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/wrappers")
-	timestampPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/timestamp")
-	durationPkg  = protogen.GoImportPath("github.com/golang/protobuf/ptypes/duration")
+	wrappersPkg  = protogen.GoImportPath("google.golang.org/protobuf/types/known/wrapperspb")
+	timestampPkg = protogen.GoImportPath("google.golang.org/protobuf/types/known/timestamppb")
+	durationPkg  = protogen.GoImportPath("google.golang.org/protobuf/types/known/durationpb")
 	knownTypes   = map[protogen.GoIdent]struct{ Type, Parse, Value, Slice string }{
 		timestampPkg.Ident("Timestamp"):  {"timestamp", "ParseTimestamp", "TimestampVar", "TimestampSliceVar"},
 		durationPkg.Ident("Duration"):    {"duration", "ParseDuration", "DurationVar", "DurationSliceVar"},

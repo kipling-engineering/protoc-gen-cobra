@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // TypesClient is the client API for Types service.
 //
@@ -49,13 +50,20 @@ type TypesServer interface {
 type UnimplementedTypesServer struct {
 }
 
-func (*UnimplementedTypesServer) Echo(context.Context, *Sound) (*Sound, error) {
+func (UnimplementedTypesServer) Echo(context.Context, *Sound) (*Sound, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
-func (*UnimplementedTypesServer) mustEmbedUnimplementedTypesServer() {}
+func (UnimplementedTypesServer) mustEmbedUnimplementedTypesServer() {}
 
-func RegisterTypesServer(s *grpc.Server, srv TypesServer) {
-	s.RegisterService(&_Types_serviceDesc, srv)
+// UnsafeTypesServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TypesServer will
+// result in compilation errors.
+type UnsafeTypesServer interface {
+	mustEmbedUnimplementedTypesServer()
+}
+
+func RegisterTypesServer(s grpc.ServiceRegistrar, srv TypesServer) {
+	s.RegisterService(&Types_ServiceDesc, srv)
 }
 
 func _Types_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -76,7 +84,10 @@ func _Types_Echo_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Types_serviceDesc = grpc.ServiceDesc{
+// Types_ServiceDesc is the grpc.ServiceDesc for Types service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Types_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Types",
 	HandlerType: (*TypesServer)(nil),
 	Methods: []grpc.MethodDesc{

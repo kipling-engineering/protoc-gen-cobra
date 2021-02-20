@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // CyclicalClient is the client API for Cyclical service.
 //
@@ -49,13 +50,20 @@ type CyclicalServer interface {
 type UnimplementedCyclicalServer struct {
 }
 
-func (*UnimplementedCyclicalServer) Test(context.Context, *Foo) (*Bar, error) {
+func (UnimplementedCyclicalServer) Test(context.Context, *Foo) (*Bar, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
 }
-func (*UnimplementedCyclicalServer) mustEmbedUnimplementedCyclicalServer() {}
+func (UnimplementedCyclicalServer) mustEmbedUnimplementedCyclicalServer() {}
 
-func RegisterCyclicalServer(s *grpc.Server, srv CyclicalServer) {
-	s.RegisterService(&_Cyclical_serviceDesc, srv)
+// UnsafeCyclicalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CyclicalServer will
+// result in compilation errors.
+type UnsafeCyclicalServer interface {
+	mustEmbedUnimplementedCyclicalServer()
+}
+
+func RegisterCyclicalServer(s grpc.ServiceRegistrar, srv CyclicalServer) {
+	s.RegisterService(&Cyclical_ServiceDesc, srv)
 }
 
 func _Cyclical_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -76,7 +84,10 @@ func _Cyclical_Test_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Cyclical_serviceDesc = grpc.ServiceDesc{
+// Cyclical_ServiceDesc is the grpc.ServiceDesc for Cyclical service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Cyclical_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Cyclical",
 	HandlerType: (*CyclicalServer)(nil),
 	Methods: []grpc.MethodDesc{

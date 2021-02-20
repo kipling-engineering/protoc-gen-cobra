@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // DeprecatedClient is the client API for Deprecated service.
 //
@@ -57,14 +58,21 @@ type DeprecatedServer interface {
 type UnimplementedDeprecatedServer struct {
 }
 
-func (*UnimplementedDeprecatedServer) Obsolete(context.Context, *ObsoleteRequest) (*ObsoleteResponse, error) {
+func (UnimplementedDeprecatedServer) Obsolete(context.Context, *ObsoleteRequest) (*ObsoleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Obsolete not implemented")
 }
-func (*UnimplementedDeprecatedServer) mustEmbedUnimplementedDeprecatedServer() {}
+func (UnimplementedDeprecatedServer) mustEmbedUnimplementedDeprecatedServer() {}
+
+// UnsafeDeprecatedServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DeprecatedServer will
+// result in compilation errors.
+type UnsafeDeprecatedServer interface {
+	mustEmbedUnimplementedDeprecatedServer()
+}
 
 // Deprecated: Do not use.
-func RegisterDeprecatedServer(s *grpc.Server, srv DeprecatedServer) {
-	s.RegisterService(&_Deprecated_serviceDesc, srv)
+func RegisterDeprecatedServer(s grpc.ServiceRegistrar, srv DeprecatedServer) {
+	s.RegisterService(&Deprecated_ServiceDesc, srv)
 }
 
 func _Deprecated_Obsolete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -85,7 +93,10 @@ func _Deprecated_Obsolete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Deprecated_serviceDesc = grpc.ServiceDesc{
+// Deprecated_ServiceDesc is the grpc.ServiceDesc for Deprecated service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Deprecated_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Deprecated",
 	HandlerType: (*DeprecatedServer)(nil),
 	Methods: []grpc.MethodDesc{

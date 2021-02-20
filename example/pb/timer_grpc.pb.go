@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // TimerClient is the client API for Timer service.
 //
@@ -29,7 +30,7 @@ func NewTimerClient(cc grpc.ClientConnInterface) TimerClient {
 }
 
 func (c *timerClient) Tick(ctx context.Context, in *TickRequest, opts ...grpc.CallOption) (Timer_TickClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Timer_serviceDesc.Streams[0], "/example.Timer/Tick", opts...)
+	stream, err := c.cc.NewStream(ctx, &Timer_ServiceDesc.Streams[0], "/example.Timer/Tick", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,13 +73,20 @@ type TimerServer interface {
 type UnimplementedTimerServer struct {
 }
 
-func (*UnimplementedTimerServer) Tick(*TickRequest, Timer_TickServer) error {
+func (UnimplementedTimerServer) Tick(*TickRequest, Timer_TickServer) error {
 	return status.Errorf(codes.Unimplemented, "method Tick not implemented")
 }
-func (*UnimplementedTimerServer) mustEmbedUnimplementedTimerServer() {}
+func (UnimplementedTimerServer) mustEmbedUnimplementedTimerServer() {}
 
-func RegisterTimerServer(s *grpc.Server, srv TimerServer) {
-	s.RegisterService(&_Timer_serviceDesc, srv)
+// UnsafeTimerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TimerServer will
+// result in compilation errors.
+type UnsafeTimerServer interface {
+	mustEmbedUnimplementedTimerServer()
+}
+
+func RegisterTimerServer(s grpc.ServiceRegistrar, srv TimerServer) {
+	s.RegisterService(&Timer_ServiceDesc, srv)
 }
 
 func _Timer_Tick_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -102,7 +110,10 @@ func (x *timerTickServer) Send(m *TickResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-var _Timer_serviceDesc = grpc.ServiceDesc{
+// Timer_ServiceDesc is the grpc.ServiceDesc for Timer service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Timer_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Timer",
 	HandlerType: (*TimerServer)(nil),
 	Methods:     []grpc.MethodDesc{},

@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // OneofClient is the client API for Oneof service.
 //
@@ -60,16 +61,23 @@ type OneofServer interface {
 type UnimplementedOneofServer struct {
 }
 
-func (*UnimplementedOneofServer) Fetch(context.Context, *FetchRequest) (*FetchResponse, error) {
+func (UnimplementedOneofServer) Fetch(context.Context, *FetchRequest) (*FetchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Fetch not implemented")
 }
-func (*UnimplementedOneofServer) FetchNested(context.Context, *FetchNestedRequest) (*FetchResponse, error) {
+func (UnimplementedOneofServer) FetchNested(context.Context, *FetchNestedRequest) (*FetchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchNested not implemented")
 }
-func (*UnimplementedOneofServer) mustEmbedUnimplementedOneofServer() {}
+func (UnimplementedOneofServer) mustEmbedUnimplementedOneofServer() {}
 
-func RegisterOneofServer(s *grpc.Server, srv OneofServer) {
-	s.RegisterService(&_Oneof_serviceDesc, srv)
+// UnsafeOneofServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OneofServer will
+// result in compilation errors.
+type UnsafeOneofServer interface {
+	mustEmbedUnimplementedOneofServer()
+}
+
+func RegisterOneofServer(s grpc.ServiceRegistrar, srv OneofServer) {
+	s.RegisterService(&Oneof_ServiceDesc, srv)
 }
 
 func _Oneof_Fetch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -108,7 +116,10 @@ func _Oneof_FetchNested_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Oneof_serviceDesc = grpc.ServiceDesc{
+// Oneof_ServiceDesc is the grpc.ServiceDesc for Oneof service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Oneof_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Oneof",
 	HandlerType: (*OneofServer)(nil),
 	Methods: []grpc.MethodDesc{

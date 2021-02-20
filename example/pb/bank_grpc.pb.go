@@ -11,7 +11,8 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion6
+// Requires gRPC-Go v1.32.0 or later.
+const _ = grpc.SupportPackageIsVersion7
 
 // BankClient is the client API for Bank service.
 //
@@ -49,13 +50,20 @@ type BankServer interface {
 type UnimplementedBankServer struct {
 }
 
-func (*UnimplementedBankServer) Deposit(context.Context, *DepositRequest) (*DepositReply, error) {
+func (UnimplementedBankServer) Deposit(context.Context, *DepositRequest) (*DepositReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
 }
-func (*UnimplementedBankServer) mustEmbedUnimplementedBankServer() {}
+func (UnimplementedBankServer) mustEmbedUnimplementedBankServer() {}
 
-func RegisterBankServer(s *grpc.Server, srv BankServer) {
-	s.RegisterService(&_Bank_serviceDesc, srv)
+// UnsafeBankServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BankServer will
+// result in compilation errors.
+type UnsafeBankServer interface {
+	mustEmbedUnimplementedBankServer()
+}
+
+func RegisterBankServer(s grpc.ServiceRegistrar, srv BankServer) {
+	s.RegisterService(&Bank_ServiceDesc, srv)
 }
 
 func _Bank_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -76,7 +84,10 @@ func _Bank_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Bank_serviceDesc = grpc.ServiceDesc{
+// Bank_ServiceDesc is the grpc.ServiceDesc for Bank service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Bank_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "example.Bank",
 	HandlerType: (*BankServer)(nil),
 	Methods: []grpc.MethodDesc{
