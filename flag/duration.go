@@ -3,29 +3,29 @@ package flag
 import (
 	"strings"
 
-	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/spf13/pflag"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
 )
 
-func DurationVar(fs *pflag.FlagSet, p **duration.Duration, name, usage string) {
+func DurationVar(fs *pflag.FlagSet, p **durationpb.Duration, name, usage string) {
 	v := fs.String(name, "", usage)
 	WithPostSetHookE(fs, name, func() (err error) { *p, err = ptypes.ToDuration(v); return })
 }
 
 type durationSliceValue struct {
-	value   *[]*duration.Duration
+	value   *[]*durationpb.Duration
 	changed bool
 }
 
-func DurationSliceVar(fs *pflag.FlagSet, p *[]*duration.Duration, name, usage string) {
+func DurationSliceVar(fs *pflag.FlagSet, p *[]*durationpb.Duration, name, usage string) {
 	fs.Var(&durationSliceValue{value: p}, name, usage)
 }
 
 func (s *durationSliceValue) Set(val string) error {
 	ss := strings.Split(val, ",")
-	out := make([]*duration.Duration, len(ss))
+	out := make([]*durationpb.Duration, len(ss))
 	for i, v := range ss {
 		var err error
 		if out[i], err = ptypes.ToDuration(v); err != nil {

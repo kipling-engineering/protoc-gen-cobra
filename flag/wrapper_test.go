@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func TestBoolWrapperVar(t *testing.T) {
@@ -21,7 +21,7 @@ func TestBoolWrapperVar(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		fs := &pflag.FlagSet{}
-		var v *wrappers.BoolValue
+		var v *wrapperspb.BoolValue
 		BoolWrapperVar(fs, &v, "foo", "")
 		assert.NoError(t, fs.Set("foo", tc.val))
 		assert.NotNil(t, v)
@@ -31,7 +31,7 @@ func TestBoolWrapperVar(t *testing.T) {
 
 func TestBytesBase64WrapperVar(t *testing.T) {
 	fs := &pflag.FlagSet{}
-	var v *wrappers.BytesValue
+	var v *wrapperspb.BytesValue
 	BytesBase64WrapperVar(fs, &v, "foo", "")
 	assert.NoError(t, fs.Set("foo", "YWJjZA=="))
 	assert.NotNil(t, v)
@@ -40,7 +40,7 @@ func TestBytesBase64WrapperVar(t *testing.T) {
 
 func TestBytesBase64WrapperVarStdIn(t *testing.T) {
 	fs := &pflag.FlagSet{}
-	var v *wrappers.BytesValue
+	var v *wrapperspb.BytesValue
 	BytesBase64WrapperVar(fs, &v, "foo", "")
 	stdin = bytes.NewReader([]byte("abcd"))
 	assert.NoError(t, fs.Set("foo", "-"))
@@ -50,7 +50,7 @@ func TestBytesBase64WrapperVarStdIn(t *testing.T) {
 
 func TestBytesBase64WrapperSliceVar(t *testing.T) {
 	fs := &pflag.FlagSet{}
-	var v []*wrappers.BytesValue
+	var v []*wrapperspb.BytesValue
 	BytesBase64WrapperSliceVar(fs, &v, "foo", "")
 	assert.NoError(t, fs.Set("foo", "YWJjZA=="))
 	assert.NoError(t, fs.Set("foo", "MTIzNA=="))

@@ -4,14 +4,15 @@ import (
 	"encoding/xml"
 	"errors"
 	"io"
+	"io/ioutil"
 	"reflect"
 
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/duration"
-	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/mitchellh/mapstructure"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
 )
@@ -28,19 +29,28 @@ type (
 func JSONDecoderMaker() DecoderMaker {
 	return func(r io.Reader) Decoder {
 		return func(v interface{}) error {
-			return jsonpb.Unmarshal(r, v.(proto.Message))
+			if b, err := ioutil.ReadAll(r); err != nil {
+				return err
+			} else {
+				return protojson.Unmarshal(b, v.(proto.Message))
+			}
 		}
 	}
 }
 
 func JSONEncoderMaker(pretty bool) EncoderMaker {
-	m := &jsonpb.Marshaler{}
+	m := &protojson.MarshalOptions{}
 	if pretty {
 		m.Indent = "  "
 	}
 	return func(w io.Writer) Encoder {
 		return func(v interface{}) error {
-			return m.Marshal(w, v.(proto.Message))
+			if b, err := m.Marshal(v.(proto.Message)); err != nil {
+				return err
+			} else {
+				_, err := w.Write(b)
+				return err
+			}
 		}
 	}
 }
@@ -85,27 +95,27 @@ func decodeValue(v interface{}, p interface{}) error {
 			to = indirect(to)
 			if to.Kind() == reflect.Struct {
 				switch reflect.PtrTo(to) {
-				case reflect.TypeOf((*timestamp.Timestamp)(nil)):
+				case reflect.TypeOf((*timestamppb.Timestamp)(nil)):
 					return ptypes.ToTimestamp(v)
-				case reflect.TypeOf((*duration.Duration)(nil)):
+				case reflect.TypeOf((*durationpb.Duration)(nil)):
 					return ptypes.ToDuration(v)
-				case reflect.TypeOf((*wrappers.DoubleValue)(nil)):
+				case reflect.TypeOf((*wrapperspb.DoubleValue)(nil)):
 					return ptypes.ToDoubleWrapper(v)
-				case reflect.TypeOf((*wrappers.FloatValue)(nil)):
+				case reflect.TypeOf((*wrapperspb.FloatValue)(nil)):
 					return ptypes.ToFloatWrapper(v)
-				case reflect.TypeOf((*wrappers.Int64Value)(nil)):
+				case reflect.TypeOf((*wrapperspb.Int64Value)(nil)):
 					return ptypes.ToInt64Wrapper(v)
-				case reflect.TypeOf((*wrappers.UInt64Value)(nil)):
+				case reflect.TypeOf((*wrapperspb.UInt64Value)(nil)):
 					return ptypes.ToUInt64Wrapper(v)
-				case reflect.TypeOf((*wrappers.Int32Value)(nil)):
+				case reflect.TypeOf((*wrapperspb.Int32Value)(nil)):
 					return ptypes.ToInt32Wrapper(v)
-				case reflect.TypeOf((*wrappers.UInt32Value)(nil)):
+				case reflect.TypeOf((*wrapperspb.UInt32Value)(nil)):
 					return ptypes.ToUInt32Wrapper(v)
-				case reflect.TypeOf((*wrappers.BoolValue)(nil)):
+				case reflect.TypeOf((*wrapperspb.BoolValue)(nil)):
 					return ptypes.ToBoolWrapper(v)
-				case reflect.TypeOf((*wrappers.StringValue)(nil)):
+				case reflect.TypeOf((*wrapperspb.StringValue)(nil)):
 					return ptypes.ToStringWrapper(v)
-				case reflect.TypeOf((*wrappers.BytesValue)(nil)):
+				case reflect.TypeOf((*wrapperspb.BytesValue)(nil)):
 					return ptypes.ToBytesWrapper(v)
 				}
 			}
@@ -138,27 +148,27 @@ func EncodeKnownTypes(e Encoder) Encoder {
 
 func encodeValue(v interface{}) (interface{}, error) {
 	switch v := v.(type) {
-	case *timestamp.Timestamp:
+	case *timestamppb.Timestamp:
 		return v.AsTime(), nil
-	case *duration.Duration:
+	case *durationpb.Duration:
 		return v.AsDuration(), nil
-	case *wrappers.BoolValue:
+	case *wrapperspb.BoolValue:
 		return v.Value, nil
-	case *wrappers.BytesValue:
+	case *wrapperspb.BytesValue:
 		return v.Value, nil
-	case *wrappers.DoubleValue:
+	case *wrapperspb.DoubleValue:
 		return v.Value, nil
-	case *wrappers.FloatValue:
+	case *wrapperspb.FloatValue:
 		return v.Value, nil
-	case *wrappers.Int32Value:
+	case *wrapperspb.Int32Value:
 		return v.Value, nil
-	case *wrappers.UInt32Value:
+	case *wrapperspb.UInt32Value:
 		return v.Value, nil
-	case *wrappers.Int64Value:
+	case *wrapperspb.Int64Value:
 		return v.Value, nil
-	case *wrappers.UInt64Value:
+	case *wrapperspb.UInt64Value:
 		return v.Value, nil
-	case *wrappers.StringValue:
+	case *wrapperspb.StringValue:
 		return v.Value, nil
 	default:
 		vv := reflect.Indirect(reflect.ValueOf(v))

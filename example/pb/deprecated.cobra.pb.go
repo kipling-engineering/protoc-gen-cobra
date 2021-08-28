@@ -6,9 +6,9 @@ import (
 	client "github.com/NathanBaulch/protoc-gen-cobra/client"
 	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
-	proto "github.com/golang/protobuf/proto"
 	cobra "github.com/spf13/cobra"
 	grpc "google.golang.org/grpc"
+	proto "google.golang.org/protobuf/proto"
 )
 
 func DeprecatedClientCommand(options ...client.Option) *cobra.Command {

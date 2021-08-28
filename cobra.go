@@ -181,12 +181,12 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 		Funcs(template.FuncMap{"cleanComments": cleanComments}).
 		Parse(methodTemplateCode))
 	methodImports = []protogen.GoImportPath{
-		"github.com/golang/protobuf/proto",
 		"github.com/NathanBaulch/protoc-gen-cobra/client",
 		"github.com/NathanBaulch/protoc-gen-cobra/flag",
 		"github.com/NathanBaulch/protoc-gen-cobra/iocodec",
 		"github.com/spf13/cobra",
 		"google.golang.org/grpc",
+		"google.golang.org/protobuf/proto",
 	}
 )
 
