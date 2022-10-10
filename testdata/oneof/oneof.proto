@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package oneof;
+
+option go_package = ".;oneof";
+
+import "common/common.proto";
+
+service OneOfService {
+    rpc OneOf(OneOfRequest) returns (OneOfResponse) {}
+}
+
+message OneOfRequest {
+    common.PaginationRequest paging = 1;
+}
+
+message OneOfResponse {
+}

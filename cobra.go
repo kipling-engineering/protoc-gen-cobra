@@ -256,7 +256,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			if fld.Oneof != nil {
 				varName := strings.Join(path, "")
 				goPath := fmt.Sprintf("&%s.%s", varName, fld.GoName)
-				flagLine = fmt.Sprintf("%s := &%s{}\n", varName, fld.GoIdent.GoName)
+				flagLine = fmt.Sprintf("%s := &%s{}\n", varName, g.QualifiedGoIdent(fld.GoIdent))
 				flagLine += fmt.Sprintf(f, goPath, flagName, comment)
 				target := strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
 				postSetCode := fmt.Sprintf("%s.%s = %s", target, fld.Oneof.GoName, varName)
@@ -292,7 +292,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 						postSetCode += ";"
 					}
 					target := strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
-					postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, fld.GoIdent.GoName, fld.GoName, strings.Join(path, ""))
+					postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, g.QualifiedGoIdent(fld.GoIdent), fld.GoName, strings.Join(path, ""))
 					level = len(path)
 				}
 				initCode, flagCode := walkFields(g, fld.Message, path, enums, deprecated, m, level, postSetCode)

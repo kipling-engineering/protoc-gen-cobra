@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/NathanBaulch/protoc-gen-cobra/testdata/oneof/common";
+
+message PaginationRequest{
+    int32 page_size = 1;
+    oneof value {
+        string page_token = 2;
+        int32 page_offset = 3;
+    }
+}
