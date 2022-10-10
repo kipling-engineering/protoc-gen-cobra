@@ -17,6 +17,6 @@ clean:
 	rm -f $(GO_SOURCES) $(GRPC_SOURCES) $(COBRA_SOURCES)
 
 deps:
-	go get google.golang.org/protobuf/cmd/protoc-gen-go
-	go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go get github.com/NathanBaulch/protoc-gen-cobra
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go install github.com/NathanBaulch/protoc-gen-cobra@latest
