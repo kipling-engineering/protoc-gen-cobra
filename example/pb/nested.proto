@@ -6,6 +6,7 @@ option go_package = ".;pb";
 
 service Nested {
     rpc Get (NestedRequest) returns (NestedResponse);
+    rpc GetOptional (OptionalRequest) returns (NestedResponse);
     rpc GetDeep (DeepRequest) returns (NestedResponse);
     rpc GetOneOf (OneOfRequest) returns (NestedResponse);
     rpc GetOneOfDeep (OneOfDeepRequest) returns (NestedResponse);
@@ -21,6 +22,14 @@ message NestedRequest {
     }
     Top top = 1;
     Inner inner = 2;
+}
+
+message OptionalRequest {
+    message Inner {
+        optional string value = 1;
+    }
+    optional Top top = 1;
+    optional Inner inner = 2;
 }
 
 message DeepRequest {

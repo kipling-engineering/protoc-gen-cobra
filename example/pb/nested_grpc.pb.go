@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NestedClient interface {
 	Get(ctx context.Context, in *NestedRequest, opts ...grpc.CallOption) (*NestedResponse, error)
+	GetOptional(ctx context.Context, in *OptionalRequest, opts ...grpc.CallOption) (*NestedResponse, error)
 	GetDeep(ctx context.Context, in *DeepRequest, opts ...grpc.CallOption) (*NestedResponse, error)
 	GetOneOf(ctx context.Context, in *OneOfRequest, opts ...grpc.CallOption) (*NestedResponse, error)
 	GetOneOfDeep(ctx context.Context, in *OneOfDeepRequest, opts ...grpc.CallOption) (*NestedResponse, error)
@@ -39,6 +40,15 @@ func NewNestedClient(cc grpc.ClientConnInterface) NestedClient {
 func (c *nestedClient) Get(ctx context.Context, in *NestedRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
 	out := new(NestedResponse)
 	err := c.cc.Invoke(ctx, "/example.Nested/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nestedClient) GetOptional(ctx context.Context, in *OptionalRequest, opts ...grpc.CallOption) (*NestedResponse, error) {
+	out := new(NestedResponse)
+	err := c.cc.Invoke(ctx, "/example.Nested/GetOptional", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +87,7 @@ func (c *nestedClient) GetOneOfDeep(ctx context.Context, in *OneOfDeepRequest, o
 // for forward compatibility
 type NestedServer interface {
 	Get(context.Context, *NestedRequest) (*NestedResponse, error)
+	GetOptional(context.Context, *OptionalRequest) (*NestedResponse, error)
 	GetDeep(context.Context, *DeepRequest) (*NestedResponse, error)
 	GetOneOf(context.Context, *OneOfRequest) (*NestedResponse, error)
 	GetOneOfDeep(context.Context, *OneOfDeepRequest) (*NestedResponse, error)
@@ -89,6 +100,9 @@ type UnimplementedNestedServer struct {
 
 func (UnimplementedNestedServer) Get(context.Context, *NestedRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedNestedServer) GetOptional(context.Context, *OptionalRequest) (*NestedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOptional not implemented")
 }
 func (UnimplementedNestedServer) GetDeep(context.Context, *DeepRequest) (*NestedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeep not implemented")
@@ -126,6 +140,24 @@ func _Nested_Get_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NestedServer).Get(ctx, req.(*NestedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nested_GetOptional_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptionalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NestedServer).GetOptional(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/example.Nested/GetOptional",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NestedServer).GetOptional(ctx, req.(*OptionalRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -194,6 +226,10 @@ var Nested_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _Nested_Get_Handler,
+		},
+		{
+			MethodName: "GetOptional",
+			Handler:    _Nested_GetOptional_Handler,
 		},
 		{
 			MethodName: "GetDeep",

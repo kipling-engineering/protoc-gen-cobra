@@ -253,7 +253,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
 			comment := cleanComments(fld.Comments.Leading)
 			var flagLine string
-			if fld.Oneof != nil {
+			if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
 				varName := strings.Join(path, "")
 				goPath := fmt.Sprintf("&%s.%s", varName, fld.GoName)
 				flagLine = fmt.Sprintf("%s := &%s{}\n", varName, g.QualifiedGoIdent(fld.GoIdent))
@@ -287,7 +287,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 				level := level
 				postSetCode := postSetCode
-				if fld.Oneof != nil {
+				if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
 					if postSetCode != "" {
 						postSetCode += ";"
 					}
@@ -296,11 +296,11 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 					level = len(path)
 				}
 				initCode, flagCode := walkFields(g, fld.Message, path, enums, deprecated, m, level, postSetCode)
-				if initCode != "" && fld.Oneof == nil {
+				if initCode != "" && (fld.Oneof == nil || fld.Oneof.Desc.IsSynthetic()) {
 					initLines[fld.Desc.Index()] = fmt.Sprintf("%s: %s,", fld.GoName, initCode)
 				}
 				if flagCode != "" {
-					if fld.Oneof != nil {
+					if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
 						flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
 						flagLine := fmt.Sprintf("%s := %s\n", strings.Join(path, ""), initCode)
 						flagLine += fmt.Sprintf("cmd.PersistentFlags().Bool(%s, false, \"\")\n", flagName)
@@ -333,7 +333,7 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field, enums map[string
 			}
 		} else if k == protoreflect.BytesKind {
 			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", bt.Value)
-		} else if fld.Desc.HasPresence() && fld.Oneof == nil {
+		} else if (fld.Oneof == nil && fld.Desc.HasPresence()) || (fld.Oneof != nil && fld.Oneof.Desc.IsSynthetic()) {
 			return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", bt.Pointer)
 		} else {
 			return fmt.Sprintf("cmd.PersistentFlags().%s(%%s, %%s, %s, %%q)", bt.Value, bt.Default)

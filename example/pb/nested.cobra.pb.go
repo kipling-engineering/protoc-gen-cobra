@@ -21,6 +21,7 @@ func NestedClientCommand(options ...client.Option) *cobra.Command {
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
 		_NestedGetCommand(cfg),
+		_NestedGetOptionalCommand(cfg),
 		_NestedGetDeepCommand(cfg),
 		_NestedGetOneOfCommand(cfg),
 		_NestedGetOneOfDeepCommand(cfg),
@@ -70,6 +71,52 @@ func _NestedGetCommand(cfg *client.Config) *cobra.Command {
 
 	cmd.PersistentFlags().StringVar(&req.Top.Value, cfg.FlagNamer("Top Value"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Inner.Value, cfg.FlagNamer("Inner Value"), "", "")
+
+	return cmd
+}
+
+func _NestedGetOptionalCommand(cfg *client.Config) *cobra.Command {
+	req := &OptionalRequest{
+		Top:   &Top{},
+		Inner: &OptionalRequest_Inner{},
+	}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetOptional"),
+		Short: "GetOptional RPC client",
+		Long:  "",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Nested"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Nested", "GetOptional"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewNestedClient(cc)
+				v := &OptionalRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetOptional(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.Top.Value, cfg.FlagNamer("Top Value"), "", "")
+	flag.StringPointerVar(cmd.PersistentFlags(), &req.Inner.Value, cfg.FlagNamer("Inner Value"), "")
 
 	return cmd
 }

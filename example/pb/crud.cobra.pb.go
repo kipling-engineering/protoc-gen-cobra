@@ -151,7 +151,7 @@ func _CRUDUpdateCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.Name, cfg.FlagNamer("Name"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Value, cfg.FlagNamer("Value"), "", "")
+	flag.StringPointerVar(cmd.PersistentFlags(), &req.Value, cfg.FlagNamer("Value"), "")
 
 	return cmd
 }
@@ -194,7 +194,7 @@ func _CRUDDeleteCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.Name, cfg.FlagNamer("Name"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Value, cfg.FlagNamer("Value"), "", "")
+	flag.StringPointerVar(cmd.PersistentFlags(), &req.Value, cfg.FlagNamer("Value"), "")
 
 	return cmd
 }
