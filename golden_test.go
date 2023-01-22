@@ -46,7 +46,7 @@ func TestGolden(t *testing.T) {
 	// Compile each package, using this binary as protoc-gen-cobra.
 	for dir, sources := range packages {
 		dir := filepath.Join(workdir, dir)
-		if err := os.MkdirAll(dir, 0666); err != nil {
+		if err := os.MkdirAll(dir, 0o666); err != nil {
 			t.Fatal(err)
 		}
 		args := []string{"-Itestdata", "--cobra_out=" + dir}
@@ -78,7 +78,7 @@ func TestGolden(t *testing.T) {
 		}
 		if *regenerate {
 			// If --regenerate set, just rewrite the golden files.
-			err := ioutil.WriteFile(goldenPath, got, 0666)
+			err := ioutil.WriteFile(goldenPath, got, 0o666)
 			if err != nil {
 				t.Error(err)
 			}
