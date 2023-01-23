@@ -34,7 +34,7 @@ func (c *CRUD) Get(_ context.Context, req *pb.GetCRUD) (*pb.CRUDObject, error) {
 	}
 	return &pb.CRUDObject{
 		Name:  req.Name,
-		Value: val.(string),
+		Value: val.(*string),
 	}, nil
 }
 
