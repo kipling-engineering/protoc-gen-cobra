@@ -7,11 +7,8 @@ import (
 	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	cobra "github.com/spf13/cobra"
-	pflag "github.com/spf13/pflag"
 	grpc "google.golang.org/grpc"
 	proto "google.golang.org/protobuf/proto"
-	strconv "strconv"
-	strings "strings"
 )
 
 func TypesClientCommand(options ...client.Option) *cobra.Command {
@@ -80,8 +77,8 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().BoolVar(&req.Bool, cfg.FlagNamer("Bool"), false, "")
 	cmd.PersistentFlags().StringVar(&req.String_, cfg.FlagNamer("String_"), "", "")
 	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Bytes, cfg.FlagNamer("Bytes"), "")
-	_Sound_NestedEnumVar(cmd.PersistentFlags(), &req.NestedEnum, cfg.FlagNamer("NestedEnum"), "")
-	_GlobalEnumVar(cmd.PersistentFlags(), &req.GlobalEnum, cfg.FlagNamer("GlobalEnum"), "")
+	flag.EnumVar(cmd.PersistentFlags(), &req.NestedEnum, cfg.FlagNamer("NestedEnum"), "")
+	flag.EnumVar(cmd.PersistentFlags(), &req.GlobalEnum, cfg.FlagNamer("GlobalEnum"), "")
 	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, cfg.FlagNamer("ListDouble"), nil, "")
 	cmd.PersistentFlags().Float32SliceVar(&req.ListFloat, cfg.FlagNamer("ListFloat"), nil, "")
 	cmd.PersistentFlags().Int32SliceVar(&req.ListInt32, cfg.FlagNamer("ListInt32"), nil, "")
@@ -97,36 +94,36 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().BoolSliceVar(&req.ListBool, cfg.FlagNamer("ListBool"), nil, "")
 	cmd.PersistentFlags().StringSliceVar(&req.ListString, cfg.FlagNamer("ListString"), nil, "")
 	flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.ListBytes, cfg.FlagNamer("ListBytes"), "")
-	_Sound_NestedEnumSliceVar(cmd.PersistentFlags(), &req.ListNestedEnum, cfg.FlagNamer("ListNestedEnum"), "")
-	_GlobalEnumSliceVar(cmd.PersistentFlags(), &req.ListGlobalEnum, cfg.FlagNamer("ListGlobalEnum"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseFloat64, "string=float64", &req.MapStringDouble, cfg.FlagNamer("MapStringDouble"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseFloat32, "string=float32", &req.MapStringFloat, cfg.FlagNamer("MapStringFloat"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32, "string=int32", &req.MapStringInt32, cfg.FlagNamer("MapStringInt32"), "")
+	flag.EnumSliceVar(cmd.PersistentFlags(), &req.ListNestedEnum, cfg.FlagNamer("ListNestedEnum"), "")
+	flag.EnumSliceVar(cmd.PersistentFlags(), &req.ListGlobalEnum, cfg.FlagNamer("ListGlobalEnum"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseFloat64E, &req.MapStringDouble, cfg.FlagNamer("MapStringDouble"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseFloat32E, &req.MapStringFloat, cfg.FlagNamer("MapStringFloat"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseInt32E, &req.MapStringInt32, cfg.FlagNamer("MapStringInt32"), "")
 	cmd.PersistentFlags().StringToInt64Var(&req.MapStringInt64, cfg.FlagNamer("MapStringInt64"), nil, "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint32, "string=uint32", &req.MapStringUint32, cfg.FlagNamer("MapStringUint32"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint64, "string=uint64", &req.MapStringUint64, cfg.FlagNamer("MapStringUint64"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32, "string=int32", &req.MapStringSint32, cfg.FlagNamer("MapStringSint32"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseUint32E, &req.MapStringUint32, cfg.FlagNamer("MapStringUint32"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseUint64E, &req.MapStringUint64, cfg.FlagNamer("MapStringUint64"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseInt32E, &req.MapStringSint32, cfg.FlagNamer("MapStringSint32"), "")
 	cmd.PersistentFlags().StringToInt64Var(&req.MapStringSint64, cfg.FlagNamer("MapStringSint64"), nil, "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint32, "string=uint32", &req.MapStringFixed32, cfg.FlagNamer("MapStringFixed32"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUint64, "string=uint64", &req.MapStringFixed64, cfg.FlagNamer("MapStringFixed64"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32, "string=int32", &req.MapStringSfixed32, cfg.FlagNamer("MapStringSfixed32"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseUint32E, &req.MapStringFixed32, cfg.FlagNamer("MapStringFixed32"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseUint64E, &req.MapStringFixed64, cfg.FlagNamer("MapStringFixed64"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseInt32E, &req.MapStringSfixed32, cfg.FlagNamer("MapStringSfixed32"), "")
 	cmd.PersistentFlags().StringToInt64Var(&req.MapStringSfixed64, cfg.FlagNamer("MapStringSfixed64"), nil, "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBool, "string=bool", &req.MapStringBool, cfg.FlagNamer("MapStringBool"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseBoolE, &req.MapStringBool, cfg.FlagNamer("MapStringBool"), "")
 	cmd.PersistentFlags().StringToStringVar(&req.MapStringString, cfg.FlagNamer("MapStringString"), nil, "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBytesBase64, "string=bytesBase64", &req.MapStringBytes, cfg.FlagNamer("MapStringBytes"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, _Sound_NestedEnumParse, "string=Sound_NestedEnum", &req.MapStringNestedEnum, cfg.FlagNamer("MapStringNestedEnum"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, _GlobalEnumParse, "string=GlobalEnum", &req.MapStringGlobalEnum, cfg.FlagNamer("MapStringGlobalEnum"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt32, flag.ParseString, "int32=string", &req.MapInt32String, cfg.FlagNamer("MapInt32String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt64, flag.ParseString, "int64=string", &req.MapInt64String, cfg.FlagNamer("MapInt64String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint32, flag.ParseString, "uint32=string", &req.MapUint32String, cfg.FlagNamer("MapUint32String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint64, flag.ParseString, "uint64=string", &req.MapUint64String, cfg.FlagNamer("MapUint64String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt32, flag.ParseString, "int32=string", &req.MapSint32String, cfg.FlagNamer("MapSint32String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt64, flag.ParseString, "int64=string", &req.MapSint64String, cfg.FlagNamer("MapSint64String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint32, flag.ParseString, "uint32=string", &req.MapFixed32String, cfg.FlagNamer("MapFixed32String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseUint64, flag.ParseString, "uint64=string", &req.MapFixed64String, cfg.FlagNamer("MapFixed64String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt32, flag.ParseString, "int32=string", &req.MapSfixed32String, cfg.FlagNamer("MapSfixed32String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseInt64, flag.ParseString, "int64=string", &req.MapSfixed64String, cfg.FlagNamer("MapSfixed64String"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseBool, flag.ParseString, "bool=string", &req.MapBoolString, cfg.FlagNamer("MapBoolString"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseBytesBase64E, &req.MapStringBytes, cfg.FlagNamer("MapStringBytes"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseEnumE[Sound_NestedEnum], &req.MapStringNestedEnum, cfg.FlagNamer("MapStringNestedEnum"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseEnumE[GlobalEnum], &req.MapStringGlobalEnum, cfg.FlagNamer("MapStringGlobalEnum"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt32E, flag.ParseStringE, &req.MapInt32String, cfg.FlagNamer("MapInt32String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt64E, flag.ParseStringE, &req.MapInt64String, cfg.FlagNamer("MapInt64String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseUint32E, flag.ParseStringE, &req.MapUint32String, cfg.FlagNamer("MapUint32String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseUint64E, flag.ParseStringE, &req.MapUint64String, cfg.FlagNamer("MapUint64String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt32E, flag.ParseStringE, &req.MapSint32String, cfg.FlagNamer("MapSint32String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt64E, flag.ParseStringE, &req.MapSint64String, cfg.FlagNamer("MapSint64String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseUint32E, flag.ParseStringE, &req.MapFixed32String, cfg.FlagNamer("MapFixed32String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseUint64E, flag.ParseStringE, &req.MapFixed64String, cfg.FlagNamer("MapFixed64String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt32E, flag.ParseStringE, &req.MapSfixed32String, cfg.FlagNamer("MapSfixed32String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt64E, flag.ParseStringE, &req.MapSfixed64String, cfg.FlagNamer("MapSfixed64String"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseBoolE, flag.ParseStringE, &req.MapBoolString, cfg.FlagNamer("MapBoolString"), "")
 	flag.TimestampVar(cmd.PersistentFlags(), &req.Timestamp, cfg.FlagNamer("Timestamp"), "")
 	flag.DurationVar(cmd.PersistentFlags(), &req.Duration, cfg.FlagNamer("Duration"), "")
 	flag.BoolWrapperVar(cmd.PersistentFlags(), &req.WrapperBool, cfg.FlagNamer("WrapperBool"), "")
@@ -149,145 +146,17 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	flag.StringWrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperString, cfg.FlagNamer("ListWrapperString"), "")
 	flag.UInt32WrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperUint32, cfg.FlagNamer("ListWrapperUint32"), "")
 	flag.UInt64WrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperUint64, cfg.FlagNamer("ListWrapperUint64"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseTimestamp, "string=timestamp", &req.MapStringTimestamp, cfg.FlagNamer("MapStringTimestamp"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseDuration, "string=duration", &req.MapStringDuration, cfg.FlagNamer("MapStringDuration"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBoolWrapper, "string=bool", &req.MapStringWrapperBool, cfg.FlagNamer("MapStringWrapperBool"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseBytesBase64Wrapper, "string=bytesBase64", &req.MapStringWrapperBytes, cfg.FlagNamer("MapStringWrapperBytes"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseDoubleWrapper, "string=float64", &req.MapStringWrapperDouble, cfg.FlagNamer("MapStringWrapperDouble"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseFloatWrapper, "string=float32", &req.MapStringWrapperFloat, cfg.FlagNamer("MapStringWrapperFloat"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt32Wrapper, "string=int32", &req.MapStringWrapperInt32, cfg.FlagNamer("MapStringWrapperInt32"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseInt64Wrapper, "string=int64", &req.MapStringWrapperInt64, cfg.FlagNamer("MapStringWrapperInt64"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseStringWrapper, "string=string", &req.MapStringWrapperString, cfg.FlagNamer("MapStringWrapperString"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUInt32Wrapper, "string=uint32", &req.MapStringWrapperUint32, cfg.FlagNamer("MapStringWrapperUint32"), "")
-	flag.ReflectMapVar(cmd.PersistentFlags(), flag.ParseString, flag.ParseUInt64Wrapper, "string=uint64", &req.MapStringWrapperUint64, cfg.FlagNamer("MapStringWrapperUint64"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseTimestampE, &req.MapStringTimestamp, cfg.FlagNamer("MapStringTimestamp"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseDurationE, &req.MapStringDuration, cfg.FlagNamer("MapStringDuration"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseBoolWrapperE, &req.MapStringWrapperBool, cfg.FlagNamer("MapStringWrapperBool"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseBytesBase64WrapperE, &req.MapStringWrapperBytes, cfg.FlagNamer("MapStringWrapperBytes"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseDoubleWrapperE, &req.MapStringWrapperDouble, cfg.FlagNamer("MapStringWrapperDouble"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseFloatWrapperE, &req.MapStringWrapperFloat, cfg.FlagNamer("MapStringWrapperFloat"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseInt32WrapperE, &req.MapStringWrapperInt32, cfg.FlagNamer("MapStringWrapperInt32"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseInt64WrapperE, &req.MapStringWrapperInt64, cfg.FlagNamer("MapStringWrapperInt64"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseStringWrapperE, &req.MapStringWrapperString, cfg.FlagNamer("MapStringWrapperString"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseUInt32WrapperE, &req.MapStringWrapperUint32, cfg.FlagNamer("MapStringWrapperUint32"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseUInt64WrapperE, &req.MapStringWrapperUint64, cfg.FlagNamer("MapStringWrapperUint64"), "")
 
 	return cmd
-}
-
-type _GlobalEnumValue GlobalEnum
-
-func _GlobalEnumVar(fs *pflag.FlagSet, p *GlobalEnum, name, usage string) {
-	fs.Var((*_GlobalEnumValue)(p), name, usage)
-}
-
-func (v *_GlobalEnumValue) Set(val string) error {
-	if e, err := parseGlobalEnum(val); err != nil {
-		return err
-	} else {
-		*v = _GlobalEnumValue(e)
-		return nil
-	}
-}
-
-func (*_GlobalEnumValue) Type() string { return "GlobalEnum" }
-
-func (v *_GlobalEnumValue) String() string { return (GlobalEnum)(*v).String() }
-
-type _GlobalEnumSliceValue struct {
-	value   *[]GlobalEnum
-	changed bool
-}
-
-func _GlobalEnumSliceVar(fs *pflag.FlagSet, p *[]GlobalEnum, name, usage string) {
-	fs.Var(&_GlobalEnumSliceValue{value: p}, name, usage)
-}
-
-func (s *_GlobalEnumSliceValue) Set(val string) error {
-	ss := strings.Split(val, ",")
-	out := make([]GlobalEnum, len(ss))
-	for i, s := range ss {
-		var err error
-		if out[i], err = parseGlobalEnum(s); err != nil {
-			return err
-		}
-	}
-	if !s.changed {
-		*s.value = out
-		s.changed = true
-	} else {
-		*s.value = append(*s.value, out...)
-	}
-	return nil
-}
-
-func (*_GlobalEnumSliceValue) Type() string { return "GlobalEnumSlice" }
-
-func (*_GlobalEnumSliceValue) String() string { return "[]" }
-
-func _GlobalEnumParse(val string) (interface{}, error) {
-	return parseGlobalEnum(val)
-}
-
-func parseGlobalEnum(s string) (GlobalEnum, error) {
-	if i, ok := GlobalEnum_value[s]; ok {
-		return GlobalEnum(i), nil
-	} else if i, err := strconv.ParseInt(s, 0, 32); err == nil {
-		return GlobalEnum(i), nil
-	} else {
-		return 0, err
-	}
-}
-
-type _Sound_NestedEnumValue Sound_NestedEnum
-
-func _Sound_NestedEnumVar(fs *pflag.FlagSet, p *Sound_NestedEnum, name, usage string) {
-	fs.Var((*_Sound_NestedEnumValue)(p), name, usage)
-}
-
-func (v *_Sound_NestedEnumValue) Set(val string) error {
-	if e, err := parseSound_NestedEnum(val); err != nil {
-		return err
-	} else {
-		*v = _Sound_NestedEnumValue(e)
-		return nil
-	}
-}
-
-func (*_Sound_NestedEnumValue) Type() string { return "Sound_NestedEnum" }
-
-func (v *_Sound_NestedEnumValue) String() string { return (Sound_NestedEnum)(*v).String() }
-
-type _Sound_NestedEnumSliceValue struct {
-	value   *[]Sound_NestedEnum
-	changed bool
-}
-
-func _Sound_NestedEnumSliceVar(fs *pflag.FlagSet, p *[]Sound_NestedEnum, name, usage string) {
-	fs.Var(&_Sound_NestedEnumSliceValue{value: p}, name, usage)
-}
-
-func (s *_Sound_NestedEnumSliceValue) Set(val string) error {
-	ss := strings.Split(val, ",")
-	out := make([]Sound_NestedEnum, len(ss))
-	for i, s := range ss {
-		var err error
-		if out[i], err = parseSound_NestedEnum(s); err != nil {
-			return err
-		}
-	}
-	if !s.changed {
-		*s.value = out
-		s.changed = true
-	} else {
-		*s.value = append(*s.value, out...)
-	}
-	return nil
-}
-
-func (*_Sound_NestedEnumSliceValue) Type() string { return "Sound_NestedEnumSlice" }
-
-func (*_Sound_NestedEnumSliceValue) String() string { return "[]" }
-
-func _Sound_NestedEnumParse(val string) (interface{}, error) {
-	return parseSound_NestedEnum(val)
-}
-
-func parseSound_NestedEnum(s string) (Sound_NestedEnum, error) {
-	if i, ok := Sound_NestedEnum_value[s]; ok {
-		return Sound_NestedEnum(i), nil
-	} else if i, err := strconv.ParseInt(s, 0, 32); err == nil {
-		return Sound_NestedEnum(i), nil
-	} else {
-		return 0, err
-	}
 }

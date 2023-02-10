@@ -24,6 +24,9 @@ func BoolWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.BoolValue, name, us
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseBoolWrapperE(val string) (*wrapperspb.BoolValue, error) { return ptypes.ToBoolWrapper(val) }
+
+// Deprecated
 func ParseBoolWrapper(val string) (interface{}, error) { return ptypes.ToBoolWrapper(val) }
 
 func Int32WrapperVar(fs *pflag.FlagSet, p **wrapperspb.Int32Value, name, usage string) {
@@ -43,6 +46,11 @@ func Int32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.Int32Value, name, 
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseInt32WrapperE(val string) (*wrapperspb.Int32Value, error) {
+	return ptypes.ToInt32Wrapper(val)
+}
+
+// Deprecated
 func ParseInt32Wrapper(val string) (interface{}, error) { return ptypes.ToInt32Wrapper(val) }
 
 func Int64WrapperVar(fs *pflag.FlagSet, p **wrapperspb.Int64Value, name, usage string) {
@@ -62,6 +70,11 @@ func Int64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.Int64Value, name, 
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseInt64WrapperE(val string) (*wrapperspb.Int64Value, error) {
+	return ptypes.ToInt64Wrapper(val)
+}
+
+// Deprecated
 func ParseInt64Wrapper(val string) (interface{}, error) { return ptypes.ToInt64Wrapper(val) }
 
 func UInt32WrapperVar(fs *pflag.FlagSet, p **wrapperspb.UInt32Value, name, usage string) {
@@ -82,6 +95,11 @@ func UInt32WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.UInt32Value, name
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseUInt32WrapperE(val string) (*wrapperspb.UInt32Value, error) {
+	return ptypes.ToUInt32Wrapper(val)
+}
+
+// Deprecated
 func ParseUInt32Wrapper(val string) (interface{}, error) { return ptypes.ToUInt32Wrapper(val) }
 
 func UInt64WrapperVar(fs *pflag.FlagSet, p **wrapperspb.UInt64Value, name, usage string) {
@@ -102,6 +120,11 @@ func UInt64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.UInt64Value, name
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseUInt64WrapperE(val string) (*wrapperspb.UInt64Value, error) {
+	return ptypes.ToUInt64Wrapper(val)
+}
+
+// Deprecated
 func ParseUInt64Wrapper(val string) (interface{}, error) { return ptypes.ToUInt64Wrapper(val) }
 
 func FloatWrapperVar(fs *pflag.FlagSet, p **wrapperspb.FloatValue, name, usage string) {
@@ -121,6 +144,11 @@ func FloatWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.FloatValue, name, 
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseFloatWrapperE(val string) (*wrapperspb.FloatValue, error) {
+	return ptypes.ToFloatWrapper(val)
+}
+
+// Deprecated
 func ParseFloatWrapper(val string) (interface{}, error) { return ptypes.ToFloatWrapper(val) }
 
 func DoubleWrapperVar(fs *pflag.FlagSet, p **wrapperspb.DoubleValue, name, usage string) {
@@ -140,6 +168,11 @@ func DoubleWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.DoubleValue, name
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseDoubleWrapperE(val string) (*wrapperspb.DoubleValue, error) {
+	return ptypes.ToDoubleWrapper(val)
+}
+
+// Deprecated
 func ParseDoubleWrapper(val string) (interface{}, error) { return ptypes.ToDoubleWrapper(val) }
 
 func StringWrapperVar(fs *pflag.FlagSet, p **wrapperspb.StringValue, name, usage string) {
@@ -159,6 +192,11 @@ func StringWrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.StringValue, name
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseStringWrapperE(val string) (*wrapperspb.StringValue, error) {
+	return ptypes.ToStringWrapper(val)
+}
+
+// Deprecated
 func ParseStringWrapper(val string) (interface{}, error) { return ptypes.ToStringWrapper(val) }
 
 func BytesBase64WrapperVar(fs *pflag.FlagSet, p **wrapperspb.BytesValue, name, usage string) {
@@ -180,25 +218,9 @@ func BytesBase64WrapperSliceVar(fs *pflag.FlagSet, p *[]*wrapperspb.BytesValue, 
 	WithPostSetHook(fs, name, hook)
 }
 
+func ParseBytesBase64WrapperE(val string) (*wrapperspb.BytesValue, error) {
+	return ptypes.ToBytesWrapper(val)
+}
+
+// Deprecated
 func ParseBytesBase64Wrapper(val string) (interface{}, error) { return ptypes.ToBytesWrapper(val) }
-
-func WithPostSetHook(fs *pflag.FlagSet, name string, hook func()) {
-	WithPostSetHookE(fs, name, func() error { hook(); return nil })
-}
-
-func WithPostSetHookE(fs *pflag.FlagSet, name string, hook func() error) {
-	f := fs.Lookup(name)
-	f.Value = &postSetHookValue{f.Value, hook}
-}
-
-type postSetHookValue struct {
-	pflag.Value
-	hook func() error
-}
-
-func (v *postSetHookValue) Set(s string) error {
-	if err := v.Value.Set(s); err != nil {
-		return err
-	}
-	return v.hook()
-}

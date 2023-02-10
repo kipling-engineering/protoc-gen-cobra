@@ -1,8 +1,6 @@
 package flag
 
 import (
-	"strings"
-
 	"github.com/spf13/pflag"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -14,35 +12,11 @@ func TimestampVar(fs *pflag.FlagSet, p **timestamppb.Timestamp, name, usage stri
 	WithPostSetHookE(fs, name, func() (err error) { *p, err = ptypes.ToTimestamp(v); return })
 }
 
-type timestampSliceValue struct {
-	value   *[]*timestamppb.Timestamp
-	changed bool
-}
-
 func TimestampSliceVar(fs *pflag.FlagSet, p *[]*timestamppb.Timestamp, name, usage string) {
-	fs.Var(&timestampSliceValue{value: p}, name, usage)
+	SliceVar[*timestamppb.Timestamp](fs, ParseTimestampE, p, name, usage)
 }
 
-func (s *timestampSliceValue) Set(val string) error {
-	ss := strings.Split(val, ",")
-	out := make([]*timestamppb.Timestamp, len(ss))
-	for i, v := range ss {
-		var err error
-		if out[i], err = ptypes.ToTimestamp(v); err != nil {
-			return err
-		}
-	}
-	if !s.changed {
-		*s.value = out
-		s.changed = true
-	} else {
-		*s.value = append(*s.value, out...)
-	}
-	return nil
-}
+func ParseTimestampE(val string) (*timestamppb.Timestamp, error) { return ptypes.ToTimestamp(val) }
 
-func (*timestampSliceValue) Type() string { return "timestampSlice" }
-
-func (*timestampSliceValue) String() string { return "[]" }
-
+// Deprecated
 func ParseTimestamp(val string) (interface{}, error) { return ptypes.ToTimestamp(val) }

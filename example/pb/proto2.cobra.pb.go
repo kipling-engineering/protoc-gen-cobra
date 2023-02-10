@@ -7,11 +7,8 @@ import (
 	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
 	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	cobra "github.com/spf13/cobra"
-	pflag "github.com/spf13/pflag"
 	grpc "google.golang.org/grpc"
 	proto "google.golang.org/protobuf/proto"
-	strconv "strconv"
-	strings "strings"
 )
 
 func Proto2ClientCommand(options ...client.Option) *cobra.Command {
@@ -97,8 +94,8 @@ func _Proto2EchoCommand(cfg *client.Config) *cobra.Command {
 	flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.ListBytes, cfg.FlagNamer("ListBytes"), "")
 	cmd.PersistentFlags().StringToInt64Var(&req.MapStringInt64, cfg.FlagNamer("MapStringInt64"), nil, "")
 	cmd.PersistentFlags().StringToStringVar(&req.MapStringString, cfg.FlagNamer("MapStringString"), nil, "")
-	_Sound2_EnumPointerVar(cmd.PersistentFlags(), &req.Enum, cfg.FlagNamer("Enum"), "")
-	_Sound2_EnumSliceVar(cmd.PersistentFlags(), &req.ListEnum, cfg.FlagNamer("ListEnum"), "")
+	flag.EnumPointerVar(cmd.PersistentFlags(), &req.Enum, cfg.FlagNamer("Enum"), "")
+	flag.EnumSliceVar(cmd.PersistentFlags(), &req.ListEnum, cfg.FlagNamer("ListEnum"), "")
 	flag.TimestampVar(cmd.PersistentFlags(), &req.Timestamp, cfg.FlagNamer("Timestamp"), "")
 	flag.DurationVar(cmd.PersistentFlags(), &req.Duration, cfg.FlagNamer("Duration"), "")
 	flag.BoolWrapperVar(cmd.PersistentFlags(), &req.WrapperBool, cfg.FlagNamer("WrapperBool"), "")
@@ -123,58 +120,4 @@ func _Proto2EchoCommand(cfg *client.Config) *cobra.Command {
 	flag.UInt64WrapperSliceVar(cmd.PersistentFlags(), &req.ListWrapperUint64, cfg.FlagNamer("ListWrapperUint64"), "")
 
 	return cmd
-}
-
-func _Sound2_EnumPointerVar(fs *pflag.FlagSet, p **Sound2_Enum, name, usage string) {
-	v := fs.String(name, "", usage)
-	hook := func() error {
-		if e, err := parseSound2_Enum(*v); err != nil {
-			return err
-		} else {
-			*p = &e
-			return nil
-		}
-	}
-	flag.WithPostSetHookE(fs, name, hook)
-}
-
-type _Sound2_EnumSliceValue struct {
-	value   *[]Sound2_Enum
-	changed bool
-}
-
-func _Sound2_EnumSliceVar(fs *pflag.FlagSet, p *[]Sound2_Enum, name, usage string) {
-	fs.Var(&_Sound2_EnumSliceValue{value: p}, name, usage)
-}
-
-func (s *_Sound2_EnumSliceValue) Set(val string) error {
-	ss := strings.Split(val, ",")
-	out := make([]Sound2_Enum, len(ss))
-	for i, s := range ss {
-		var err error
-		if out[i], err = parseSound2_Enum(s); err != nil {
-			return err
-		}
-	}
-	if !s.changed {
-		*s.value = out
-		s.changed = true
-	} else {
-		*s.value = append(*s.value, out...)
-	}
-	return nil
-}
-
-func (*_Sound2_EnumSliceValue) Type() string { return "Sound2_EnumSlice" }
-
-func (*_Sound2_EnumSliceValue) String() string { return "[]" }
-
-func parseSound2_Enum(s string) (Sound2_Enum, error) {
-	if i, ok := Sound2_Enum_value[s]; ok {
-		return Sound2_Enum(i), nil
-	} else if i, err := strconv.ParseInt(s, 0, 32); err == nil {
-		return Sound2_Enum(i), nil
-	} else {
-		return 0, err
-	}
 }

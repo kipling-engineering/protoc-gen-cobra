@@ -10,6 +10,49 @@ import (
 	"github.com/spf13/pflag"
 )
 
+type mapValue[K comparable, V any] struct {
+	value     *map[K]V
+	changed   bool
+	keyParser func(val string) (K, error)
+	valParser func(val string) (V, error)
+}
+
+func MapVar[K comparable, V any](fs *pflag.FlagSet, keyParser func(val string) (K, error), valParser func(val string) (V, error), p *map[K]V, name, usage string) {
+	fs.Var(&mapValue[K, V]{value: p, keyParser: keyParser, valParser: valParser}, name, usage)
+}
+
+func (m *mapValue[K, V]) Set(val string) error {
+	ss := strings.Split(val, ",")
+	out := make(map[K]V, len(ss))
+	for _, pair := range ss {
+		kv := strings.SplitN(pair, "=", 2)
+		if len(kv) != 2 {
+			return fmt.Errorf("%s must be formatted as key=value", pair)
+		}
+		if k, err := m.keyParser(kv[0]); err != nil {
+			return err
+		} else if v, err := m.valParser(kv[1]); err != nil {
+			return err
+		} else {
+			out[k] = v
+		}
+	}
+	if !m.changed {
+		*m.value = out
+		m.changed = true
+	} else {
+		for k, v := range out {
+			(*m.value)[k] = v
+		}
+	}
+	return nil
+}
+
+func (*mapValue[K, V]) Type() string { return "map" }
+
+func (*mapValue[K, V]) String() string { return "{}" }
+
+// Deprecated
 func ReflectMapVar(fs *pflag.FlagSet, keyParser, valParser func(val string) (interface{}, error), typ string, p interface{}, name, usage string) {
 	v := reflect.ValueOf(p)
 	if !v.IsValid() || v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Map {
@@ -18,8 +61,10 @@ func ReflectMapVar(fs *pflag.FlagSet, keyParser, valParser func(val string) (int
 	fs.Var(&reflectMapValue{value: v, typ: typ, keyParser: keyParser, valParser: valParser}, name, usage)
 }
 
+// Deprecated
 func ParseBool(val string) (interface{}, error) { return strconv.ParseBool(val) }
 
+// Deprecated
 func ParseInt32(val string) (interface{}, error) {
 	if i, err := strconv.ParseInt(val, 10, 32); err != nil {
 		return nil, err
@@ -28,8 +73,10 @@ func ParseInt32(val string) (interface{}, error) {
 	}
 }
 
+// Deprecated
 func ParseInt64(val string) (interface{}, error) { return strconv.ParseInt(val, 10, 64) }
 
+// Deprecated
 func ParseUint32(val string) (interface{}, error) {
 	if i, err := strconv.ParseUint(val, 10, 32); err != nil {
 		return nil, err
@@ -38,8 +85,10 @@ func ParseUint32(val string) (interface{}, error) {
 	}
 }
 
+// Deprecated
 func ParseUint64(val string) (interface{}, error) { return strconv.ParseUint(val, 10, 64) }
 
+// Deprecated
 func ParseFloat32(val string) (interface{}, error) {
 	if i, err := strconv.ParseFloat(val, 32); err != nil {
 		return nil, err
@@ -48,10 +97,13 @@ func ParseFloat32(val string) (interface{}, error) {
 	}
 }
 
+// Deprecated
 func ParseFloat64(val string) (interface{}, error) { return strconv.ParseFloat(val, 64) }
 
+// Deprecated
 func ParseString(val string) (interface{}, error) { return val, nil }
 
+// Deprecated
 func ParseBytesBase64(val string) (interface{}, error) {
 	return base64.RawStdEncoding.DecodeString(strings.TrimRight(val, "="))
 }
