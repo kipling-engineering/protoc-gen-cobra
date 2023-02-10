@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"io"
-	"io/ioutil"
 	"reflect"
 
 	"github.com/mitchellh/mapstructure"
@@ -29,7 +28,7 @@ type (
 func JSONDecoderMaker() DecoderMaker {
 	return func(r io.Reader) Decoder {
 		return func(v interface{}) error {
-			if b, err := ioutil.ReadAll(r); err != nil {
+			if b, err := io.ReadAll(r); err != nil {
 				return err
 			} else {
 				return protojson.Unmarshal(b, v.(proto.Message))

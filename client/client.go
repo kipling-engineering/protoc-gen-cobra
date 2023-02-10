@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -16,6 +15,7 @@ import (
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
@@ -232,7 +232,7 @@ func (c *Config) dialOpts(ctx context.Context, opts *[]grpc.DialOption) error {
 	if c.TLS {
 		tlsConfig := &tls.Config{InsecureSkipVerify: c.InsecureSkipVerify}
 		if c.CACertFile != "" {
-			caCert, err := ioutil.ReadFile(c.CACertFile)
+			caCert, err := os.ReadFile(c.CACertFile)
 			if err != nil {
 				return fmt.Errorf("ca cert: %v", err)
 			}
@@ -259,7 +259,7 @@ func (c *Config) dialOpts(ctx context.Context, opts *[]grpc.DialOption) error {
 		cred := credentials.NewTLS(tlsConfig)
 		*opts = append(*opts, grpc.WithTransportCredentials(cred))
 	} else {
-		*opts = append(*opts, grpc.WithInsecure())
+		*opts = append(*opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
 	for _, dialer := range c.preDialers {

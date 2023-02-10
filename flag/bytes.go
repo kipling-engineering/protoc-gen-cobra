@@ -3,7 +3,6 @@ package flag
 import (
 	"encoding/base64"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -16,7 +15,7 @@ func BytesBase64Var(fs *pflag.FlagSet, p *[]byte, name, usage string) {
 	v := fs.String(name, "", usage)
 	hook := func() (err error) {
 		if *v == "-" {
-			*p, err = ioutil.ReadAll(stdin)
+			*p, err = io.ReadAll(stdin)
 		} else {
 			*p, err = base64.RawStdEncoding.DecodeString(strings.TrimRight(*v, "="))
 		}

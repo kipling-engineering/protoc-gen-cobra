@@ -31,10 +31,10 @@ func init() {
 		cfg := Config
 
 		if cfg.AccessToken != "" {
-			cred := oauth.NewOauthAccess(&oauth2.Token{
+			cred := oauth.TokenSource{TokenSource: oauth2.StaticTokenSource(&oauth2.Token{
 				AccessToken: cfg.AccessToken,
 				TokenType:   cfg.TokenType,
-			})
+			})}
 			*opts = append(*opts, grpc.WithPerRPCCredentials(cred))
 		}
 

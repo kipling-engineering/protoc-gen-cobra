@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -24,7 +23,7 @@ func init() {
 }
 
 func TestGolden(t *testing.T) {
-	workdir, err := ioutil.TempDir("", "proto-test")
+	workdir, err := os.MkdirTemp("", "proto-test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -71,21 +70,21 @@ func TestGolden(t *testing.T) {
 
 		goldenPath := relPath
 
-		got, err := ioutil.ReadFile(genPath)
+		got, err := os.ReadFile(genPath)
 		if err != nil {
 			t.Error(err)
 			return nil
 		}
 		if *regenerate {
 			// If --regenerate set, just rewrite the golden files.
-			err := ioutil.WriteFile(goldenPath, got, 0o666)
+			err := os.WriteFile(goldenPath, got, 0o666)
 			if err != nil {
 				t.Error(err)
 			}
 			return nil
 		}
 
-		want, err := ioutil.ReadFile(goldenPath)
+		want, err := os.ReadFile(goldenPath)
 		if err != nil {
 			t.Error(err)
 			return nil
