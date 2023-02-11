@@ -49,7 +49,7 @@ func TestGolden(t *testing.T) {
 		if err := os.MkdirAll(dir, 0o666); err != nil {
 			t.Fatal(err)
 		}
-		args := []string{"-Itestdata", "--cobra_out=" + dir}
+		args := []string{"-Itestdata", "-Itestdata/oneof", "--cobra_out=" + dir}
 		args = append(args, sources...)
 		t.Log(args)
 		protoc(t, args)
