@@ -1,6 +1,9 @@
 package flag
 
-import "strconv"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 func ParseBoolE(val string) (bool, error) { return strconv.ParseBool(val) }
 
@@ -35,3 +38,12 @@ func ParseFloat32E(val string) (float32, error) {
 func ParseFloat64E(val string) (float64, error) { return strconv.ParseFloat(val, 64) }
 
 func ParseStringE(val string) (string, error) { return val, nil }
+
+func ParseJsonE[T any](val string) (*T, error) {
+	v := new(T)
+	if err := json.Unmarshal([]byte(val), v); err != nil {
+		return nil, err
+	} else {
+		return v, nil
+	}
+}

@@ -69,6 +69,8 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&req.Parent, cfg.FlagNamer("Parent"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Tenant, cfg.FlagNamer("Tenant"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Environment, cfg.FlagNamer("Environment"), "", "")
+	flag.SliceVar(cmd.PersistentFlags(), flag.ParseJsonE[DepositRequest_ClusterWithNamespaces], &req.Clusters, cfg.FlagNamer("Clusters"), "")
+	flag.SliceVar(cmd.PersistentFlags(), flag.ParseJsonE[DepositRequest_NamespaceWithDeployments], &req.ClusterWithNamespaces.Namespaces, cfg.FlagNamer("ClusterWithNamespaces Namespaces"), "")
 
 	return cmd
 }

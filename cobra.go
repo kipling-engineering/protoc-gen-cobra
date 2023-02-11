@@ -339,8 +339,9 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {
 			} else {
 				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", kt.Value)
 			}
-		}
-		if fld.Desc.IsMap() {
+		} else if fld.Desc.IsList() {
+			return fmt.Sprintf("flag.SliceVar(cmd.PersistentFlags(), flag.ParseJsonE[%s], %%s, %%s, %%q)", g.QualifiedGoIdent(fld.Message.GoIdent))
+		} else if fld.Desc.IsMap() {
 			kk := normalizeKind(fld.Desc.MapKey().Kind())
 			vk := normalizeKind(fld.Desc.MapValue().Kind())
 			if kk == protoreflect.StringKind {
@@ -357,12 +358,12 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {
 				valParser := ""
 				switch vk {
 				case protoreflect.EnumKind:
-					id := g.QualifiedGoIdent(fld.Message.Fields[1].Enum.GoIdent)
-					valParser = fmt.Sprintf("flag.ParseEnumE[%s]", id)
+					valParser = fmt.Sprintf("flag.ParseEnumE[%s]", g.QualifiedGoIdent(fld.Message.Fields[1].Enum.GoIdent))
 				case protoreflect.MessageKind:
-					id := fld.Message.Fields[1].Message.GoIdent
-					if kt, ok := knownTypes[id]; ok {
+					if kt, ok := knownTypes[fld.Message.Fields[1].Message.GoIdent]; ok {
 						valParser = "flag." + kt.Parse
+					} else {
+						valParser = fmt.Sprintf("flag.ParseJsonE[%s]", g.QualifiedGoIdent(fld.Message.Fields[1].Message.GoIdent))
 					}
 				default:
 					if bt, ok := basicTypes[vk]; ok {

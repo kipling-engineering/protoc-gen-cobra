@@ -30,6 +30,8 @@ message Sound {
     bytes bytes = 15;
     NestedEnum nested_enum = 16;
     GlobalEnum global_enum = 17;
+    NestedMessage nested_msg = 18;
+    GlobalMessage global_msg = 19;
 
     repeated double list_double = 21;
     repeated float list_float = 22;
@@ -48,6 +50,8 @@ message Sound {
     repeated bytes list_bytes = 35;
     repeated NestedEnum list_nested_enum = 36;
     repeated GlobalEnum list_global_enum = 37;
+    repeated NestedMessage list_nested_msg = 38;
+    repeated GlobalMessage list_global_msg = 39;
 
     map<string, double> map_string_double = 41;
     map<string, float> map_string_float = 42;
@@ -66,6 +70,8 @@ message Sound {
     map<string, bytes> map_string_bytes = 55;
     map<string, NestedEnum> map_string_nested_enum = 56;
     map<string, GlobalEnum> map_string_global_enum = 57;
+    map<string, NestedMessage> map_string_nested_msg = 58;
+    map<string, GlobalMessage> map_string_global_msg = 59;
 
     map<int32, string> map_int32_string = 61;
     map<int64, string> map_int64_string = 62;
@@ -120,10 +126,18 @@ message Sound {
         FEB = 1;
         MAR = 2;
     }
+
+    message NestedMessage {
+        string value = 1;
+    }
 }
 
 enum GlobalEnum {
     MON = 0;
     TUE = 1;
     WED = 2;
+}
+
+message GlobalMessage {
+    string value = 1;
 }

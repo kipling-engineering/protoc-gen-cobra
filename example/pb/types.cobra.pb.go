@@ -26,7 +26,10 @@ func TypesClientCommand(options ...client.Option) *cobra.Command {
 }
 
 func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
-	req := &Sound{}
+	req := &Sound{
+		NestedMsg: &Sound_NestedMessage{},
+		GlobalMsg: &GlobalMessage{},
+	}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Echo"),
@@ -79,6 +82,8 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Bytes, cfg.FlagNamer("Bytes"), "")
 	flag.EnumVar(cmd.PersistentFlags(), &req.NestedEnum, cfg.FlagNamer("NestedEnum"), "")
 	flag.EnumVar(cmd.PersistentFlags(), &req.GlobalEnum, cfg.FlagNamer("GlobalEnum"), "")
+	cmd.PersistentFlags().StringVar(&req.NestedMsg.Value, cfg.FlagNamer("NestedMsg Value"), "", "")
+	cmd.PersistentFlags().StringVar(&req.GlobalMsg.Value, cfg.FlagNamer("GlobalMsg Value"), "", "")
 	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, cfg.FlagNamer("ListDouble"), nil, "")
 	cmd.PersistentFlags().Float32SliceVar(&req.ListFloat, cfg.FlagNamer("ListFloat"), nil, "")
 	cmd.PersistentFlags().Int32SliceVar(&req.ListInt32, cfg.FlagNamer("ListInt32"), nil, "")
@@ -96,6 +101,8 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	flag.BytesBase64SliceVar(cmd.PersistentFlags(), &req.ListBytes, cfg.FlagNamer("ListBytes"), "")
 	flag.EnumSliceVar(cmd.PersistentFlags(), &req.ListNestedEnum, cfg.FlagNamer("ListNestedEnum"), "")
 	flag.EnumSliceVar(cmd.PersistentFlags(), &req.ListGlobalEnum, cfg.FlagNamer("ListGlobalEnum"), "")
+	flag.SliceVar(cmd.PersistentFlags(), flag.ParseJsonE[Sound_NestedMessage], &req.ListNestedMsg, cfg.FlagNamer("ListNestedMsg"), "")
+	flag.SliceVar(cmd.PersistentFlags(), flag.ParseJsonE[GlobalMessage], &req.ListGlobalMsg, cfg.FlagNamer("ListGlobalMsg"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseFloat64E, &req.MapStringDouble, cfg.FlagNamer("MapStringDouble"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseFloat32E, &req.MapStringFloat, cfg.FlagNamer("MapStringFloat"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseInt32E, &req.MapStringInt32, cfg.FlagNamer("MapStringInt32"), "")
@@ -113,6 +120,8 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseBytesBase64E, &req.MapStringBytes, cfg.FlagNamer("MapStringBytes"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseEnumE[Sound_NestedEnum], &req.MapStringNestedEnum, cfg.FlagNamer("MapStringNestedEnum"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseEnumE[GlobalEnum], &req.MapStringGlobalEnum, cfg.FlagNamer("MapStringGlobalEnum"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseJsonE[Sound_NestedMessage], &req.MapStringNestedMsg, cfg.FlagNamer("MapStringNestedMsg"), "")
+	flag.MapVar(cmd.PersistentFlags(), flag.ParseStringE, flag.ParseJsonE[GlobalMessage], &req.MapStringGlobalMsg, cfg.FlagNamer("MapStringGlobalMsg"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt32E, flag.ParseStringE, &req.MapInt32String, cfg.FlagNamer("MapInt32String"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseInt64E, flag.ParseStringE, &req.MapInt64String, cfg.FlagNamer("MapInt64String"), "")
 	flag.MapVar(cmd.PersistentFlags(), flag.ParseUint32E, flag.ParseStringE, &req.MapUint32String, cfg.FlagNamer("MapUint32String"), "")
