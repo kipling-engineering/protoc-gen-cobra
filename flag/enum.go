@@ -1,7 +1,9 @@
 package flag
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/pflag"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -29,11 +31,19 @@ func EnumSliceVar[T ~int32](fs *pflag.FlagSet, p *[]T, name, usage string) {
 }
 
 func ParseEnumE[T ~int32](val string) (T, error) {
-	if n := any(T(0)).(protoreflect.Enum).Descriptor().Values().ByName(protoreflect.Name(val)); n != nil {
+	vals := any(T(0)).(protoreflect.Enum).Descriptor().Values()
+	if i, err := strconv.ParseInt(val, 0, 32); err == nil {
+		if n := vals.ByNumber(protoreflect.EnumNumber(i)); n != nil {
+			return T(i), nil
+		}
+	} else if n := vals.ByName(protoreflect.Name(val)); n != nil {
 		return T(int32(n.Number())), nil
-	} else if i, err := strconv.ParseInt(val, 0, 32); err == nil {
-		return T(i), nil
 	} else {
-		return 0, err
+		for i := 0; i < vals.Len(); i++ {
+			if n := vals.Get(i); strings.EqualFold(string(n.Name()), val) {
+				return T(int32(n.Number())), nil
+			}
+		}
 	}
+	return 0, fmt.Errorf("unable to parse enum: %s", val)
 }
