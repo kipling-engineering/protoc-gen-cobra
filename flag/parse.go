@@ -1,8 +1,10 @@
 package flag
 
 import (
-	"encoding/json"
 	"strconv"
+
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 func ParseBoolE(val string) (bool, error) { return strconv.ParseBool(val) }
@@ -39,11 +41,9 @@ func ParseFloat64E(val string) (float64, error) { return strconv.ParseFloat(val,
 
 func ParseStringE(val string) (string, error) { return val, nil }
 
-func ParseJsonE[T any](val string) (*T, error) {
-	v := new(T)
-	if err := json.Unmarshal([]byte(val), v); err != nil {
-		return nil, err
-	} else {
-		return v, nil
-	}
+func ParseMessageE[T proto.Message](val string) (T, error) {
+	var t T
+	t = t.ProtoReflect().New().Interface().(T)
+	err := protojson.Unmarshal([]byte(val), t)
+	return t, err
 }

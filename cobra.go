@@ -340,7 +340,7 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {
 				return fmt.Sprintf("flag.%s(cmd.PersistentFlags(), %%s, %%s, %%q)", kt.Value)
 			}
 		} else if fld.Desc.IsList() {
-			return fmt.Sprintf("flag.SliceVar(cmd.PersistentFlags(), flag.ParseJsonE[%s], %%s, %%s, %%q)", g.QualifiedGoIdent(fld.Message.GoIdent))
+			return fmt.Sprintf("flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*%s], %%s, %%s, %%q)", g.QualifiedGoIdent(fld.Message.GoIdent))
 		} else if fld.Desc.IsMap() {
 			kk := normalizeKind(fld.Desc.MapKey().Kind())
 			vk := normalizeKind(fld.Desc.MapValue().Kind())
@@ -363,7 +363,7 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {
 					if kt, ok := knownTypes[fld.Message.Fields[1].Message.GoIdent]; ok {
 						valParser = "flag." + kt.Parse
 					} else {
-						valParser = fmt.Sprintf("flag.ParseJsonE[%s]", g.QualifiedGoIdent(fld.Message.Fields[1].Message.GoIdent))
+						valParser = fmt.Sprintf("flag.ParseMessageE[*%s]", g.QualifiedGoIdent(fld.Message.Fields[1].Message.GoIdent))
 					}
 				default:
 					if bt, ok := basicTypes[vk]; ok {
