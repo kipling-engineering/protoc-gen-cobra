@@ -2,6 +2,7 @@ package flag
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -22,16 +23,24 @@ func MapVar[K comparable, V any](fs *pflag.FlagSet, keyParser func(val string) (
 }
 
 func (m *mapValue[K, V]) Set(val string) error {
-	ss := strings.Split(val, ",")
-	out := make(map[K]V, len(ss))
-	for _, pair := range ss {
-		kv := strings.SplitN(pair, "=", 2)
-		if len(kv) != 2 {
-			return fmt.Errorf("%s must be formatted as key=value", pair)
+	sm, ok := m.trySetJSON(val)
+	if !ok {
+		ss := strings.Split(val, ",")
+		sm = make(map[string]string, len(ss))
+		for _, pair := range ss {
+			kv := strings.SplitN(pair, "=", 2)
+			if len(kv) != 2 {
+				return fmt.Errorf("%s must be comma separated key=value or a json object", pair)
+			}
+			sm[kv[0]] = kv[1]
 		}
-		if k, err := m.keyParser(kv[0]); err != nil {
+	}
+
+	out := make(map[K]V, len(sm))
+	for k, v := range sm {
+		if k, err := m.keyParser(k); err != nil {
 			return err
-		} else if v, err := m.valParser(kv[1]); err != nil {
+		} else if v, err := m.valParser(v); err != nil {
 			return err
 		} else {
 			out[k] = v
@@ -46,6 +55,29 @@ func (m *mapValue[K, V]) Set(val string) error {
 		}
 	}
 	return nil
+}
+
+func (*mapValue[K, V]) trySetJSON(val string) (map[string]string, bool) {
+	if len(val) >= 2 && val[0] == '{' && val[len(val)-1] == '}' {
+		var raw map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(val), &raw); err != nil {
+			return nil, false
+		}
+
+		out := make(map[string]string, len(raw))
+		for k, v := range raw {
+			var str string
+			if v[0] == '"' {
+				_ = json.Unmarshal(v, &str)
+			} else {
+				str = string(v)
+			}
+			out[k] = str
+		}
+		return out, true
+	}
+
+	return nil, false
 }
 
 func (*mapValue[K, V]) Type() string { return "map" }

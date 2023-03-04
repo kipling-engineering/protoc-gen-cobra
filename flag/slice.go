@@ -1,6 +1,7 @@
 package flag
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/spf13/pflag"
@@ -17,7 +18,11 @@ func SliceVar[T any](fs *pflag.FlagSet, parser func(val string) (T, error), p *[
 }
 
 func (s *sliceValue[T]) Set(val string) error {
-	ss := strings.Split(val, ",")
+	ss, ok := s.trySetJSON(val)
+	if !ok {
+		ss = strings.Split(val, ",")
+	}
+
 	out := make([]T, len(ss))
 	for i, v := range ss {
 		var err error
@@ -32,6 +37,31 @@ func (s *sliceValue[T]) Set(val string) error {
 		*s.value = append(*s.value, out...)
 	}
 	return nil
+}
+
+func (*sliceValue[T]) trySetJSON(val string) ([]string, bool) {
+	if len(val) >= 2 {
+		if val[0] == '{' && val[len(val)-1] == '}' && json.Valid([]byte(val)) {
+			return []string{val}, true
+		} else if val[0] == '[' && val[len(val)-1] == ']' {
+			var raw []json.RawMessage
+			if err := json.Unmarshal([]byte(val), &raw); err != nil {
+				return nil, false
+			}
+
+			out := make([]string, len(raw))
+			for i, v := range raw {
+				if v[0] == '"' {
+					_ = json.Unmarshal(v, &out[i])
+				} else {
+					out[i] = string(v)
+				}
+			}
+			return out, true
+		}
+	}
+
+	return nil, false
 }
 
 func (*sliceValue[T]) Type() string { return "slice" }
