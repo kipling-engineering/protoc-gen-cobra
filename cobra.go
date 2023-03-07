@@ -181,7 +181,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 		g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "io"})
 	}
 
-	initCode, flagCode := walkFields(g, method.Input, nil, false, make(map[protogen.GoIdent]bool), 0, "")
+	initCode, flagCode := walkMessage(g, method.Input, nil, false, make(map[protogen.GoIdent]bool), 0, "")
 	data := struct {
 		*protogen.Method
 		InputInitializerCode string
@@ -220,7 +220,7 @@ var (
 	}
 )
 
-func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, deprecated bool, visited map[protogen.GoIdent]bool, level int, postSetCode string) (string, string) {
+func walkMessage(g *protogen.GeneratedFile, msg *protogen.Message, path []string, deprecated bool, visited map[protogen.GoIdent]bool, level int, postSetCode string) (string, string) {
 	var initLines []string
 	var flagLines []string
 
@@ -229,71 +229,14 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 		target = "_" + strings.Join(path[:level], "_")
 	}
 
-	sort.Slice(message.Fields, func(i, j int) bool { return message.Fields[i].Desc.Index() < message.Fields[j].Desc.Index() })
-	for _, fld := range message.Fields {
-		path := append(path, fld.GoName)
-		varName := "_" + strings.Join(path, "_")
-
-		if f := flagFormat(g, fld); f != "" {
-			flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
-			comment := cleanComments(fld.Comments.Leading)
-			var flagLine string
-			if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
-				goPath := fmt.Sprintf("&%s.%s", varName, fld.GoName)
-				flagLine = fmt.Sprintf("%s := &%s{}\n", varName, g.QualifiedGoIdent(fld.GoIdent))
-				flagLine += fmt.Sprintf(f, goPath, flagName, comment)
-				target := strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
-				postSetCode := fmt.Sprintf("%s.%s = %s", target, fld.Oneof.GoName, varName)
-				flagLine += fmt.Sprintf("\nflag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })", flagName, postSetCode)
-			} else {
-				goPath := fmt.Sprintf("&%s.%s", target, strings.Join(path[level:], "."))
-				flagLine = fmt.Sprintf(f, goPath, flagName, comment)
-			}
-			if postSetCode != "" {
-				flagLine += fmt.Sprintf("\nflag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })", flagName, postSetCode)
-			}
-			if deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated() {
-				flagLine += fmt.Sprintf("\n_ = cmd.PersistentFlags().MarkDeprecated(%s, \"deprecated\")", flagName)
-			}
-			flagLines = append(flagLines, flagLine)
-		} else if normalizeKind(fld.Desc.Kind()) == protoreflect.MessageKind {
-			if fld.Desc.IsList() {
-				// message list not supported
-			} else if fld.Desc.IsMap() {
-				// limited map support
-			} else if visited[message.GoIdent] = true; visited[fld.Message.GoIdent] {
-				// cycle detected
-			} else {
-				m := make(map[protogen.GoIdent]bool, len(visited))
-				for k, v := range visited {
-					m[k] = v
-				}
-
-				level := level
-				postSetCode := postSetCode
-				if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
-					if postSetCode != "" {
-						postSetCode += ";"
-					}
-					target := strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
-					postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, g.QualifiedGoIdent(fld.GoIdent), fld.GoName, varName)
-					level = len(path)
-				}
-				initCode, flagCode := walkFields(g, fld.Message, path, deprecated, m, level, postSetCode)
-				if initCode != "" && (fld.Oneof == nil || fld.Oneof.Desc.IsSynthetic()) {
-					initLines = append(initLines, fmt.Sprintf("%s: %s,", fld.GoName, initCode))
-				}
-				if flagCode != "" {
-					if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
-						flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
-						flagLine := fmt.Sprintf("%s := %s\n", varName, initCode)
-						flagLine += fmt.Sprintf("cmd.PersistentFlags().Bool(%s, false, \"\")\n", flagName)
-						flagLine += fmt.Sprintf("flag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })\n", flagName, postSetCode)
-						flagCode = flagLine + flagCode
-					}
-					flagLines = append(flagLines, flagCode)
-				}
-			}
+	sort.Slice(msg.Fields, func(i, j int) bool { return msg.Fields[i].Desc.Index() < msg.Fields[j].Desc.Index() })
+	for _, fld := range msg.Fields {
+		ic, fc := walkField(g, fld, path, deprecated, visited, level, postSetCode, target)
+		if ic != "" {
+			initLines = append(initLines, ic)
+		}
+		if fc != "" {
+			flagLines = append(flagLines, fc)
 		}
 	}
 
@@ -301,7 +244,76 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 	if len(initLines) > 0 {
 		initCode = fmt.Sprintf("\n%s\n", strings.Join(initLines, "\n"))
 	}
-	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(flagLines, "\n")
+	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(msg.GoIdent), initCode), strings.Join(flagLines, "\n")
+}
+
+func walkField(g *protogen.GeneratedFile, fld *protogen.Field, path []string, deprecated bool, visited map[protogen.GoIdent]bool, level int, postSetCode string, target string) (string, string) {
+	path = append(path, fld.GoName)
+	flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
+	varName := "_" + strings.Join(path, "_")
+	oneof := fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic()
+
+	if f := flagFormat(g, fld); f != "" {
+		comment := cleanComments(fld.Comments.Leading)
+		var flagCode string
+		if oneof {
+			goPath := fmt.Sprintf("&%s.%s", varName, fld.GoName)
+			flagCode = fmt.Sprintf("%s := &%s{}\n", varName, g.QualifiedGoIdent(fld.GoIdent))
+			flagCode += fmt.Sprintf(f, goPath, flagName, comment)
+			target = strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
+			if postSetCode != "" {
+				postSetCode += ";"
+			}
+			postSetCode += fmt.Sprintf("%s.%s = %s", target, fld.Oneof.GoName, varName)
+		} else {
+			goPath := fmt.Sprintf("&%s.%s", target, strings.Join(path[level:], "."))
+			flagCode = fmt.Sprintf(f, goPath, flagName, comment)
+		}
+		if postSetCode != "" {
+			flagCode += fmt.Sprintf("\nflag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })", flagName, postSetCode)
+		}
+		if deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated() {
+			flagCode += fmt.Sprintf("\n_ = cmd.PersistentFlags().MarkDeprecated(%s, \"deprecated\")", flagName)
+		}
+		return "", flagCode
+	} else if normalizeKind(fld.Desc.Kind()) == protoreflect.MessageKind {
+		if fld.Desc.IsList() {
+			// message list not supported
+		} else if fld.Desc.IsMap() {
+			// limited map support
+		} else if visited[fld.Parent.GoIdent] = true; visited[fld.Message.GoIdent] {
+			// cycle detected
+		} else {
+			m := make(map[protogen.GoIdent]bool, len(visited))
+			for k, v := range visited {
+				m[k] = v
+			}
+
+			if oneof {
+				if postSetCode != "" {
+					postSetCode += ";"
+				}
+				target = strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
+				postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, g.QualifiedGoIdent(fld.GoIdent), fld.GoName, varName)
+				level = len(path)
+			}
+			initCode, flagCode := walkMessage(g, fld.Message, path, deprecated, m, level, postSetCode)
+			if flagCode != "" {
+				if oneof {
+					flagLine := fmt.Sprintf("%s := %s\n", varName, initCode)
+					initCode = ""
+					flagLine += fmt.Sprintf("cmd.PersistentFlags().Bool(%s, false, \"\")\n", flagName)
+					flagLine += fmt.Sprintf("flag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })\n", flagName, postSetCode)
+					flagCode = flagLine + flagCode
+				} else if initCode != "" {
+					initCode = fmt.Sprintf("%s: %s,", fld.GoName, initCode)
+				}
+				return initCode, flagCode
+			}
+		}
+	}
+
+	return "", ""
 }
 
 func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {

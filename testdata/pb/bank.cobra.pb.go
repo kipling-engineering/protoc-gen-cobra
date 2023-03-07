@@ -27,9 +27,7 @@ func BankClientCommand(options ...client.Option) *cobra.Command {
 
 func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 	req := &DepositRequest{
-		ClusterWithNamespaces: &DepositRequest_ClusterWithNamespaces{
-			Cluster: &Cluster{},
-		},
+		ClusterWithNamespaces: &DepositRequest_ClusterWithNamespaces{},
 	}
 
 	cmd := &cobra.Command{
