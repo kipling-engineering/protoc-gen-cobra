@@ -26,10 +26,7 @@ func CyclicalClientCommand(options ...client.Option) *cobra.Command {
 }
 
 func _CyclicalTestCommand(cfg *client.Config) *cobra.Command {
-	req := &Foo{
-		Bar1: &Bar{},
-		Bar2: &Bar{},
-	}
+	req := &Foo{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Test"),
@@ -65,8 +62,12 @@ func _CyclicalTestCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Bar1.Value, cfg.FlagNamer("Bar1 Value"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Bar2.Value, cfg.FlagNamer("Bar2 Value"), "", "")
+	_Bar1 := &Bar{}
+	cmd.PersistentFlags().StringVar(&_Bar1.Value, cfg.FlagNamer("Bar1 Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Bar1 Value"), func() { req.Bar1 = _Bar1 })
+	_Bar2 := &Bar{}
+	cmd.PersistentFlags().StringVar(&_Bar2.Value, cfg.FlagNamer("Bar2 Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Bar2 Value"), func() { req.Bar2 = _Bar2 })
 	cmd.PersistentFlags().StringVar(&req.Value, cfg.FlagNamer("Value"), "", "")
 
 	return cmd

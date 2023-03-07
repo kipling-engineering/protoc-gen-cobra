@@ -26,10 +26,7 @@ func TypesClientCommand(options ...client.Option) *cobra.Command {
 }
 
 func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
-	req := &Sound{
-		NestedMsg: &Sound_NestedMessage{},
-		GlobalMsg: &GlobalMessage{},
-	}
+	req := &Sound{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Echo"),
@@ -82,8 +79,12 @@ func _TypesEchoCommand(cfg *client.Config) *cobra.Command {
 	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Bytes, cfg.FlagNamer("Bytes"), "")
 	flag.EnumVar(cmd.PersistentFlags(), &req.NestedEnum, cfg.FlagNamer("NestedEnum"), "")
 	flag.EnumVar(cmd.PersistentFlags(), &req.GlobalEnum, cfg.FlagNamer("GlobalEnum"), "")
-	cmd.PersistentFlags().StringVar(&req.NestedMsg.Value, cfg.FlagNamer("NestedMsg Value"), "", "")
-	cmd.PersistentFlags().StringVar(&req.GlobalMsg.Value, cfg.FlagNamer("GlobalMsg Value"), "", "")
+	_NestedMsg := &Sound_NestedMessage{}
+	cmd.PersistentFlags().StringVar(&_NestedMsg.Value, cfg.FlagNamer("NestedMsg Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("NestedMsg Value"), func() { req.NestedMsg = _NestedMsg })
+	_GlobalMsg := &GlobalMessage{}
+	cmd.PersistentFlags().StringVar(&_GlobalMsg.Value, cfg.FlagNamer("GlobalMsg Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("GlobalMsg Value"), func() { req.GlobalMsg = _GlobalMsg })
 	cmd.PersistentFlags().Float64SliceVar(&req.ListDouble, cfg.FlagNamer("ListDouble"), nil, "")
 	cmd.PersistentFlags().Float32SliceVar(&req.ListFloat, cfg.FlagNamer("ListFloat"), nil, "")
 	cmd.PersistentFlags().Int32SliceVar(&req.ListInt32, cfg.FlagNamer("ListInt32"), nil, "")

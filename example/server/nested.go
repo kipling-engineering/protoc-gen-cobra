@@ -18,19 +18,19 @@ func NewNested() *Nested {
 
 func (*Nested) Get(_ context.Context, req *pb.NestedRequest) (*pb.NestedResponse, error) {
 	return &pb.NestedResponse{
-		Return: req.Top.Value + req.Inner.Value,
+		Return: req.GetTop().GetValue() + req.GetInner().GetValue(),
 	}, nil
 }
 
 func (*Nested) GetOptional(_ context.Context, req *pb.OptionalRequest) (*pb.NestedResponse, error) {
 	return &pb.NestedResponse{
-		Return: req.Top.Value + req.Inner.GetValue(),
+		Return: req.GetTop().GetValue() + req.GetInner().GetValue(),
 	}, nil
 }
 
 func (*Nested) GetDeep(_ context.Context, req *pb.DeepRequest) (*pb.NestedResponse, error) {
 	return &pb.NestedResponse{
-		Return: req.L0.L1.L2.Value,
+		Return: req.GetL0().GetL1().GetL2().GetValue(),
 	}, nil
 }
 
@@ -68,7 +68,7 @@ func (*Nested) GetOneOfDeep(_ context.Context, req *pb.OneOfDeepRequest) (*pb.Ne
 	}
 
 	var op2 interface{ GetValue() string }
-	l2 := op1.GetL1().L2
+	l2 := op1.GetL1().GetL2()
 	if l2.GetOption1() != nil {
 		op2 = l2.GetOption1()
 	} else if l2.GetOption2() != nil {

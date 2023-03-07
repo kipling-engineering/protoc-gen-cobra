@@ -19,6 +19,6 @@ func (*Oneof) Fetch(_ context.Context, req *pb.FetchRequest) (*pb.FetchResponse,
 }
 
 func (*Oneof) FetchNested(_ context.Context, req *pb.FetchNestedRequest) (*pb.FetchResponse, error) {
-	l2 := req.L0.L1.L2
+	l2 := req.GetL0().GetL1().GetL2()
 	return &pb.FetchResponse{Value: l2.GetOption1() + l2.GetOption2() + l2.GetOption3()}, nil
 }

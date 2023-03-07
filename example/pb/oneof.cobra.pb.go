@@ -77,13 +77,7 @@ func _OneofFetchCommand(cfg *client.Config) *cobra.Command {
 }
 
 func _OneofFetchNestedCommand(cfg *client.Config) *cobra.Command {
-	req := &FetchNestedRequest{
-		L0: &FetchNestedRequest_Outer{
-			L1: &FetchNestedRequest_Outer_Middle{
-				L2: &FetchNestedRequest_Outer_Middle_Inner{},
-			},
-		},
-	}
+	req := &FetchNestedRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("FetchNested"),
@@ -119,15 +113,18 @@ func _OneofFetchNestedCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
+	_L0 := &FetchNestedRequest_Outer{}
+	_L0_L1 := &FetchNestedRequest_Outer_Middle{}
+	_L0_L1_L2 := &FetchNestedRequest_Outer_Middle_Inner{}
 	_L0_L1_L2_Option1 := &FetchNestedRequest_Outer_Middle_Inner_Option1{}
 	cmd.PersistentFlags().StringVar(&_L0_L1_L2_Option1.Option1, cfg.FlagNamer("L0 L1 L2 Option1"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option1"), func() { req.L0.L1.L2.Choose = _L0_L1_L2_Option1 })
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option1"), func() { req.L0 = _L0; _L0.L1 = _L0_L1; _L0_L1.L2 = _L0_L1_L2; _L0_L1_L2.Choose = _L0_L1_L2_Option1 })
 	_L0_L1_L2_Option2 := &FetchNestedRequest_Outer_Middle_Inner_Option2{}
 	cmd.PersistentFlags().StringVar(&_L0_L1_L2_Option2.Option2, cfg.FlagNamer("L0 L1 L2 Option2"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option2"), func() { req.L0.L1.L2.Choose = _L0_L1_L2_Option2 })
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option2"), func() { req.L0 = _L0; _L0.L1 = _L0_L1; _L0_L1.L2 = _L0_L1_L2; _L0_L1_L2.Choose = _L0_L1_L2_Option2 })
 	_L0_L1_L2_Option3 := &FetchNestedRequest_Outer_Middle_Inner_Option3{}
 	cmd.PersistentFlags().StringVar(&_L0_L1_L2_Option3.Option3, cfg.FlagNamer("L0 L1 L2 Option3"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option3"), func() { req.L0.L1.L2.Choose = _L0_L1_L2_Option3 })
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option3"), func() { req.L0 = _L0; _L0.L1 = _L0_L1; _L0_L1.L2 = _L0_L1_L2; _L0_L1_L2.Choose = _L0_L1_L2_Option3 })
 
 	return cmd
 }

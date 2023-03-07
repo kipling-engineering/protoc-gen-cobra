@@ -26,9 +26,7 @@ func BankClientCommand(options ...client.Option) *cobra.Command {
 }
 
 func _BankDepositCommand(cfg *client.Config) *cobra.Command {
-	req := &DepositRequest{
-		ClusterWithNamespaces: &DepositRequest_ClusterWithNamespaces{},
-	}
+	req := &DepositRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Deposit"),
@@ -68,7 +66,9 @@ func _BankDepositCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&req.Tenant, cfg.FlagNamer("Tenant"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Environment, cfg.FlagNamer("Environment"), "", "")
 	flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*DepositRequest_ClusterWithNamespaces], &req.Clusters, cfg.FlagNamer("Clusters"), "")
-	flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*DepositRequest_NamespaceWithDeployments], &req.ClusterWithNamespaces.Namespaces, cfg.FlagNamer("ClusterWithNamespaces Namespaces"), "")
+	_ClusterWithNamespaces := &DepositRequest_ClusterWithNamespaces{}
+	flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*DepositRequest_NamespaceWithDeployments], &_ClusterWithNamespaces.Namespaces, cfg.FlagNamer("ClusterWithNamespaces Namespaces"), "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("ClusterWithNamespaces Namespaces"), func() { req.ClusterWithNamespaces = _ClusterWithNamespaces })
 
 	return cmd
 }
