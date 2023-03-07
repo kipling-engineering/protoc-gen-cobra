@@ -221,14 +221,15 @@ var (
 )
 
 func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []string, deprecated bool, visited map[protogen.GoIdent]bool, level int, postSetCode string) (string, string) {
-	initLines := make(map[int]string)
-	flagLines := make(map[int]string, len(message.Fields))
+	var initLines []string
+	var flagLines []string
 
 	target := "req"
 	if level > 0 {
 		target = "_" + strings.Join(path[:level], "_")
 	}
 
+	sort.Slice(message.Fields, func(i, j int) bool { return message.Fields[i].Desc.Index() < message.Fields[j].Desc.Index() })
 	for _, fld := range message.Fields {
 		path := append(path, fld.GoName)
 		varName := "_" + strings.Join(path, "_")
@@ -254,7 +255,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 			if deprecated || fld.Desc.Options().(*descriptorpb.FieldOptions).GetDeprecated() {
 				flagLine += fmt.Sprintf("\n_ = cmd.PersistentFlags().MarkDeprecated(%s, \"deprecated\")", flagName)
 			}
-			flagLines[fld.Desc.Index()] = flagLine
+			flagLines = append(flagLines, flagLine)
 		} else if normalizeKind(fld.Desc.Kind()) == protoreflect.MessageKind {
 			if fld.Desc.IsList() {
 				// message list not supported
@@ -280,7 +281,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 				}
 				initCode, flagCode := walkFields(g, fld.Message, path, deprecated, m, level, postSetCode)
 				if initCode != "" && (fld.Oneof == nil || fld.Oneof.Desc.IsSynthetic()) {
-					initLines[fld.Desc.Index()] = fmt.Sprintf("%s: %s,", fld.GoName, initCode)
+					initLines = append(initLines, fmt.Sprintf("%s: %s,", fld.GoName, initCode))
 				}
 				if flagCode != "" {
 					if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
@@ -290,7 +291,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 						flagLine += fmt.Sprintf("flag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })\n", flagName, postSetCode)
 						flagCode = flagLine + flagCode
 					}
-					flagLines[fld.Desc.Index()] = flagCode
+					flagLines = append(flagLines, flagCode)
 				}
 			}
 		}
@@ -298,9 +299,9 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 	initCode := ""
 	if len(initLines) > 0 {
-		initCode = fmt.Sprintf("\n%s\n", strings.Join(sortedLines(initLines), "\n"))
+		initCode = fmt.Sprintf("\n%s\n", strings.Join(initLines, "\n"))
 	}
-	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(sortedLines(flagLines), "\n")
+	return fmt.Sprintf("&%s{%s}", g.QualifiedGoIdent(message.GoIdent), initCode), strings.Join(flagLines, "\n")
 }
 
 func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {
@@ -395,21 +396,6 @@ func normalizeKind(kind protoreflect.Kind) protoreflect.Kind {
 	default:
 		return kind
 	}
-}
-
-func sortedLines(m map[int]string) []string {
-	keys := make([]int, len(m))
-	i := 0
-	for k := range m {
-		keys[i] = k
-		i++
-	}
-	sort.Ints(keys)
-	vals := make([]string, len(m))
-	for i, k := range keys {
-		vals[i] = m[k]
-	}
-	return vals
 }
 
 func cleanComments(comments protogen.Comments) string {
