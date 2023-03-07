@@ -63,15 +63,15 @@ func _OneofFetchCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	Option1 := &FetchRequest_Option1{}
-	cmd.PersistentFlags().StringVar(&Option1.Option1, cfg.FlagNamer("Option1"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option1"), func() { req.Choose = Option1 })
-	Option2 := &FetchRequest_Option2{}
-	cmd.PersistentFlags().StringVar(&Option2.Option2, cfg.FlagNamer("Option2"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option2"), func() { req.Choose = Option2 })
-	Option3 := &FetchRequest_Option3{}
-	cmd.PersistentFlags().StringVar(&Option3.Option3, cfg.FlagNamer("Option3"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option3"), func() { req.Choose = Option3 })
+	_Option1 := &FetchRequest_Option1{}
+	cmd.PersistentFlags().StringVar(&_Option1.Option1, cfg.FlagNamer("Option1"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option1"), func() { req.Choose = _Option1 })
+	_Option2 := &FetchRequest_Option2{}
+	cmd.PersistentFlags().StringVar(&_Option2.Option2, cfg.FlagNamer("Option2"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option2"), func() { req.Choose = _Option2 })
+	_Option3 := &FetchRequest_Option3{}
+	cmd.PersistentFlags().StringVar(&_Option3.Option3, cfg.FlagNamer("Option3"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option3"), func() { req.Choose = _Option3 })
 
 	return cmd
 }
@@ -119,15 +119,15 @@ func _OneofFetchNestedCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	L0L1L2Option1 := &FetchNestedRequest_Outer_Middle_Inner_Option1{}
-	cmd.PersistentFlags().StringVar(&L0L1L2Option1.Option1, cfg.FlagNamer("L0 L1 L2 Option1"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option1"), func() { req.L0.L1.L2.Choose = L0L1L2Option1 })
-	L0L1L2Option2 := &FetchNestedRequest_Outer_Middle_Inner_Option2{}
-	cmd.PersistentFlags().StringVar(&L0L1L2Option2.Option2, cfg.FlagNamer("L0 L1 L2 Option2"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option2"), func() { req.L0.L1.L2.Choose = L0L1L2Option2 })
-	L0L1L2Option3 := &FetchNestedRequest_Outer_Middle_Inner_Option3{}
-	cmd.PersistentFlags().StringVar(&L0L1L2Option3.Option3, cfg.FlagNamer("L0 L1 L2 Option3"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option3"), func() { req.L0.L1.L2.Choose = L0L1L2Option3 })
+	_L0_L1_L2_Option1 := &FetchNestedRequest_Outer_Middle_Inner_Option1{}
+	cmd.PersistentFlags().StringVar(&_L0_L1_L2_Option1.Option1, cfg.FlagNamer("L0 L1 L2 Option1"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option1"), func() { req.L0.L1.L2.Choose = _L0_L1_L2_Option1 })
+	_L0_L1_L2_Option2 := &FetchNestedRequest_Outer_Middle_Inner_Option2{}
+	cmd.PersistentFlags().StringVar(&_L0_L1_L2_Option2.Option2, cfg.FlagNamer("L0 L1 L2 Option2"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option2"), func() { req.L0.L1.L2.Choose = _L0_L1_L2_Option2 })
+	_L0_L1_L2_Option3 := &FetchNestedRequest_Outer_Middle_Inner_Option3{}
+	cmd.PersistentFlags().StringVar(&_L0_L1_L2_Option3.Option3, cfg.FlagNamer("L0 L1 L2 Option3"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 L1 L2 Option3"), func() { req.L0.L1.L2.Choose = _L0_L1_L2_Option3 })
 
 	return cmd
 }

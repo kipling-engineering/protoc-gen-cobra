@@ -226,18 +226,18 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 
 	target := "req"
 	if level > 0 {
-		target = strings.Join(path[:level], "")
+		target = "_" + strings.Join(path[:level], "_")
 	}
 
 	for _, fld := range message.Fields {
 		path := append(path, fld.GoName)
+		varName := "_" + strings.Join(path, "_")
 
 		if f := flagFormat(g, fld); f != "" {
 			flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
 			comment := cleanComments(fld.Comments.Leading)
 			var flagLine string
 			if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
-				varName := strings.Join(path, "")
 				goPath := fmt.Sprintf("&%s.%s", varName, fld.GoName)
 				flagLine = fmt.Sprintf("%s := &%s{}\n", varName, g.QualifiedGoIdent(fld.GoIdent))
 				flagLine += fmt.Sprintf(f, goPath, flagName, comment)
@@ -275,7 +275,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 						postSetCode += ";"
 					}
 					target := strings.Join(append([]string{target}, path[level:len(path)-1]...), ".")
-					postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, g.QualifiedGoIdent(fld.GoIdent), fld.GoName, strings.Join(path, ""))
+					postSetCode += fmt.Sprintf("%s.%s = &%s{%s: %s}", target, fld.Oneof.GoName, g.QualifiedGoIdent(fld.GoIdent), fld.GoName, varName)
 					level = len(path)
 				}
 				initCode, flagCode := walkFields(g, fld.Message, path, deprecated, m, level, postSetCode)
@@ -285,7 +285,7 @@ func walkFields(g *protogen.GeneratedFile, message *protogen.Message, path []str
 				if flagCode != "" {
 					if fld.Oneof != nil && !fld.Oneof.Desc.IsSynthetic() {
 						flagName := fmt.Sprintf("cfg.FlagNamer(%q)", strings.Join(path, " "))
-						flagLine := fmt.Sprintf("%s := %s\n", strings.Join(path, ""), initCode)
+						flagLine := fmt.Sprintf("%s := %s\n", varName, initCode)
 						flagLine += fmt.Sprintf("cmd.PersistentFlags().Bool(%s, false, \"\")\n", flagName)
 						flagLine += fmt.Sprintf("flag.WithPostSetHook(cmd.PersistentFlags(), %s, func() { %s })\n", flagName, postSetCode)
 						flagCode = flagLine + flagCode

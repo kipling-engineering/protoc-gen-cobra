@@ -206,21 +206,21 @@ func _NestedGetOneOfCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	Option1 := &OneOfRequest_First{}
+	_Option1 := &OneOfRequest_First{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("Option1"), false, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option1"), func() { req.Choose = &OneOfRequest_Option1{Option1: Option1} })
-	cmd.PersistentFlags().StringVar(&Option1.Value, cfg.FlagNamer("Option1 Value"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option1 Value"), func() { req.Choose = &OneOfRequest_Option1{Option1: Option1} })
-	Option2 := &OneOfRequest_Second{}
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option1"), func() { req.Choose = &OneOfRequest_Option1{Option1: _Option1} })
+	cmd.PersistentFlags().StringVar(&_Option1.Value, cfg.FlagNamer("Option1 Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option1 Value"), func() { req.Choose = &OneOfRequest_Option1{Option1: _Option1} })
+	_Option2 := &OneOfRequest_Second{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("Option2"), false, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option2"), func() { req.Choose = &OneOfRequest_Option2{Option2: Option2} })
-	cmd.PersistentFlags().StringVar(&Option2.Value, cfg.FlagNamer("Option2 Value"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option2 Value"), func() { req.Choose = &OneOfRequest_Option2{Option2: Option2} })
-	Option3 := &OneOfRequest_Third{}
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option2"), func() { req.Choose = &OneOfRequest_Option2{Option2: _Option2} })
+	cmd.PersistentFlags().StringVar(&_Option2.Value, cfg.FlagNamer("Option2 Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option2 Value"), func() { req.Choose = &OneOfRequest_Option2{Option2: _Option2} })
+	_Option3 := &OneOfRequest_Third{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("Option3"), false, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option3"), func() { req.Choose = &OneOfRequest_Option3{Option3: Option3} })
-	cmd.PersistentFlags().StringVar(&Option3.Value, cfg.FlagNamer("Option3 Value"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option3 Value"), func() { req.Choose = &OneOfRequest_Option3{Option3: Option3} })
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option3"), func() { req.Choose = &OneOfRequest_Option3{Option3: _Option3} })
+	cmd.PersistentFlags().StringVar(&_Option3.Value, cfg.FlagNamer("Option3 Value"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Option3 Value"), func() { req.Choose = &OneOfRequest_Option3{Option3: _Option3} })
 
 	return cmd
 }
@@ -264,125 +264,125 @@ func _NestedGetOneOfDeepCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	L0Option1 := &OneOfDeepRequest_Outer_First{
+	_L0_Option1 := &OneOfDeepRequest_Outer_First{
 		L1: &OneOfDeepRequest_Outer_Middle{
 			L2: &OneOfDeepRequest_Outer_Middle_Inner{},
 		},
 	}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option1"), false, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1"), func() { req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1} })
-	L0Option1L1L2Option1 := &OneOfDeepRequest_Outer_Middle_Inner_First{}
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1"), func() { req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1} })
+	_L0_Option1_L1_L2_Option1 := &OneOfDeepRequest_Outer_Middle_Inner_First{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option1 L1 L2 Option1"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1 L1 L2 Option1"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1}
-		L0Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: L0Option1L1L2Option1}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1}
+		_L0_Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: _L0_Option1_L1_L2_Option1}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option1L1L2Option1.Value, cfg.FlagNamer("L0 Option1 L1 L2 Option1 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option1_L1_L2_Option1.Value, cfg.FlagNamer("L0 Option1 L1 L2 Option1 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1 L1 L2 Option1 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1}
-		L0Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: L0Option1L1L2Option1}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1}
+		_L0_Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: _L0_Option1_L1_L2_Option1}
 	})
-	L0Option1L1L2Option2 := &OneOfDeepRequest_Outer_Middle_Inner_Second{}
+	_L0_Option1_L1_L2_Option2 := &OneOfDeepRequest_Outer_Middle_Inner_Second{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option1 L1 L2 Option2"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1 L1 L2 Option2"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1}
-		L0Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: L0Option1L1L2Option2}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1}
+		_L0_Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: _L0_Option1_L1_L2_Option2}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option1L1L2Option2.Value, cfg.FlagNamer("L0 Option1 L1 L2 Option2 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option1_L1_L2_Option2.Value, cfg.FlagNamer("L0 Option1 L1 L2 Option2 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1 L1 L2 Option2 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1}
-		L0Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: L0Option1L1L2Option2}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1}
+		_L0_Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: _L0_Option1_L1_L2_Option2}
 	})
-	L0Option1L1L2Option3 := &OneOfDeepRequest_Outer_Middle_Inner_Third{}
+	_L0_Option1_L1_L2_Option3 := &OneOfDeepRequest_Outer_Middle_Inner_Third{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option1 L1 L2 Option3"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1 L1 L2 Option3"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1}
-		L0Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: L0Option1L1L2Option3}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1}
+		_L0_Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: _L0_Option1_L1_L2_Option3}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option1L1L2Option3.Value, cfg.FlagNamer("L0 Option1 L1 L2 Option3 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option1_L1_L2_Option3.Value, cfg.FlagNamer("L0 Option1 L1 L2 Option3 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option1 L1 L2 Option3 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: L0Option1}
-		L0Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: L0Option1L1L2Option3}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option1{Option1: _L0_Option1}
+		_L0_Option1.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: _L0_Option1_L1_L2_Option3}
 	})
-	L0Option2 := &OneOfDeepRequest_Outer_Second{
+	_L0_Option2 := &OneOfDeepRequest_Outer_Second{
 		L1: &OneOfDeepRequest_Outer_Middle{
 			L2: &OneOfDeepRequest_Outer_Middle_Inner{},
 		},
 	}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option2"), false, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2"), func() { req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2} })
-	L0Option2L1L2Option1 := &OneOfDeepRequest_Outer_Middle_Inner_First{}
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2"), func() { req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2} })
+	_L0_Option2_L1_L2_Option1 := &OneOfDeepRequest_Outer_Middle_Inner_First{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option2 L1 L2 Option1"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2 L1 L2 Option1"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2}
-		L0Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: L0Option2L1L2Option1}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2}
+		_L0_Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: _L0_Option2_L1_L2_Option1}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option2L1L2Option1.Value, cfg.FlagNamer("L0 Option2 L1 L2 Option1 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option2_L1_L2_Option1.Value, cfg.FlagNamer("L0 Option2 L1 L2 Option1 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2 L1 L2 Option1 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2}
-		L0Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: L0Option2L1L2Option1}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2}
+		_L0_Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: _L0_Option2_L1_L2_Option1}
 	})
-	L0Option2L1L2Option2 := &OneOfDeepRequest_Outer_Middle_Inner_Second{}
+	_L0_Option2_L1_L2_Option2 := &OneOfDeepRequest_Outer_Middle_Inner_Second{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option2 L1 L2 Option2"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2 L1 L2 Option2"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2}
-		L0Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: L0Option2L1L2Option2}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2}
+		_L0_Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: _L0_Option2_L1_L2_Option2}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option2L1L2Option2.Value, cfg.FlagNamer("L0 Option2 L1 L2 Option2 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option2_L1_L2_Option2.Value, cfg.FlagNamer("L0 Option2 L1 L2 Option2 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2 L1 L2 Option2 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2}
-		L0Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: L0Option2L1L2Option2}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2}
+		_L0_Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: _L0_Option2_L1_L2_Option2}
 	})
-	L0Option2L1L2Option3 := &OneOfDeepRequest_Outer_Middle_Inner_Third{}
+	_L0_Option2_L1_L2_Option3 := &OneOfDeepRequest_Outer_Middle_Inner_Third{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option2 L1 L2 Option3"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2 L1 L2 Option3"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2}
-		L0Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: L0Option2L1L2Option3}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2}
+		_L0_Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: _L0_Option2_L1_L2_Option3}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option2L1L2Option3.Value, cfg.FlagNamer("L0 Option2 L1 L2 Option3 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option2_L1_L2_Option3.Value, cfg.FlagNamer("L0 Option2 L1 L2 Option3 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option2 L1 L2 Option3 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: L0Option2}
-		L0Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: L0Option2L1L2Option3}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option2{Option2: _L0_Option2}
+		_L0_Option2.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: _L0_Option2_L1_L2_Option3}
 	})
-	L0Option3 := &OneOfDeepRequest_Outer_Third{
+	_L0_Option3 := &OneOfDeepRequest_Outer_Third{
 		L1: &OneOfDeepRequest_Outer_Middle{
 			L2: &OneOfDeepRequest_Outer_Middle_Inner{},
 		},
 	}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option3"), false, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3"), func() { req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3} })
-	L0Option3L1L2Option1 := &OneOfDeepRequest_Outer_Middle_Inner_First{}
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3"), func() { req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3} })
+	_L0_Option3_L1_L2_Option1 := &OneOfDeepRequest_Outer_Middle_Inner_First{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option3 L1 L2 Option1"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3 L1 L2 Option1"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3}
-		L0Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: L0Option3L1L2Option1}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3}
+		_L0_Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: _L0_Option3_L1_L2_Option1}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option3L1L2Option1.Value, cfg.FlagNamer("L0 Option3 L1 L2 Option1 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option3_L1_L2_Option1.Value, cfg.FlagNamer("L0 Option3 L1 L2 Option1 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3 L1 L2 Option1 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3}
-		L0Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: L0Option3L1L2Option1}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3}
+		_L0_Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option1{Option1: _L0_Option3_L1_L2_Option1}
 	})
-	L0Option3L1L2Option2 := &OneOfDeepRequest_Outer_Middle_Inner_Second{}
+	_L0_Option3_L1_L2_Option2 := &OneOfDeepRequest_Outer_Middle_Inner_Second{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option3 L1 L2 Option2"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3 L1 L2 Option2"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3}
-		L0Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: L0Option3L1L2Option2}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3}
+		_L0_Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: _L0_Option3_L1_L2_Option2}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option3L1L2Option2.Value, cfg.FlagNamer("L0 Option3 L1 L2 Option2 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option3_L1_L2_Option2.Value, cfg.FlagNamer("L0 Option3 L1 L2 Option2 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3 L1 L2 Option2 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3}
-		L0Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: L0Option3L1L2Option2}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3}
+		_L0_Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option2{Option2: _L0_Option3_L1_L2_Option2}
 	})
-	L0Option3L1L2Option3 := &OneOfDeepRequest_Outer_Middle_Inner_Third{}
+	_L0_Option3_L1_L2_Option3 := &OneOfDeepRequest_Outer_Middle_Inner_Third{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("L0 Option3 L1 L2 Option3"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3 L1 L2 Option3"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3}
-		L0Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: L0Option3L1L2Option3}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3}
+		_L0_Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: _L0_Option3_L1_L2_Option3}
 	})
-	cmd.PersistentFlags().StringVar(&L0Option3L1L2Option3.Value, cfg.FlagNamer("L0 Option3 L1 L2 Option3 Value"), "", "")
+	cmd.PersistentFlags().StringVar(&_L0_Option3_L1_L2_Option3.Value, cfg.FlagNamer("L0 Option3 L1 L2 Option3 Value"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("L0 Option3 L1 L2 Option3 Value"), func() {
-		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: L0Option3}
-		L0Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: L0Option3L1L2Option3}
+		req.L0.Choose = &OneOfDeepRequest_Outer_Option3{Option3: _L0_Option3}
+		_L0_Option3.L1.L2.Choose = &OneOfDeepRequest_Outer_Middle_Inner_Option3{Option3: _L0_Option3_L1_L2_Option3}
 	})
 
 	return cmd

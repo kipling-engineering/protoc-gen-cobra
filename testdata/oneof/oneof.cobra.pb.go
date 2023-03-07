@@ -66,12 +66,12 @@ func _OneOfServiceOneOfCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().Int32Var(&req.Paging.PageSize, cfg.FlagNamer("Paging PageSize"), 0, "")
-	PagingPageToken := &common.PaginationRequest_PageToken{}
-	cmd.PersistentFlags().StringVar(&PagingPageToken.PageToken, cfg.FlagNamer("Paging PageToken"), "", "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Paging PageToken"), func() { req.Paging.Value = PagingPageToken })
-	PagingPageOffset := &common.PaginationRequest_PageOffset{}
-	cmd.PersistentFlags().Int32Var(&PagingPageOffset.PageOffset, cfg.FlagNamer("Paging PageOffset"), 0, "")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Paging PageOffset"), func() { req.Paging.Value = PagingPageOffset })
+	_Paging_PageToken := &common.PaginationRequest_PageToken{}
+	cmd.PersistentFlags().StringVar(&_Paging_PageToken.PageToken, cfg.FlagNamer("Paging PageToken"), "", "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Paging PageToken"), func() { req.Paging.Value = _Paging_PageToken })
+	_Paging_PageOffset := &common.PaginationRequest_PageOffset{}
+	cmd.PersistentFlags().Int32Var(&_Paging_PageOffset.PageOffset, cfg.FlagNamer("Paging PageOffset"), 0, "")
+	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Paging PageOffset"), func() { req.Paging.Value = _Paging_PageOffset })
 
 	return cmd
 }
