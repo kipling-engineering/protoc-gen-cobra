@@ -22,6 +22,12 @@ func (*Nested) Get(_ context.Context, req *pb.NestedRequest) (*pb.NestedResponse
 	}, nil
 }
 
+func (*Nested) GetOptional(_ context.Context, req *pb.OptionalRequest) (*pb.NestedResponse, error) {
+	return &pb.NestedResponse{
+		Return: req.Top.Value + req.Inner.GetValue(),
+	}, nil
+}
+
 func (*Nested) GetDeep(_ context.Context, req *pb.DeepRequest) (*pb.NestedResponse, error) {
 	return &pb.NestedResponse{
 		Return: req.L0.L1.L2.Value,
