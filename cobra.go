@@ -95,7 +95,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := New{{.Parent.GoName}}Client(cc)
-				v := &{{.Input.GoIdent.GoName}}{}
+				v := &{{.InputType}}{}
 	{{if .Desc.IsStreamingClient}}
 				stm, err := cli.{{.GoName}}(cmd.Context())
 				if err != nil {
