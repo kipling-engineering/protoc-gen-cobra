@@ -16,6 +16,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
@@ -27,6 +28,7 @@ type (
 )
 
 type Config struct {
+	PreSendHook    func(proto.Message)
 	ServerAddr     string
 	RequestFile    string
 	RequestFormat  string

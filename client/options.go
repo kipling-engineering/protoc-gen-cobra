@@ -3,6 +3,8 @@ package client
 import (
 	"time"
 
+	"google.golang.org/protobuf/proto" // Added import
+
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 )
@@ -111,5 +113,12 @@ func WithOutputEncoder(format string, maker iocodec.EncoderMaker) Option {
 		}
 		e[format] = maker
 		c.outEncoders = e
+	}
+}
+
+// WithPreSendHook sets a hook to be called with the request message before it's sent.
+func WithPreSendHook(hook func(proto.Message)) Option {
+	return func(cfg *Config) {
+		cfg.PreSendHook = hook
 	}
 }
