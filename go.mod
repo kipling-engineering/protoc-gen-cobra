@@ -1,4 +1,4 @@
-module github.com/NathanBaulch/protoc-gen-cobra
+module github.com/kipling-engineering/protoc-gen-cobra
 
 go 1.21 // Reverted to 1.21
 
