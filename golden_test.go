@@ -200,10 +200,18 @@ func runProtoc(t *testing.T, args []string) {
 	}
 	protocGenCobraPath := os.Args[0] // The test binary itself
 
-	// Use the specific protoc binary path
-	protocBinPath := "/tmp/protoc/bin/protoc"
-	if _, err := os.Stat(protocBinPath); os.IsNotExist(err) {
-		t.Fatalf("protoc not found at %s. Ensure ci/install-protoc.sh has run.", protocBinPath)
+	// Determine protoc path
+	var protocPath string
+	path, err := exec.LookPath("protoc")
+	if err == nil {
+		protocPath = path
+		t.Logf("Using protoc found in PATH: %s", protocPath)
+	} else {
+		protocPath = "/tmp/protoc/bin/protoc"
+		t.Logf("protoc not found in PATH, using fallback: %s", protocPath)
+		if _, statErr := os.Stat(protocPath); os.IsNotExist(statErr) {
+			t.Fatalf("protoc not found in PATH or at %s. Please install protoc and ensure it's in your PATH, or run ci/install-protoc.sh.", protocPath)
+		}
 	}
 
 	// Separate --go_out, --cobra_out, --go-grpc_out from original args
@@ -239,18 +247,18 @@ func runProtoc(t *testing.T, args []string) {
 	}
 	cmdArgs = append(cmdArgs, otherArgs...) // Add -I paths, proto files
 
-	cmd := exec.Command(protocBinPath, cmdArgs...)
+	cmd := exec.Command(protocPath, cmdArgs...) // Use determined protocPath
 	cmd.Env = append(os.Environ(), "RUN_AS_PROTOC_GEN_COBRA=1")
 
-	out, err := cmd.CombinedOutput()
-	if len(out) > 0 || err != nil {
+	out, errExec := cmd.CombinedOutput() // Use a different variable name for the error from exec.Command
+	if len(out) > 0 || errExec != nil {
 		// Using t.Logf for more structured logging
-		t.Logf("RUNNING: %s %s", protocBinPath, strings.Join(cmdArgs, " "))
+		t.Logf("RUNNING: %s %s", protocPath, strings.Join(cmdArgs, " "))
 	}
 	if len(out) > 0 {
 		t.Logf("PROTOC OUTPUT:\n%s", string(out))
 	}
-	if err != nil {
-		t.Fatalf("protoc execution failed: %v", err)
+	if errExec != nil { // Check this errExec for protoc execution failure
+		t.Fatalf("protoc execution failed: %v", errExec)
 	}
 }
