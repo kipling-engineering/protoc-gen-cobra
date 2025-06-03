@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package pb; // Package name for protobuf symbols
+
+import "google/protobuf/field_mask.proto";
+
+// Output path will be relative to --*_out options, in a 'pb' subdirectory.
+option go_package = "./pb";
+
+service FieldMaskTestService {
+  rpc UpdateEntity (UpdateEntityRequest) returns (Entity);
+}
+
+message Entity {
+  string id = 1;
+  string display_name = 2;
+  int32 count = 3;
+  NestedEntity nested = 4;
+}
+
+message NestedEntity {
+  string sub_id = 1;
+  string sub_value = 2;
+}
+
+message UpdateEntityRequest {
+  Entity entity = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
