@@ -117,7 +117,7 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
             // Ensure fieldmaskpb is imported by g.QualifiedGoIdent in genMethod if HasUpdateMask
             // Corrected logic for setting/appending:
             if req.UpdateMask == nil {
-                 req.UpdateMask = &{{g.QualifiedGoIdent "google.golang.org/protobuf/types/known/fieldmaskpb" "FieldMask"}}{}
+                 req.UpdateMask = &{{.FieldMaskType}}{}
             }
             // Now append and deduplicate
             pathMap := make(map[string]struct{})
@@ -245,10 +245,20 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 	code := walkMessage(g, method.Input, nil, nil, false, make(map[protogen.GoIdent]bool))
 	data := struct {
 		*protogen.Method
-		InputType string
-		InputCode string
+	InputType     string
+	InputCode     string
 		HasUpdateMask bool
-	}{method, g.QualifiedGoIdent(method.Input.GoIdent), strings.Join(code, "\n"), hasUpdateMaskField}
+	FieldMaskType string
+}{
+	method,
+	g.QualifiedGoIdent(method.Input.GoIdent),
+	strings.Join(code, "\n"),
+	hasUpdateMaskField,
+	"", // Initialize FieldMaskType
+}
+	if hasUpdateMaskField {
+		data.FieldMaskType = g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "google.golang.org/protobuf/types/known/fieldmaskpb", GoName: "FieldMask"})
+	}
 	return methodTemplate.Execute(g, data)
 }
 

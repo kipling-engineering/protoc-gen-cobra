@@ -43,7 +43,6 @@ require (
 
 require github.com/NathanBaulch/protoc-gen-cobra v1.2.1
 
-require (
-	github.com/rogpeppe/go-internal v1.9.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 // indirect
-)
+replace github.com/NathanBaulch/protoc-gen-cobra => ./
+
+require google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 // indirect

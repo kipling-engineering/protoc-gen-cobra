@@ -45,4 +45,4 @@ clean:
 deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	go install github.com/NathanBaulch/protoc-gen-cobra@latest
+	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2.1
