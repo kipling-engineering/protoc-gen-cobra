@@ -3,12 +3,20 @@ syntax = "proto3";
 package pb; // Package name for protobuf symbols
 
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
 
 // Output path will be relative to --*_out options, in a 'pb' subdirectory.
 option go_package = "./pb";
 
 service FieldMaskTestService {
   rpc UpdateEntity (UpdateEntityRequest) returns (Entity);
+  rpc UpdateEntityBody(UpdateEntityBodyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/entitybody/{entity_payload.id}"
+      body: "entity_payload"
+    };
+  }
 }
 
 message Entity {
@@ -25,5 +33,10 @@ message NestedEntity {
 
 message UpdateEntityRequest {
   Entity entity = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateEntityBodyRequest {
+  Entity entity_payload = 1;
   google.protobuf.FieldMask update_mask = 2;
 }
