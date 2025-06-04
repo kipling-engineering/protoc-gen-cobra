@@ -241,7 +241,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 				hasUpdateMaskField = true
 				g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "google.golang.org/protobuf/types/known/fieldmaskpb"})
 				// Ensure pflag is imported for cmd.Flags().Visit and f.Changed
-				g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "github.com/spf13/pflag"})
+				// g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "github.com/spf13/pflag"}) // Removed
 				break
 			}
 		}
