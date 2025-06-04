@@ -41,7 +41,10 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
-require github.com/NathanBaulch/protoc-gen-cobra v1.2.1
+require (
+	github.com/NathanBaulch/protoc-gen-cobra v1.2.1
+	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237
+)
 
 replace github.com/NathanBaulch/protoc-gen-cobra => ./
 
