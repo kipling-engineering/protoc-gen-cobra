@@ -48,11 +48,11 @@ func TestGolden(t *testing.T) {
 		}
 
 		protocArgs := []string{
-			"-I/tmp/protoc/include", // For google.protobuf well-known types
+			"-I/tmp/protoc/include", // Re-added: For google.protobuf well-known types
 			"-Itestdata",            // For local .proto includes
 			"-Itestdata/oneof",      // For local .proto includes within oneof
 			"--go_out=" + outputDirForProtos,
-			"--cobra_out=" + outputDirForProtos,
+			"--cobra_out=" + outputDirForProtos, // cobra_out will be correctly set in runProtoc
 		}
 		protocArgs = append(protocArgs, sources...)
 
