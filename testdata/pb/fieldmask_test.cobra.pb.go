@@ -42,6 +42,31 @@ func _FieldMaskTestServiceUpdateEntityCommand(cfg *client.Config) *cobra.Command
 					return err
 				}
 			}
+
+			var updateMaskPaths []string
+
+			if len(updateMaskPaths) > 0 {
+				// Ensure fieldmaskpb is imported by g.QualifiedGoIdent in genMethod if HasUpdateMask
+				// Corrected logic for setting/appending:
+				if req.UpdateMask == nil {
+					req.UpdateMask = &fieldmaskpb.FieldMask{}
+				}
+				// Now append and deduplicate
+				pathMap := make(map[string]struct{})
+				for _, p := range req.UpdateMask.Paths { // Add existing paths
+					pathMap[p] = struct{}{}
+				}
+				for _, p := range updateMaskPaths { // Add new paths from changed flags
+					pathMap[p] = struct{}{}
+				}
+				finalPaths := make([]string, 0, len(pathMap))
+				for p := range pathMap {
+					finalPaths = append(finalPaths, p)
+				}
+				// Optional: sort.Strings(finalPaths)
+				req.UpdateMask.Paths = finalPaths
+			}
+
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewFieldMaskTestServiceClient(cc)
 				v := &UpdateEntityRequest{}
@@ -50,6 +75,9 @@ func _FieldMaskTestServiceUpdateEntityCommand(cfg *client.Config) *cobra.Command
 					return err
 				}
 				proto.Merge(v, req)
+				if cfg.PreSendHook != nil {
+					cfg.PreSendHook(v)
+				}
 
 				res, err := cli.UpdateEntity(cmd.Context(), v)
 
@@ -75,9 +103,6 @@ func _FieldMaskTestServiceUpdateEntityCommand(cfg *client.Config) *cobra.Command
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Entity Nested SubId"), func() { req.Entity = _Entity; _Entity.Nested = _Entity_Nested })
 	cmd.PersistentFlags().StringVar(&_Entity_Nested.SubValue, cfg.FlagNamer("Entity Nested SubValue"), "", "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Entity Nested SubValue"), func() { req.Entity = _Entity; _Entity.Nested = _Entity_Nested })
-	_UpdateMask := &fieldmaskpb.FieldMask{}
-	cmd.PersistentFlags().StringSliceVar(&_UpdateMask.Paths, cfg.FlagNamer("UpdateMask Paths"), nil, "The set of field mask paths.")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("UpdateMask Paths"), func() { req.UpdateMask = _UpdateMask })
 
 	return cmd
 }
