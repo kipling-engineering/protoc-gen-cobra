@@ -48,8 +48,10 @@ func TestFieldMaskUpdatePopulation(t *testing.T) {
 	}
 
 	args := []string{
-		"--entity-display-name", "A New Name",
-		"--entity-count", "42",
+		"--entity-display-name", "TopLevelName", // Top-level field
+		"--entity-nestedentity-displayname", "NestedName", // Nested field
+		"--entity-nestedentity-count", "99", // Another nested field
+		// Not setting --entity-id or --entity-nestedentity-id
 	}
 	// SetArgs is for the command's own arguments, not for parsing flags for rootCmd.
 	// To parse flags for updateCmd, we need to call its Execute or ParseFlags.
@@ -73,9 +75,12 @@ func TestFieldMaskUpdatePopulation(t *testing.T) {
 	// For "Entity Count", FlagNamer("Entity Count") -> "entity-count"
 
 	expectedChangedFlags := map[string]bool{
-		"entity-display-name": true,
-		"entity-count":        true,
-		"entity-id":           false, // Assuming "entity-id" would be the flag name for Entity.Id
+		"entity-display-name":             true,
+		"entity-count":                    false, // This was set in previous version, now unset for this test case
+		"entity-id":                       false,
+		"entity-nestedentity-displayname": true,
+		"entity-nestedentity-count":       true,
+		"entity-nestedentity-id":          false, // Unset nested field
 	}
 
 	foundNonExistentFlag := false
