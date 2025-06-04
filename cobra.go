@@ -6,7 +6,9 @@ import (
 	"strings"
 	"text/template"
 
+	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto" // Added for proto.HasExtension and proto.GetExtension
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
 )
@@ -15,6 +17,16 @@ import (
 type FieldInfoForMask struct {
 	FlagCheckPath string // e.g., "Spec Coordinates Latitude" (used for cmd.Flags().Changed(cfg.FlagNamer(FlagCheckPath)))
 	FieldMaskPath string // e.g., "spec.coordinates.latitude" (used for updateMaskPaths)
+}
+
+// copySlice creates a copy of a string slice.
+func copySlice(s []string) []string {
+	if s == nil {
+		return nil
+	}
+	c := make([]string, len(s))
+	copy(c, s)
+	return c
 }
 
 func genFile(gen *protogen.Plugin, file *protogen.File) error {
@@ -243,21 +255,63 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 	HasUpdateMask bool
 	FieldMaskType string
 	AllFieldInfos []FieldInfoForMask
+	BodyFieldName string // New field to store the extracted body field name
 }{
 	method,
 	g.QualifiedGoIdent(method.Input.GoIdent),
 	strings.Join(code, "\n"),
 	hasUpdateMaskField,
-	"", // Initialize FieldMaskType
+	"",  // Initialize FieldMaskType
 	nil, // Initialize AllFieldInfos
+	"",  // Initialize BodyFieldName
 }
+
+	// Extract HttpRule and BodyFieldName
+	var httpRule *annotations.HttpRule
+	options := method.Desc.Options().(*descriptorpb.MethodOptions)
+	if proto.HasExtension(options, annotations.E_Http) {
+		ext := proto.GetExtension(options, annotations.E_Http)
+		if rule, ok := ext.(*annotations.HttpRule); ok {
+			httpRule = rule
+		}
+	}
+
+	if httpRule != nil {
+		body := httpRule.GetBody()
+		if body != "" && body != "*" {
+			data.BodyFieldName = body
+		}
+	}
+
 	if hasUpdateMaskField {
 		data.FieldMaskType = g.QualifiedGoIdent(protogen.GoIdent{GoImportPath: "google.golang.org/protobuf/types/known/fieldmaskpb", GoName: "FieldMask"})
 		// Generate AllFieldInfos
 		var infos []FieldInfoForMask
-		// Visited map for generateFieldInfosForMask to prevent cycles
-		visited := make(map[protogen.GoIdent]bool)
-		generateFieldInfosForMask(method.Input, nil, nil, &infos, visited)
+		visited := make(map[protogen.GoIdent]bool) // Fresh visited map for each method generation
+
+		startMessage := method.Input
+		initialGoPathParts := []string{}
+		initialProtoPathParts := []string{}
+
+		if data.BodyFieldName != "" {
+			var bodyField *protogen.Field
+			for _, field := range method.Input.Fields {
+				if string(field.Desc.Name()) == data.BodyFieldName {
+					bodyField = field
+					break
+				}
+			}
+
+			if bodyField != nil && bodyField.Message != nil {
+				startMessage = bodyField.Message
+				initialGoPathParts = []string{bodyField.GoName} // Flags still need full path from request root
+				// initialProtoPathParts remains empty, as FieldMask paths are relative to this body field
+			}
+			// Else: BodyFieldName specified but not found or not a message.
+			// Proceed with method.Input and empty initial paths (default behavior).
+			// Consider adding a warning log here in a real implementation.
+		}
+		generateFieldInfosForMask(startMessage, initialGoPathParts, initialProtoPathParts, &infos, visited)
 		data.AllFieldInfos = infos
 	}
 	return methodTemplate.Execute(g, data)
@@ -265,34 +319,30 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 
 // generateFieldInfosForMask recursively walks through message fields
 // to generate paths for flag checking and field mask construction.
-func generateFieldInfosForMask(msg *protogen.Message, goPathParts, protoPathParts []string, infos *[]FieldInfoForMask, visited map[protogen.GoIdent]bool) {
+func generateFieldInfosForMask(msg *protogen.Message, goPathBase, protoPathBase []string, infos *[]FieldInfoForMask, visited map[protogen.GoIdent]bool) {
 	if visited[msg.GoIdent] {
 		return // Cycle detected
 	}
 	visited[msg.GoIdent] = true
 
 	for _, field := range msg.Fields {
-		// Skip the UpdateMask field itself
+		// Skip the UpdateMask field itself if it's part of the walked message
 		if field.GoName == "UpdateMask" && field.Message != nil && string(field.Message.Desc.FullName()) == "google.protobuf.FieldMask" {
 			continue
 		}
 
-		currentGoPathParts := append(append([]string{}, goPathParts...), field.GoName)
-		currentProtoPathParts := append(append([]string{}, protoPathParts...), string(field.Desc.Name()))
+		// Use copySlice to ensure path components are not shared across sibling iterations
+		currentGoPath := append(copySlice(goPathBase), field.GoName)
+		currentProtoPath := append(copySlice(protoPathBase), string(field.Desc.Name()))
 
 		*infos = append(*infos, FieldInfoForMask{
-			FlagCheckPath: strings.Join(currentGoPathParts, " "),
-			FieldMaskPath: strings.Join(currentProtoPathParts, "."),
+			FlagCheckPath: strings.Join(currentGoPath, " "),
+			FieldMaskPath: strings.Join(currentProtoPath, "."),
 		})
 
 		if field.Message != nil && normalizeKind(field.Desc.Kind()) == protoreflect.MessageKind {
-			// Create new slices for recursion to ensure proper backtracking
-			nextGoPathParts := make([]string, len(currentGoPathParts))
-			copy(nextGoPathParts, currentGoPathParts)
-			nextProtoPathParts := make([]string, len(currentProtoPathParts))
-			copy(nextProtoPathParts, currentProtoPathParts)
-
-			generateFieldInfosForMask(field.Message, nextGoPathParts, nextProtoPathParts, infos, visited)
+			// Pass currentGoPath and currentProtoPath directly as they are already copies
+			generateFieldInfosForMask(field.Message, currentGoPath, currentProtoPath, infos, visited)
 		}
 	}
 	delete(visited, msg.GoIdent) // Backtrack: remove from visited after processing fields and their children
